@@ -1,0 +1,20 @@
+trace("Starting opcua server")
+local ua = require("opcua.api")
+local conf = require("loadconf")
+
+local function DemoAddon(services)
+  local code = io:dofile(".lua/add_variables.lua")(services, ua.NodeIds.ObjectsFolder)
+  return code
+end
+
+ua.Log.D = nil
+ua.Log.I = trace
+ua.Log.E = trace
+
+uaServer = ua.NewServer(conf.opcua)
+uaServer:Initialize(DemoAddon)
+uaServer:Run()
+
+assert(uaServer.Services ~= nil)
+
+UaClient = io:dofile(".lua/lspclient.lua").New(uaServer.Services)

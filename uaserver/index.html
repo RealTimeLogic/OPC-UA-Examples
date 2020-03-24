@@ -1,0 +1,210 @@
+<html>
+<head>
+    <script src="ua_server.js"></script>
+    <script src="vue.js"></script>
+
+    <style type="text/css">
+        .plus {
+            color: green;
+            float: left;
+        }
+
+        .node-tree-panel {
+            float: left;
+        }
+        .attribute-panel {
+            width: 50%;
+            float: right;
+        }
+
+        table,th,td {
+            text-align: left;
+            border: 1px solid black;
+            border-collapse: collapse;
+          }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <header>
+            <button v-on:click="connect">Conect/disconnect</button>
+        </header>
+        <section class="node-tree-panel">
+            <ua-node v-if="connected" 
+                :nodeid="root.nodeid" 
+                :label="root.label" 
+                :nodes="root.nodes" 
+                :depth="0"
+            />
+        </section>
+
+        <aside>
+            <ua-attributes/>
+        </aside>
+    </div>
+
+    <script>
+        var uaServer = null
+        var eventBus = new Vue()
+
+        var root = {
+            nodeid: "i=84",
+            label: "Root",
+            nodes: []
+        }
+
+        Vue.component("ua-attributes", {
+            template: 
+            '\
+                <div v-if="visible" class="attribute-panel">\
+                    <button v-on:click="readAttributes">Refresh</button>\
+                    <table >\
+                        <caption>Node Attributes</caption>\
+                        <tr>\
+                            <th>Attribute</th><th>Value</th>\
+                        </tr>\
+                        <tr v-for="attr in attributes">\
+                            <td>{{attr.Name}}</td>\
+                            <td style="text-align: left"><pre>{{attr.Value}}</pre></td>\
+                        </tr>\
+                    </table>\
+                </div>\
+            ',
+            data() {
+                return {
+                    attributes: [],
+                    nodeid: null
+                }
+            },
+            computed: {
+                visible() {
+                    return this.attributes.length != 0
+                }
+            },
+            methods: {
+                onNodeSelected(selectedId) {
+                    this.nodeid = selectedId
+                    this.readAttributes()
+                },
+                readAttributes() {
+                    var self = this
+                    result = uaServer.readAttributes(this.nodeid, resp => {
+                        if (!resp.read || !resp.read.Results)
+                        {
+                            return;
+                        }
+
+                        let attrs = []
+                        resp.read.Results.forEach( (attr,index) => {
+                            if (attr.StatusCode != 0)
+                                return
+
+                            attrs.push({
+                                Name: uaServer.getAttributeName(attr.AttributeId),
+                                Value: JSON.stringify(attr.Value, null, "  ")
+                            })
+                        });
+                        this.attributes = attrs
+                    })
+                },
+            },
+            mounted() {
+                eventBus.$on('node-selected', this.onNodeSelected)
+            }
+        })
+
+        Vue.component("ua-node", {
+            props:['nodeid', 'label', 'nodes', 'depth'],
+            computed: {
+                ident() {
+                    return {transform: `translate(${this.depth * 20}px)`}
+                },
+            },
+            template: 
+                '<div :style="ident">\
+                    <div>\
+                        <span v-on:click.prevent="browse" class="plus">{{ nodes.length == 0 ? "+" : "-" }}</span> \
+                        <span v-on:click.prevent="selectNode">{{label}}</span> \
+                    </div>\
+                    <ua-node v-for="(node,index) in nodes" :key="index" \
+                        :nodeid="node.nodeid" \
+                        :label="node.label" \
+                        :nodes="node.nodes" \
+                        :depth="depth + 1" \
+                    />\
+                </div>',
+
+            methods: {
+                browse: function() {
+                    if (this.nodes.length != 0)
+                    {
+                        this.nodes = []
+                        return
+                    }
+                    var self = this
+                    result = uaServer.browse(this.nodeid, function(resp) {
+                        if (!resp.browse || !resp.browse.Results)
+                        {
+                            return;
+                        }
+
+                        let nodes = []
+                        resp.browse.Results.forEach(result => {
+                            result.References.forEach(ref => {
+                                nodes.push({
+                                    nodeid: ref.NodeId,
+                                    label: ref.DisplayName.Text,
+                                    nodes: []
+                                })
+                            })
+                        });
+                        self.nodes = nodes
+                    })
+                },
+                selectNode: function() {
+                    eventBus.$emit("node-selected", this.nodeid)
+                }
+            }
+        })
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                root: root,
+                connected: false,
+            },
+            mounted() {
+                this.connect()
+            },
+            methods: {
+                connect: function() {
+                    if (!uaServer) {
+                        uaServer = new UAServer(this)
+                    }
+
+                    if (!this.connected)
+                        uaServer.connect("ws://localhost:9357/opcua/opcua_client.lsp")
+                    else
+                        uaServer.disconnect()
+                },
+
+                onConnected: function() {
+                    console.log("OPCUA server connected")
+                    this.connected = true
+                    eventBus.$emit("node-selected", "i=84")
+                },
+                onDisconnected: function(e) {
+                    if (this.connected) {
+                        console.log("OPCUA server disconnected:" + (e ? e : ""))
+                        this.connected = false
+                    }
+                },
+            }
+        })
+
+    </script>
+
+</body>
+</html>
