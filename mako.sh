@@ -1,5 +1,5 @@
 #!/bin/bash
 
 path=$(dirname $0)
-MAKO_ZIP=${path}/mako.zip ./mako -lopcua::${path}/uaserver
+MAKO_ZIP=${path}/mako_zip ./mako -c ${path}/mako.conf.dev
 

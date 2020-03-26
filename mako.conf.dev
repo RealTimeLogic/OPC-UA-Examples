@@ -4,5 +4,5 @@ opcua = {
   EndpointUrl="opc.tcp://localhost:4841"
 }
 
-apps={ {name="",path="uaserver.zip"} }
+apps={ {name="",path="uaserver_zip"} }
 

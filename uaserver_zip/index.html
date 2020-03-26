@@ -185,9 +185,16 @@
                     }
 
                     if (!this.connected)
-                        uaServer.connect("ws://localhost:9357/opcua/opcua_client.lsp")
+                    {
+                        let l = window.location
+                        let protocol = l.protocol === 'https:' ? "wss://" : "ws://"
+                        let url = protocol + l.host + l.pathname + "opcua_client.lsp"
+                        uaServer.connect(url)
+                    }
                     else
+                    {
                         uaServer.disconnect()
+                    }
                 },
 
                 onConnected: function() {
