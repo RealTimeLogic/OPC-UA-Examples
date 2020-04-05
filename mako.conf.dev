@@ -1,7 +1,7 @@
 opcua = {
-  ListenPort=4841,
-  ListenAddress="*",
-  EndpointUrl="opc.tcp://localhost:4841"
+  ListenPort=4840,
+  ListenAddress="localhost",
+  EndpointUrl="opc.tcp://localhost:4840"
 }
 
 apps={ {name="",path="uaserver_zip"} }
