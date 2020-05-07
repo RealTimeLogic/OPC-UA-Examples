@@ -7,9 +7,20 @@ local function DemoAddon(services)
   return code
 end
 
-ua.Log.D = nil
-ua.Log.I = trace
-ua.Log.E = trace
+-- Connect logging traces
+local sock = require("socket")
+ua.Log.D = function(msg)
+  trace(sock.gettime(), "[DBG] ", msg)
+end
+
+ua.Log.I = function(msg)
+  trace(sock.gettime(), "[INF]", msg)
+end
+
+ua.Log.E = function(msg)
+  trace(sock.gettime(), "[ERR]", msg)
+end
+
 
 uaServer = ua.NewServer(conf.opcua)
 uaServer:Initialize(DemoAddon)
