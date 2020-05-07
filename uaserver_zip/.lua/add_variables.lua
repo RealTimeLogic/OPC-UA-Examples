@@ -1,8 +1,20 @@
 local ua = require("opcua.api")
 local s = ua.Status
 
+local function Add(client, newVariable)
+  local statusCode, results = client:AddNodes(newVariable)
+  if statusCode == ua.Status.Good then
+    for i,res in ipairs(results) do
+      assert(res.StatusCode == ua.Status.Good, string.format("Failed to add node '%s': 0x%X", newVariable.NodesToAdd[i].BrowseName.Name, res.StatusCode))
+      ua.Log.I(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
+    end
+  else
+    error(string.format("  AddNode request failed with error: %x", statusCode))
+  end
+end
+
 local function Add_Boolean(client, parentNodeId)
-  print("Adding Boolean variable")
+  ua.Log.I("Adding Boolean variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -32,19 +44,11 @@ local function Add_Boolean(client, parentNodeId)
     }
   }
   
-  local statusCode, results = client:AddNodes(newVariable)
-  if ua.Status.Good == statusCode then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of Boolean variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 local function Add_BooleanArray(client, parentNodeId)
-  print("Adding Boolean Array variable")
+  ua.Log.I("Adding Boolean Array variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -74,20 +78,12 @@ local function Add_BooleanArray(client, parentNodeId)
     }
   }
   
-  local statusCode, results = client:AddNodes(newVariable)
-  if ua.Status.Good == statusCode then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of Boolean variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_Byte(client, parentNodeId)
-  print("Adding Byte variable")
+  ua.Log.I("Adding Byte variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -116,21 +112,15 @@ local function Add_Byte(client, parentNodeId)
       }
     }
   }
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   StatusCode: %x, AddedNodeId: %s", res.StatusCode, ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of Byte variable failed with code: "..statusCode)
-  end
+  
+  Add(client, newVariable)
 end
 
 
 local function Add_ByteArray(client, parentNodeId)
-  print("Adding Byte Array variable")
+  ua.Log.I("Adding Byte Array variable")
 
+  local data = {1,2,3,4,5,6,7,8,9,10}
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
@@ -145,10 +135,10 @@ local function Add_ByteArray(client, parentNodeId)
           Description = {Text="Example of Byte Array variable"},
           WriteMask = 0,
           UserWriteMask = 0,
-          Value = {Byte={0,1,2,3,4,5,6,7,8,9}},
+          Value = {Byte=data},
           DataType = ua.NodeIds.Byte,
           ValueRank = ua.Types.ValueRank.OneDimension,
-          ArrayDimensions = {10},
+          ArrayDimensions = {#data},
           AccessLevel = 0,
           UserAccessLevel = 0,
           MinimumSamplingInterval = 1000,
@@ -159,21 +149,13 @@ local function Add_ByteArray(client, parentNodeId)
     }
   }
   
-  local statusCode, results = client:AddNodes(newVariable)
-  if ua.Status.Good == statusCode then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of Byte Array variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 
 
 local function Add_SByte(client, parentNodeId)
-  print("Adding SByte variable")
+  ua.Log.I("Adding SByte variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -202,20 +184,13 @@ local function Add_SByte(client, parentNodeId)
       }
     }
   }
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   StatusCode: %x, AddedNodeId: %s", res.StatusCode, ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of SByte variable failed with code: "..statusCode)
-  end
+  
+  Add(client, newVariable)
 end
 
 
 local function Add_SByteArray(client, parentNodeId)
-  print("Adding SByte Array variable")
+  ua.Log.I("Adding SByte Array variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -245,20 +220,12 @@ local function Add_SByteArray(client, parentNodeId)
     }
   }
   
-  local statusCode, results = client:AddNodes(newVariable)
-  if ua.Status.Good == statusCode then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of SByte array variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_Int16(client, parentNodeId)
-  print("Adding Int16 variable")
+  ua.Log.I("Adding Int16 variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -288,19 +255,11 @@ local function Add_Int16(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of SByte variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 local function Add_Int16Array(client, parentNodeId)
-  print("Adding Int16 Array variable")
+  ua.Log.I("Adding Int16 Array variable")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -330,21 +289,13 @@ local function Add_Int16Array(client, parentNodeId)
     }
   }
   
-  local statusCode, results = client:AddNodes(newVariable)
-  if ua.Status.Good == statusCode then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", res.StatusCode, ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of SByte array variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 
 
 local function Add_UInt16_Scalar_And_Array(client, parentNodeId)
-  print("Adding UInt16 variable and UInt16 array")
+  ua.Log.I("Adding UInt16 variable and UInt16 array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -397,20 +348,12 @@ local function Add_UInt16_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error("  Adding of SByte variable failed with code: "..statusCode)
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_Int32_UInt32_Scalar_And_Array(client, parentNodeId)
-  print("Adding Int32,UInt32 scalar and array")
+  ua.Log.I("Adding Int32,UInt32 scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -506,21 +449,13 @@ local function Add_Int32_UInt32_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of Int32,UInt32 variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 
 local function Add_Int64_UInt64_Scalar_And_Array(client, parentNodeId)
-  print("Adding Int64,UInt64 scalar and array")
+  ua.Log.I("Adding Int64,UInt64 scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -616,20 +551,12 @@ local function Add_Int64_UInt64_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of Int64,UInt64 variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_Float_Double_Scalar_And_Array(client, parentNodeId)
-  print("Adding Float,Double scalar and array")
+  ua.Log.I("Adding Float,Double scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -725,20 +652,12 @@ local function Add_Float_Double_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of Int64,UInt64 variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_String_Scalar_And_Array(client, parentNodeId)
-  print("Adding String scalar and array")
+  ua.Log.I("Adding String scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -790,15 +709,7 @@ local function Add_String_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of String variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 local num = 0
@@ -819,7 +730,7 @@ local function Guid()
   }
 end
 local function Add_Guid_Scalar_And_Array(client, parentNodeId)
-  print("Adding Guid scalar and array")
+  ua.Log.I("Adding Guid scalar and array")
 
   -- Array with node id attributes of a new variable
   local newVariable = {
@@ -871,20 +782,12 @@ local function Add_Guid_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of String variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_DateTime_Scalar_And_Array(client, parentNodeId)
-  print("Adding DateTime scalar and array")
+  ua.Log.I("Adding DateTime scalar and array")
 
   local curTime = os.time()
 
@@ -938,19 +841,11 @@ local function Add_DateTime_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of String variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 local function Add_ByteString_Scalar_And_Array(client, parentNodeId)
-  print("Adding ByteString scalar and array")
+  ua.Log.I("Adding ByteString scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -1002,20 +897,12 @@ local function Add_ByteString_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of ByteString variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_XmlElement_Scalar_And_Array(client, parentNodeId)
-  print("Adding XmlElement scalar and array")
+  ua.Log.I("Adding XmlElement scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -1078,19 +965,11 @@ local function Add_XmlElement_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of ByteString variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 local function Add_NodeId_Scalar_And_Array(client, parentNodeId)
-  print("Adding NodeId scalar and array")
+  ua.Log.I("Adding NodeId scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -1155,20 +1034,12 @@ local function Add_NodeId_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of ByteString variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_ExpandedNodeId_Scalar_And_Array(client, parentNodeId)
-  print("Adding ExpandedNodeId scalar and array")
+  ua.Log.I("Adding ExpandedNodeId scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -1233,20 +1104,12 @@ local function Add_ExpandedNodeId_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of ByteString variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_StatusCode_Scalar_And_Array(client, parentNodeId)
-  print("Adding Int32,UInt32 scalar and array")
+  ua.Log.I("Adding Int32,UInt32 scalar and array")
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
@@ -1309,20 +1172,12 @@ local function Add_StatusCode_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of Int32,UInt32 variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_QualifiedName_Scalar_And_Array(client, parentNodeId)
-  print("Adding QualifiedName scalar and array")
+  ua.Log.I("Adding QualifiedName scalar and array")
 
   -- Array with node id attributes of a new QualifiedName variable
   local newVariable = {
@@ -1385,20 +1240,12 @@ local function Add_QualifiedName_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of QualifiedName variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_LocalizedText_Scalar_And_Array(client, parentNodeId)
-  print("Adding LocalizedText scalar and array")
+  ua.Log.I("Adding LocalizedText scalar and array")
 
   -- Array with node id attributes of a new QualifiedName variable
   local newVariable = {
@@ -1461,20 +1308,12 @@ local function Add_LocalizedText_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of QualifiedName variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_ExtensionObject_Scalar_And_Array(client, parentNodeId)
-  print("Adding ExtensionObject scalar and array")
+  ua.Log.I("Adding ExtensionObject scalar and array")
 
   -- Array with node id attributes of a new ExtensionObject variable
   local newVariable = {
@@ -1542,19 +1381,11 @@ local function Add_ExtensionObject_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of ExtensionObject variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 local function Add_DataValue_Scalar_And_Array(client, parentNodeId)
-  print("Adding DataValue scalar and array")
+  ua.Log.I("Adding DataValue scalar and array")
 
   -- Array with node id attributes of a new DataValue variable
   local newVariable = {
@@ -1696,20 +1527,12 @@ local function Add_DataValue_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of DataValue variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 
 local function Add_DiagnosticInfo_Scalar_And_Array(client, parentNodeId)
-  print("Adding DiagnosticInfo scalar and array")
+  ua.Log.I("Adding DiagnosticInfo scalar and array")
 
   -- Array with node id attributes of a new DataValue variable
   local newVariable = {
@@ -1941,15 +1764,7 @@ local function Add_DiagnosticInfo_Scalar_And_Array(client, parentNodeId)
     }
   }
 
-  local statusCode, results = client:AddNodes(newVariable)
-  if statusCode == ua.Status.Good then
-    for _,res in ipairs(results) do
-      assert(res.StatusCode == ua.Status.Good)
-      print(string.format("   AddedNodeId: %s", ua.NodeId.ToString(res.AddedNodeId)))
-    end
-  else
-    error(string.format("  Adding of DiagnosticInfo variable failed with code: %x", statusCode))
-  end
+  Add(client, newVariable)
 end
 
 local function Variables(services, parentNodeId)
