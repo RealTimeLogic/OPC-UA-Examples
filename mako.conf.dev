@@ -1,8 +1,27 @@
 opcua = {
-  ListenPort=4840,
-  ListenAddress="localhost",
-  EndpointUrl="opc.tcp://localhost:4840"
+  ListenPort=4841,
+  ListenAddress="192.168.88.254",
+  EndpointUrl="opc.tcp://192.168.88.254:4841",
+  Logging = {
+    Socket = {
+      D = false,
+      I = false,
+      E = true
+    },
+    Binary = {
+      D = false,
+      I = true,
+      E = true
+    },
+    Services = {
+      D = true,
+      I = true,
+      E = true
+    }
+  }
 }
 
-apps={ {name="",path="uaserver_zip"} }
-
+apps={
+  {name="",path="uaserver_zip"},
+  {name="www", path="www"}
+}
