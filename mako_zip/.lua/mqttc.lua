@@ -191,8 +191,8 @@ function C:run()
       if not cpt then break end
    end
    self.timer:cancel()
-   local err = self.error or msg -- msg=err
-   return nil,err
+   if not self.error then self.error = msg end -- msg=err
+   return nil,self.error
 end
 
 local function connect(addr, onpub, opt)

@@ -9,6 +9,7 @@ local dURL = { -- ACME service's directory (discover) URL
  -- getCert queue: list of {account=obj,rspCB=func,op=obj,getCertCO=coroutine}
 local jobQ={}
 local jobs=0
+local jwt=require"jwt"
 
 local schar,slower=string.char,string.lower
 
@@ -105,13 +106,10 @@ local function createAcmeHttp(op)
    return false, dir
 end
 
-local function sign(hash, key)
-   local r,s = ba.crypto.der2ecdsa(ba.crypto.sign(hash,key))
-   return ba.b64urlencode(r..s)
-end
-
-local function hashsign(data, key)
-   return sign(ba.crypto.hash"sha256"(data)(true), key)
+local function postAsGet(http, account, nonce, url, getraw)
+   local header = {nonce=nonce, alg='ES256', url=aue(url), kid=account.id}
+   local payload = "" -- POST-as-GET
+   return http(url, jwt.sign(account.key,payload,header), getraw)
 end
 
 
@@ -172,7 +170,7 @@ local function getCertCOFunc(job)
    http, dir, nonce = createAcmeHttp(op)
    if not http then return retErr(dir) end
 
-   local newAccount
+   local newAccount,header,payload
    -- Create the accountKey (pem) and extract the private key and the
    -- public key (x,y) components
    local pkey,x,y
@@ -183,14 +181,8 @@ local function getCertCOFunc(job)
       newAccount=true
       account.key = account.key or ba.create.key()
       pkey,x,y=decodeEccPemKey(account.key)
-
       -- Prepare for new account request
-      local payload64=jsto64{
-	 termsOfServiceAgreed=true,
-	 onlyReturnExisting=false,
-	 contact={'mailto:'..account.email},
-      }
-      local protected64=jsto64{
+      header={
 	 nonce=nonce,
 	 url=dir.newAccount,
 	 alg='ES256',
@@ -201,32 +193,22 @@ local function getCertCOFunc(job)
 	    y=y,
 	 }
       }
-      local data = { -- Signed Account Data
-	 protected=protected64,
-	 payload=payload64,
-	 signature= hashsign(protected64.."."..payload64, account.key),
+      payload={
+	 termsOfServiceAgreed=true,
+	 onlyReturnExisting=false,
+	 contact={'mailto:'..account.email},
       }
       -- Send account request
-      ok,rsp,nonce,h = http(dir.newAccount, data)
+      ok,rsp,nonce,h = http(dir.newAccount,jwt.sign(account.key,payload,header))
       if not ok then return retErr(rsp) end
       account.id=h.location
    end
 
    -- Prepare the order
-   payload64 = jsto64{
-      identifiers = {
-	 { type='dns', value=job.domain }
-      }
-   }
-   protected64 = jsto64{
-      nonce=nonce, alg='ES256', url=dir.newOrder, kid=account.id}
-   data = { -- Signed Order
-      protected=protected64,
-      payload=payload64,
-      signature=hashsign(protected64.."."..payload64, account.key),
-   }
+   header = {nonce=nonce, alg='ES256', url=dir.newOrder, kid=account.id}
+   payload = {identifiers = {{ type='dns', value=job.domain }}}
    -- Send order request
-   ok,rsp,nonce,h = http(dir.newOrder, data)
+   ok,rsp,nonce,h = http(dir.newOrder, jwt.sign(account.key,payload,header))
    if not ok then
       if newAccount==false then
 	 account.key,account.id=nil,nil
@@ -239,11 +221,11 @@ local function getCertCOFunc(job)
    local finalizeURL=rsp.finalize
 
    -- The authURL returns a list of possible challenges.
-   ok,rsp = http(authURL)
+   ok, rsp, nonce, h = postAsGet(http, account, nonce, authURL)
    if not ok then return retErr(rsp) end
    local token,challengeUrl
    for _,ch in ipairs(rsp.challenges) do -- Find the HTTP challenge option
-      if (not dnsch and ch.type=="http-01") or (dnsch and ch.type=="dns-01") then
+      if(not dnsch and ch.type=="http-01") or (dnsch and ch.type=="dns-01") then
 	 -- Fetch the token and HTTP challenge URL
 	 token,challengeUrl = ch.token,ch.url
 	 break
@@ -264,21 +246,16 @@ local function getCertCOFunc(job)
       op.ch.set(dnsRecord, dnsAuth, resumeCo)
    else
       local tokenURL="acme-challenge/"..token
-      op.ch.insert(tokenURL, keyAuth, resumeCo)
+      op.ch.insert(tokenURL, keyAuth, resumeCo, job.domain)
    end
    ok,rsp = coroutine.yield()
    if not ok then return retErr(rsp or "Start: challenge API") end
 
-   payload64 = ba.b64urlencode"{}"
-   protected64 = jsto64{
-      nonce=nonce, alg='ES256', url=aue(challengeUrl), kid=account.id}
-   data = {
-      protected=protected64,
-      payload=payload64,
-      signature=hashsign(protected64.."."..payload64, account.key),
-   }
-   -- Initiate challenge. ACME now calls our 'wellknown' dir or checks DNS rec.
-   ok, rsp, nonce, h = http(challengeUrl, data)
+-- Initiate challenge
+   header = {nonce=nonce, alg='ES256', url=aue(challengeUrl), kid=account.id}
+   payload = ba.b64urlencode"{}"
+   --  http -> ACME will now call our 'wellknown' dir or checks DNS rec.
+   ok, rsp, nonce, h = http(challengeUrl, jwt.sign(account.key,payload,header))
    if not ok then return retErr(rsp) end
    local challengePollURL = rsp.url
    local cnt=0
@@ -288,14 +265,14 @@ local function getCertCOFunc(job)
       cnt = cnt+1
       if cnt > mcnt then ok,rsp=false,"Challenge timeout" break end
       ba.sleep(3000)
-      ok,rsp = http(challengePollURL)
+      ok, rsp, nonce, h = postAsGet(http, account, nonce, challengePollURL)
       if not ok then break end
       if rsp.status ~= "pending" and rsp.status ~= "processing" then
 	 if rsp.status ~= "valid" then ok=false end
 	 break
       end
    end
-   op.ch.remove(resumeCo)
+   op.ch.remove(resumeCo,job.domain)
    local ok2,rsp2 = coroutine.yield()
    if not ok then return retErr(rsp) end
    if not ok2 then return retErr(rsp2 or "End: challenge API") end
@@ -305,22 +282,14 @@ local function getCertCOFunc(job)
    local keyusage = {"DIGITAL_SIGNATURE", "KEY_ENCIPHERMENT"}
    local certKey=ba.create.key{
       key = op.rsa==true and "rsa" or "ecc", bits=op.bits}
-
-   local csr=ba.create.csr(
-     certKey,{commonname=job.domain},certtype,keyusage)
+   local csr=ba.create.csr(certKey,{commonname=job.domain},certtype,keyusage)
    -- Convert CSR to raw URL-safe B64
+   header={nonce=nonce,alg='ES256',url=aue(finalizeURL),kid=account.id}
    csr=ba.b64urlencode(ba.b64decode(csr:match".-BEGIN.-\n%s*(.-)\n%s*%-%-"))
-   payload64=jsto64{csr=csr}
-   protected64=jsto64{nonce=nonce,alg='ES256',url=aue(finalizeURL),kid=account.id}
-   data = {
-      protected=protected64,
-      payload=payload64,
-      signature=hashsign(protected64.."."..payload64, account.key)
-   }
+   payload={csr=csr}
    -- Send the CSR
-   ok, rsp = http(finalizeURL, data)
+   ok, rsp, nonce, h = http(finalizeURL, jwt.sign(account.key,payload,header))
    if not ok then return retErr(rsp) end
-
    if rsp.status ~= "valid" then -- If not ready
       cnt=0
       -- Loop and poll the 'challengePollURL'
@@ -328,12 +297,12 @@ local function getCertCOFunc(job)
 	 cnt = cnt+1
 	 if cnt > 10 then return retErr"CSR response timeout" end
 	 ba.sleep(3000)
-	 ok, rsp = http(currentOrderURL)
+         ok, rsp, nonce, h = postAsGet(http, account, nonce, currentOrderURL)
 	 if not ok then return retErr(rsp) end
 	 if rsp.status == "valid" then break end
       end
    end
-   local cert,err = http(rsp.certificate, nil, true)
+   local cert,err = postAsGet(http, account, nonce, rsp.certificate, true)
    if not cert then return retErr(err) end
    job.rspCB(certKey, cert)
    return true
@@ -367,16 +336,10 @@ end
 
 local function revokeCert(account,cert,rspCB, op)
    http, dir, nonce = createAcmeHttp(op or {})
-   local payload64 = jsto64{certificate=
+   local header = {nonce=nonce, alg='ES256', url=dir.revokeCert, kid=account.id}
+   local payload = {certificate=
       ba.b64urlencode(ba.b64decode(cert:match".-BEGIN.-\n%s*(.-)\n%s*%-%-"))}
-   local protected64 = jsto64{
-      nonce=nonce, alg='ES256', url=dir.revokeCert, kid=account.id}
-   local data = {
-      protected=protected64,
-      payload=payload64,
-      signature=hashsign(protected64.."."..payload64, account.key),
-   }
-   local ok, rsp = http(dir.revokeCert, data)
+   local ok, rsp = http(dir.revokeCert, jwt.sign(account.key,payload,header))
    if ok then
       rspCB(true)
    else
@@ -384,8 +347,8 @@ local function revokeCert(account,cert,rspCB, op)
    end
 end
 
-local function terms()
-   local ok, dir = createAcmeHttp{}
+local function terms(op)
+   local ok, dir = createAcmeHttp(op or {})
    return ok and dir.meta.termsOfService or "https://letsencrypt.org/"
 end
 

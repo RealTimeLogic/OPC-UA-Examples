@@ -82,7 +82,7 @@ $(function(){
      overlay: 80,
      onHide:function(h){h.w.fadeOut(function(){if(h.o) h.o.remove();});}
    });
-   $("#fstab tr").click(function(e){ctxmenu(this,e);}).bind("contextmenu",function(e){e.preventDefault();ctxmenu(this,e);});
+   $("#fstab tbody tr").click(function(e){ctxmenu(this,e);}).bind("contextmenu",function(e){e.preventDefault();ctxmenu(this,e);});
 
    function trbg(ae, color) {
       $(ae).parent().parent().css("background",color);

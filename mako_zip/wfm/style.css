@@ -77,11 +77,11 @@ span.lock {padding-right:20px;height:16px;width:16px;cursor:help;background: url
 }
 
 
-#fstab th.headerSortUp {
+#fstab th.tablesorter-headerAsc {
   background: #969696 url(asc.png) no-repeat;
 }
 
-#fstab th.headerSortDown {
+#fstab th.tablesorter-headerDesc {
   background: #969696 url(desc.png) no-repeat;
 }
 

@@ -3,11 +3,14 @@ local function loadcfg()
    if _G.mako.cfgfname then
       local fp=ba.openio"disk":open(_G.mako.cfgfname)
       if fp then
-         local f,e=load(fp:read"*a","","bt",conf)
+         local x,e=load(fp:read"*a","","bt",conf)
          fp:close()
-         if f then
-            pcall(f)
+         if x then
+            setmetatable(conf, {__index=_G})
+            x,e=pcall(x)
+            setmetatable(conf, nil)
          end
+         if e then print(_G.mako.cfgfname,e) end
       end
    end
    return conf

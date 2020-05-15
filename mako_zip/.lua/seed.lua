@@ -5,7 +5,7 @@ local function seed()
    local ok,err=
       http:request{trusted=true,url="https://beacon.nist.gov/beacon/2.0/pulse/last"}
    if ok and http:status() == 200 then
-      ba.rndseed(ba.crypto.hash("hmac","sha512",ba.clock())(http:read"*a")(true,"binary"))
+      ba.rndseed(ba.crypto.hash("hmac","sha256",ba.clock())(http:read"*a")(true,"binary"))
    end
 end
 local function thseed() return ba.thread.run(seed) end

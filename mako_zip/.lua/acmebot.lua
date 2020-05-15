@@ -1,15 +1,12 @@
 local acme=require"acme"
-local hio=ba.openio"home"
 local fmt=string.format
 
 local optionT
 local status={}
 
-if not hio:stat"cert" and not hio:mkdir"cert" then
-   error("Cannot create "..hio:realpath"cert")
-end
+local hio,init,M,loadcerts,installcerts,log
 
-local function log(flush,fmts,...)
+local function makolog(flush,fmts,...)
    local msg=fmt("ACME: "..fmts,...)
    tracep(false,flush and 0 or 2,msg)
    if mako.daemon then
@@ -18,12 +15,38 @@ local function log(flush,fmts,...)
    end
 end
 
+log=mako and makolog or 
+   function(flush,fmts,...) tracep(false,9,fmt("ACME: "..fmts,...)) end
+
+init=function(io,ic,lg)
+   if lg then log=lg end
+   hio = io or ba.openio"home"
+   assert(hio,"No IO")
+   if not hio:stat"cert" and not hio:mkdir"cert" then
+      error("Cannot create directory "..hio:realpath"cert")
+   end
+   installcerts = ic or mako and mako.loadcerts
+   assert(installcerts, "No installcerts")
+   init=function() end
+   M.init=init
+   loadcerts()
+end
+
+
 local rw=require"rwfile"
 local function jfile(name,tab)
-   return rw.json(hio,fmt("cert/%s.json",name),tab)
+   init()
+   name=fmt("cert/%s.json",name)
+   local ok,err=rw.json(hio,name,tab)
+   if not ok and tab then log(true,"Writing %s failed: %s",name,err) end
+   return ok,err
 end
 local function cfile(name,cert)
-   return rw.file(hio,fmt("cert/%s.pem",name),cert)
+   init()
+   name=fmt("cert/%s.pem",name)
+   local ok,err=rw.file(hio,name,cert)
+   if not ok and cert then log(true,"Writing %s failed: %s",name,err) end
+   return ok,err
 end
 
 
@@ -36,6 +59,7 @@ local function getproxy(op)
    return op
 end
 
+local function renewAllowed() return true end -- Default
 
 -- ASN1 time format: YYMMDDHHMMSSZ
 local function time2renew(asn1exptime)
@@ -55,8 +79,48 @@ local function getKeyCertNames(domain)
    return fmt("cert/%s.key.pem",domain),fmt("cert/%s.cert.pem",domain)
 end
 
+local function getCert(domain)
+   return cfile(domain..".key"),cfile(domain..".cert")
+end
 
-local function loadcerts(domainsT)
+local function updateCert(domain,key,cert)
+   local domainsT=jfile"domains" or {}
+   domainsT[domain]=ba.parsecert(
+         ba.b64decode(cert:match".-BEGIN.-\n%s*(.-)\n%s*%-%-")).tzto
+   jfile("domains",domainsT)
+   cfile(domain..".key",key)
+   cfile(domain..".cert",cert)
+   loadcerts()
+   return domainsT
+end
+
+
+local function renew(accountT,domain,accepted)
+   local function rspCB(key,cert)
+      status={domain=domain}
+      if key then
+         updateCert(domain,key,cert)
+         accountT.production = optionT.production
+	 jfile("account",accountT)
+	 log(false,"%s renewed",domain)
+         optionT.renewed(domain,key,cert)
+      else
+         status.err=cert
+	 log(true,"renewing %s failed: %s",domain,cert)
+      end
+   end
+   -- if previously accepted
+   if accepted then optionT.acceptterms=true end
+   acme.cert(accountT,domain,rspCB,optionT)
+end
+
+local function renOnNotFund(domain)
+   if optionT and renewAllowed(domain) then
+      renew(jfile"account",domain, true)
+   end
+end
+
+loadcerts=function(domainsT)
    domainsT=domainsT or jfile"domains" or {}
    local keys,certs={},{}
    for domain, exptime in pairs(domainsT) do
@@ -67,33 +131,13 @@ local function loadcerts(domainsT)
 	    table.insert(certs,c)
 	 else
 	    log(true,"not found: %s",hio:stat(k) and c or k)
+            ba.thread.run(function() renOnNotFund(domain) end)
 	 end
       end
    end
    if #keys > 0 then
-      mako.loadcerts(keys,certs)
+      installcerts(keys,certs)
    end
-end
-
-local function renew(accountT,domain)
-   local function rspCB(key,cert)
-      status={domain=domain}
-      if key then
-	 local domainsT=jfile"domains" or {}
-	 domainsT[domain]=ba.parsecert(
-            ba.b64decode(cert:match".-BEGIN.-\n%s*(.-)\n%s*%-%-")).tzto
-	 cfile(domain..".key",key)
-	 cfile(domain..".cert",cert)
-	 jfile("domains",domainsT)
-	 jfile("account",accountT)
-	 log(false,"%s renewed",domain)
-	 loadcerts(domainsT)
-      else
-         status.err=cert
-	 log(true,"renewing %s failed: %s",domain,cert)
-      end
-   end
-   acme.cert(accountT,domain,rspCB,optionT)
 end
 
 local function check(forceUpdate)
@@ -105,8 +149,13 @@ local function check(forceUpdate)
    local accountT=jfile"account"
    if not domainsT then log(true,"Cannot open domains.json") return end
    if not accountT then log(true,"Cannot open account.json") return end
+   if accountT.production ~= optionT.production then
+      forceUpdate=true
+   end
    for domain,exptime in pairs(domainsT) do
-      if forceUpdate or time2renew(exptime) then renew(accountT,domain) end
+      if forceUpdate or (renewAllowed(domain) and time2renew(exptime)) then
+         renew(accountT,domain,#exptime > 0)
+      end
    end
    return true
 end
@@ -117,6 +166,7 @@ local function configure(email,domains,op)
 	  (not domains or ((type(domains)=='table' and
            type(domains[1])=='string'))),
           "Invalid args or 'acme' table in mako.conf")
+   optionT.renewed=optionT.renewed or function() end
    local accountT=jfile"account" or {}
    if email and accountT.email ~= email then
       accountT.email,accountT.id=email,nil
@@ -148,8 +198,10 @@ end
 local timer
 local function autoupdate(activate)
    if activate then
-      if timer then return false end
+      -- Thread not needed, we just want to defer 'check'
       if jfile"domains" then ba.thread.run(check) end
+      -- Check activated, but signal that auto update already active */
+      if timer then return false end
       timer=ba.timer(check)
       timer:set(24*60*60*1000) -- once a day
    else
@@ -160,12 +212,21 @@ local function autoupdate(activate)
    return true
 end
 
-local function renew()
+local function forceRenew()
    if timer then return nil,"autoupdate" end
    if not jfile"domains" then return nil,"inactive" end
    if acme.jobs() > 0 then return nil,"busy" end
    status={}
    return check(true)
+end
+
+local function revokeCert(domain, rspCB, op)
+   local key,cert=getCert(domain)
+   if cert then
+      acme.revoke(jfile"account", cert, rspCB, op)
+   else
+      ba.thread.run(function() rspCB(nil, "Cert not found") end)
+   end
 end
 
 
@@ -184,22 +245,34 @@ function cfgFileActivation()
    autoupdate(true)
 end
 
+local function account()
+   return jfile"account",jfile"domains"   
+end
 
-require"seed" -- seed sharkssl
-loadcerts()
 
-return {
+pcall(function() require"seed" end) -- seed sharkssl
+
+M={
+   init=init,
+   account=account,
    start = function() return autoupdate(true) end,
    configure=configure,
    getdomains=function() return jfile"domains" or {} end,
    status=function() return acme.jobs(), status.domain, status.err end,
+   getCert=getCert,
    getproxy=getproxy,
-   pdns={ -- private: used by acmedns
+   priv={ -- private: non documented: used by other acme modules
+      time2renew=time2renew,
+      updateCert=updateCert,
       autoupdate=autoupdate,
       getcfg=getcfg,
       jfile=jfile,
-      renew=renew,
+      renew=forceRenew,
+      setRenewAllowed=function(func) renewAllowed=func end,
       setErr=function(msg) log(true,"%s",msg) status={err=msg} end,
    },
+   revoke=revokeCert,
    cfgFileActivation=cfgFileActivation -- Called by .config if acme options
 }
+
+return M

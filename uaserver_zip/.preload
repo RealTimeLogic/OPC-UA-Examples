@@ -1,9 +1,21 @@
+mako.createloader(io)
+
+-- Load the Lua Debugger Monitor "ldbgmon" and call the connect() method
+--require"ldbgmon".connect{
+--   -- host="192.168.1.100", -- Default value: "localhost"
+--   -- port = 8888,  -- Default value: 4711
+--   -- stop=true, -- Default value: false. Can also stop via launch.json: "stopOnEntry": true,
+--   -- retry=10, -- Default value: infinite. Try connecting to debugger this many times
+--   restartonmod=true, -- Default value: false. Auto restart server on file change
+--}
+--trace"The debugger should stop the program on this line"
+
 trace("Starting opcua server")
 local ua = require("opcua.api")
 local conf = require("loadconf")
 
 local function DemoAddon(services)
-  local code = io:dofile(".lua/add_variables.lua")(services, ua.NodeIds.ObjectsFolder)
+  local code = require("add_variables")(services, ua.NodeIds.ObjectsFolder)
   return code
 end
 
@@ -29,3 +41,4 @@ uaServer:Run()
 assert(uaServer.Services ~= nil)
 
 UaClient = io:dofile(".lua/lspclient.lua").New(uaServer.Services)
+

@@ -23,5 +23,5 @@ opcua = {
 
 apps={
   {name="",path="uaserver_zip"},
-  {name="www", path="www"}
+  {name="ltrace", path="ltrace"}
 }
