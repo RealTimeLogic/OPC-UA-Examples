@@ -1,22 +1,22 @@
 opcua = {
-  ListenPort=4841,
-  ListenAddress="192.168.88.254",
-  EndpointUrl="opc.tcp://192.168.88.254:4841",
-  Logging = {
-    Socket = {
-      D = false,
-      I = false,
-      E = true
+  listenPort=4841,
+  listenAddress="*",
+  endpointUrl="opc.tcp://192.168.88.243:4841",
+  logging = {
+    socket = {
+      dbgOn = false,
+      infOn = false,
+      errOn = true
     },
-    Binary = {
-      D = false,
-      I = true,
-      E = true
+    binary = {
+      dbgOn = false,
+      infOn = true,
+      errOn = true
     },
-    Services = {
-      D = true,
-      I = true,
-      E = true
+    services = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
     }
   }
 }

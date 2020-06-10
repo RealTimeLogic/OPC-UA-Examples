@@ -19,13 +19,13 @@ local C={} -- OpcUa Client
 C.__index=C
 --[[
 function C:Connect(endpointUrl)
-  trace("conecting to endpoint: "..endpointUrl)  
-  
+  trace("conecting to endpoint: "..endpointUrl)
+
   local url = ua.ParseUrl(endpointUrl)
   if url.Protocol ~= "opc.tcp" then
     error("Unknown scheme")
   end
-  
+
   trace("conecting to host '"..url.Host.."' port '"..url.Port.."'")
   local sock, err = ba.socket.connect(url.Host, url.Port)
   if err ~= nil then
@@ -33,13 +33,13 @@ function C:Connect(endpointUrl)
     return err
   end
   trace("connected")
-  
+
   local c = ua.NewBinaryClient(NewBaSocket(sock))
   trace("\n\n\n")
   trace("Saying hello to server")
   local code = c:HelloServer(endpointUrl)
   if code ~= ua.Status.Good then return code end
-  
+
   trace("Acknowledge: ")
   trace("  ProtocolVersion: '"..c.response.ProtocolVersion.."'")
   trace("  ReceiveBufferSize: '"..c.response.ReceiveBufferSize.."'")
@@ -119,9 +119,9 @@ function C:Connect(endpointUrl)
     Locales = {"en"},
     UserIdentityToken = "\9\0\0\0Anonymous"
   }
-    
+
   code = c:ActivateSession(activateParams)
-  
+
   if code ~= ua.Status.Good then return code end
   self.c = c
   print("\n\n\n")
@@ -130,76 +130,69 @@ function C:Connect(endpointUrl)
 end
 ]]
 
-function C:Browse(nodeId)
+function C:browse(nodeId)
   local browseParams = {
-    RequestedMaxReferencesPerNode = 0,
-    NodesToBrowse = {
+    nodesToBrowse = {
       {
-        NodeId = nodeId,
-        ReferenceTypeId = ua.NodeId.FromString(ua.NodeIds.HierarchicalReferences),
-        BrowseDirection = ua.Types.BrowseDirection.Forward,
-        NodeClass = ua.Types.NodeClass.Unspecified,
-        ResultMask = ua.Types.BrowseResultMask.All,
-        IncludeSubtypes = 1,
+        nodeId = nodeId,
+        referenceTypeId = ua.NodeId.fromString(ua.NodeIds.HierarchicalReferences),
+        browseDirection = ua.Types.BrowseDirection.Forward,
+        nodeClass = ua.Types.NodeClass.Unspecified,
+        resultMask = ua.Types.BrowseResultMask.All,
+        includeSubtypes = 1,
       }
     },
-    
-    View = {
-      NodeId = 0,
-      Timestamp = 0,
-      Version = 0
-    }
-  }  
+  }
 
   trace("\n\n\n")
   trace("Browse server object:")
   local response = {}
-  local code = self.Services:Browse(browseParams, response)
+  local code = self.services:browse(browseParams, response)
   if code ~= ua.Status.Good then return code end
 
-  for k,res in pairs(response.Results) do
-    for k,ref in pairs(res.References) do
-      ref.NodeId = ua.NodeId.ToString(ref.NodeId)
-      ref.ReferenceId = ua.NodeId.ToString(ref.ReferenceId)
+  for k,res in pairs(response.results) do
+    for k,ref in pairs(res.references) do
+      ref.nodeId = ua.NodeId.toString(ref.nodeId)
+      ref.referenceId = ua.NodeId.toString(ref.referenceId)
       trace("  Reference"..k..":")
-      trace("    NodeId: "..ref.NodeId)
-      trace("    ReferenceId: "..ref.ReferenceId)
-      trace("    IsForward: "..ref.IsForward)
-      trace("    BrowseName: ns="..ref.BrowseName.NamespaceIndex..";name="..ref.BrowseName.Name)
-      trace("    NodeClass: "..ref.NodeClass)
+      trace("    NodeId: "..ref.nodeId)
+      trace("    ReferenceId: "..ref.referenceId)
+      trace("    IsForward: "..ref.isForward)
+      trace("    BrowseName: ns="..ref.browseName.nsi..";name="..ref.browseName.name)
+      trace("    NodeClass: "..ref.nodeClass)
     end
   end
-  
+
   return ua.Status.Good,response
 end
 
-function C:Read(nodeId)
+function C:read(nodeId)
   print("\n\n\n")
   print("Read current time on server:")
 
   local attr = ua.Types.AttributeId
-  
+
   local nodes = {}
   for k,v in pairs(ua.Types.AttributeId) do
     if v > attr.Invalid and v < attr.Max then
-      table.insert(nodes, {NodeId = nodeId, AttributeId = v})
+      table.insert(nodes, {nodeId = nodeId, attributeId = v})
     end
   end
 
   local response = {}
-  local code = self.Services:Read({NodesToRead=nodes}, response)
+  local code = self.services:read({nodesToRead=nodes}, response)
   if code ~= ua.Status.Good then error("OPCUA error:"..code) end
 
-  for i,result in ipairs(response.Results) do
-    result.AttributeId = nodes[i].AttributeId
+  for i,result in ipairs(response.results) do
+    result.attributeId = nodes[i].attributeId
   end
-  
-  return ua.Status.Good, response 
+
+  return ua.Status.Good, response
 end
 
 function NewUaClient(services)
   local c = {
-    Services = services
+    services = services
   }
   setmetatable(c, C)
   return c

@@ -5,7 +5,7 @@ if request:header"Sec-WebSocket-Key" then
   local s = ba.socket.req2sock(request)
   if s then
     trace"Creating new UA client"
-    local c = app.UaClient
+    local c = app.uaClient
     trace"Reading data"
     while true do
       local data,err = s:read()
@@ -37,11 +37,11 @@ if request:header"Sec-WebSocket-Key" then
             if request.browse ~= nil then
               trace("Received Browse request")
               trace("Browsing node: "..request.browse.nodeId)
-              resp.error,resp.browse = c:Browse(request.browse.nodeId)
+              resp.error,resp.browse = c:browse(request.browse.nodeId)
             elseif request.read ~= nil then
               trace("Received Read request")
               trace("Reading attribute of node: "..request.read.nodeId)
-              resp.error,resp.read = c:Read(request.read.nodeId)
+              resp.error,resp.read = c:read(request.read.nodeId)
             else
               resp.error = "Unknown request"
             end
