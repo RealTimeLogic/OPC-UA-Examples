@@ -2,9 +2,8 @@ outdir=bin
 dist:
 	rm -rf ${outdir}
 	mkdir -p ${outdir} ${outdir}/doc/en ${outdir}/doc/ru
-	cd mako_zip && (find -L | zip -@ -x . .. @ ../${outdir}/mako) && cd ..
 	cd uaserver_zip && (find -L | zip -@ -x . .. @ ../${outdir}/uaserver) && cd ..
-	cp mako mako.exe mako.conf ${outdir}
+	cp mako mako.zip mako.exe mako.conf ${outdir}
 	cp -r opcua-lua.git/doc/build/en/html ${outdir}/doc/en/html
 	cp -r opcua-lua.git/doc/build/en/singlehtml ${outdir}/doc/en/singlehtml
 	cp -r opcua-lua.git/doc/build/ru/html ${outdir}/doc/ru/html

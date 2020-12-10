@@ -91,13 +91,13 @@
                 readAttributes() {
                     var self = this
                     result = uaServer.readAttributes(this.nodeid, resp => {
-                        if (!resp.read || !resp.read.results)
+                        if (!resp.read)
                         {
                             return;
                         }
 
                         let attrs = []
-                        resp.read.results.forEach( (attr,index) => {
+                        resp.read.forEach( (attr,index) => {
                             if (attr.statusCode != 0)
                                 return
 
@@ -145,13 +145,13 @@
                     }
                     var self = this
                     result = uaServer.browse(this.nodeid, function(resp) {
-                        if (!resp.browse || !resp.browse.results)
+                        if (!resp.browse)
                         {
                             return;
                         }
 
                         let nodes = []
-                        resp.browse.results.forEach(result => {
+                        resp.browse.forEach(result => {
                             result.references.forEach(ref => {
                                 nodes.push({
                                     nodeid: ref.nodeId,

@@ -1,7 +1,9 @@
 opcua = {
-  listenPort=4841,
-  listenAddress="*",
-  endpointUrl="opc.tcp://192.168.88.243:4841",
+-- uncomment to customize
+-- by default will listen the first IP address
+--  listenPort=4841,
+--  listenAddress="*",
+--  endpointUrl="opc.tcp://localhost:4841"
   logging = {
     socket = {
       dbgOn = false,

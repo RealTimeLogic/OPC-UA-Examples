@@ -135,7 +135,7 @@ function C:browse(nodeId)
     nodesToBrowse = {
       {
         nodeId = nodeId,
-        referenceTypeId = ua.NodeId.fromString(ua.NodeIds.HierarchicalReferences),
+        referenceTypeId = "i=33", -- ua.NodeIds.HierarchicalReferences,
         browseDirection = ua.Types.BrowseDirection.Forward,
         nodeClass = ua.Types.NodeClass.Unspecified,
         resultMask = ua.Types.BrowseResultMask.All,
@@ -146,24 +146,22 @@ function C:browse(nodeId)
 
   trace("\n\n\n")
   trace("Browse server object:")
-  local response = {}
-  local code = self.services:browse(browseParams, response)
-  if code ~= ua.Status.Good then return code end
+  local results = self.services:browse(browseParams, response)
 
-  for k,res in pairs(response.results) do
+  for k,res in pairs(results) do
     for k,ref in pairs(res.references) do
-      ref.nodeId = ua.NodeId.toString(ref.nodeId)
-      ref.referenceId = ua.NodeId.toString(ref.referenceId)
+      ref.nodeId = ref.nodeId
+      ref.referenceId = ref.referenceId
       trace("  Reference"..k..":")
       trace("    NodeId: "..ref.nodeId)
       trace("    ReferenceId: "..ref.referenceId)
       trace("    IsForward: "..ref.isForward)
-      trace("    BrowseName: ns="..ref.browseName.nsi..";name="..ref.browseName.name)
+      trace("    BrowseName: ns="..ref.browseName.ns..";name="..ref.browseName.name)
       trace("    NodeClass: "..ref.nodeClass)
     end
   end
 
-  return ua.Status.Good,response
+  return results
 end
 
 function C:read(nodeId)
@@ -179,15 +177,13 @@ function C:read(nodeId)
     end
   end
 
-  local response = {}
-  local code = self.services:read({nodesToRead=nodes}, response)
-  if code ~= ua.Status.Good then error("OPCUA error:"..code) end
+  local results = self.services:read({nodesToRead=nodes}, response)
 
-  for i,result in ipairs(response.results) do
+  for i,result in ipairs(results) do
     result.attributeId = nodes[i].attributeId
   end
 
-  return ua.Status.Good, response
+  return results
 end
 
 function NewUaClient(services)

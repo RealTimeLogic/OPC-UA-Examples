@@ -9,6 +9,11 @@ if request:header"Sec-WebSocket-Key" then
     trace"Reading data"
     while true do
       local data,err = s:read()
+      if data == nil then
+        trace("Failed to receive message:", err)
+        break
+      end
+
       local resp = {}
       if data == nil then
         resp.error = "Empty request"
@@ -34,14 +39,25 @@ if request:header"Sec-WebSocket-Key" then
               end
             end
 ]]
+
             if request.browse ~= nil then
               trace("Received Browse request")
               trace("Browsing node: "..request.browse.nodeId)
-              resp.error,resp.browse = c:browse(request.browse.nodeId)
+              local suc, result = pcall(c.browse, c, request.browse.nodeId)
+              if suc then
+                resp.browse = c:browse(request.browse.nodeId)
+              else
+                resp.error = result
+              end
             elseif request.read ~= nil then
               trace("Received Read request")
               trace("Reading attribute of node: "..request.read.nodeId)
-              resp.error,resp.read = c:read(request.read.nodeId)
+              local suc, result = pcall(c.read, c, request.read.nodeId)
+              if suc then
+                resp.read = result
+              else
+                resp.error = result
+              end
             else
               resp.error = "Unknown request"
             end
@@ -55,6 +71,7 @@ if request:header"Sec-WebSocket-Key" then
     end
 
     s:close()
+    trace("web-socket connection closed")
     return -- We are done
   end
 end
