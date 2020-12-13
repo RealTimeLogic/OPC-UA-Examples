@@ -1,3 +1,0 @@
-[submodule "opcua-lua.git"]
-	path = opcua-lua.git
-	url = https://github.com/treww/opcua-lua.git
