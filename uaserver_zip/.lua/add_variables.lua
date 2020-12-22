@@ -1830,8 +1830,6 @@ local function variables(services, parentNodeId)
 
   local varaiblesFolderId = addVaraibleFolder(services, parentNodeId)
   addBoolean(services, varaiblesFolderId)
-  return
-  --[[
   addBooleanArray(services, varaiblesFolderId)
   addByte(services, varaiblesFolderId)
   addByteArray(services, varaiblesFolderId)
@@ -1856,7 +1854,6 @@ local function variables(services, parentNodeId)
   addExtensionObject_Scalar_And_Array(services, varaiblesFolderId)
   addDataValue_Scalar_And_Array(services, varaiblesFolderId)
   addDiagnosticInfo_Scalar_And_Array(services, varaiblesFolderId)
-  ]]
 end
 
 return variables
