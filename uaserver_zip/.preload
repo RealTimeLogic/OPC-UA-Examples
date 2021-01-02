@@ -1,25 +1,5 @@
---local function loader(name)
---  name=name:gsub("%.","/")
---  error("I don't know")
---  local lname=string.format(".lua/%s.lua",name)
---  if not io:stat(lname) then return nil end
---  return io:loadfile(lname)
---end
-
---table.insert(package.searchers, loader)
-
--- Load the Lua Debugger Monitor "ldbgmon" and call the connect() method
--- require"ldbgmon".connect{
-   -- host="192.168.1.100", -- Default value: "localhost"
-   -- port = 4711,  -- Default value: 4711
-   -- stop=true, -- Default value: false. Can also stop via launch.json: "stopOnEntry": true,
-   -- retry=10, -- Default value: infinite. Try connecting to debugger this many times
-   restartonmod=true, -- Default value: false. Auto restart server on file change
--- }
-
-trace"The debugger should stop the program on this line"
-
 trace("Starting opcua server")
+
 local ua = require("opcua.api")
 conf = io:dofile(".opcua_config")
 local function demoAddon(services)
