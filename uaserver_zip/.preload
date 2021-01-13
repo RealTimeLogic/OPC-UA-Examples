@@ -1,14 +1,9 @@
 trace("Starting opcua server")
 
 local ua = require("opcua.api")
-conf = io:dofile(".opcua_config")
-local function demoAddon(services)
-  local objects = "i=40"
-  io:dofile(".lua/add_variables.lua")(services, objects)
-end
+local sock = require("socket")
 
 -- Connect logging traces
-local sock = require("socket")
 ua.trace.dbg = function(msg)
   trace(sock.gettime(), "[DBG] ", msg)
 end
@@ -22,10 +17,14 @@ ua.trace.err = function(msg)
 end
 
 
+conf = io:dofile(".opcua_config")
+local function demoAddon(services)
+  local objects = "i=40"
+  io:dofile(".lua/add_variables.lua")(services, objects)
+end
+
 uaServer = ua.newServer(conf)
 uaServer:initialize(demoAddon)
 uaServer:run()
 
-assert(uaServer.services ~= nil)
-
-uaClient = io:dofile(".lua/lspclient.lua").New(uaServer.services)
+uaClient = io:dofile(".lua/lsp_api.lua").New(uaServer.services)

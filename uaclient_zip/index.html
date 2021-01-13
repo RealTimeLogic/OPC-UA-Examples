@@ -95,12 +95,13 @@
                     result = uaServer.readAttributes(this.nodeid, resp => {
                         if (!resp.read)
                         {
+                            this.attributes = []
                             return;
                         }
 
                         let attrs = []
                         resp.read.forEach( (attr,index) => {
-                            if (attr.statusCode != 0)
+                            if ((typeof(attr.statusCode) != "undefined" && attr.statusCode != 0) || typeof(attr.value) == "undefined")
                                 return
 
                             attrs.push({
@@ -211,25 +212,6 @@
 
                             endpointUrl: this.endpointUrl,
                             securityPolicyUri: "http://opcfoundation.org/UA/SecurityPolicy#None",
-                            bufSize: 8192,
-
-                            logging: {
-                                socket: {
-                                    dbgOn: false,  // debug logs of socket
-                                    infOn: false,  // information logs about sockets
-                                    errOn: false   // Errors on sockets
-                                },
-                                binary: {
-                                    dbgOn: false,  // Debugging traces about binary protocol. Print encoded message hex data.
-                                    infOn: false,  // Information traces about binary protocol
-                                    errOn: false   // Errors in binary protocol
-                                },
-                                services: {
-                                    dbgOn: false, // Debugging traces about UA services work
-                                    infOn: true,  // Informations traces
-                                    errOn: true   // Errors
-                                }
-                            }
                         }
 
 

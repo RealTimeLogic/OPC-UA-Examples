@@ -7,6 +7,16 @@ if request:header"Sec-WebSocket-Key" then
     trace"Creating new UA client"
     trace"Reading data"
     local ua = require("opcua.api")
+    local mergeConfig = require("opcua.config")
+
+    trace("---------------------------------------------")
+    local localConfig = io:dofile(".opcua_config")
+    ua.Tools.printTable("Local configuration file", localConfig)
+
+    trace("---------------------------------------------")
+    defaultConfig = mergeConfig(localConfig)
+    ua.Tools.printTable("Full OPCUA configuration", defaultConfig)
+
     uaClient = ua.newClient()
 
     while true do
@@ -31,8 +41,17 @@ if request:header"Sec-WebSocket-Key" then
             if request.connectEndpoint ~= nil then
               trace("Received Connect request")
               local conn = request.connectEndpoint
+
               if conn.endpointUrl ~= nil then
-                uaClient:connect(conn)
+                trace("---------------------------------------------")
+                ua.Tools.printTable("Client configuration", conn)
+
+                trace("---------------------------------------------")
+                clienConfig = mergeConfig(conn, defaultConfig)
+                ua.Tools.printTable("Result configuration", clienConfig)
+
+                uaClient:connect(clienConfig)
+                uaClient:openSecureChannel(3600000)
                 uaClient:createSession("RTL Web client", 1200000)
               else
                 trace("Error: client sent empty endpoint URL")
@@ -52,8 +71,10 @@ if request:header"Sec-WebSocket-Key" then
               trace("Reading attribute of node: "..request.read.nodeId)
               local suc, result = pcall(uaClient.read, uaClient, request.read.nodeId)
               if suc then
+                trace("Read successfull")
                 resp.read = result
               else
+                trace("Read failed")
                 resp.error = result
               end
             else

@@ -26,20 +26,6 @@ if request:header"Sec-WebSocket-Key" then
           if request.id == nil then
             resp.error  = "Request has no 'id' field"
           else
---[[
-            if request.connect ~= nil then
-              trace("Received Connect request")
-              local conn = request.connect
-              if conn.endpointUrl ~= nil then
-                trace("Connecting to endpoint "..conn.endpointUrl)
-                resp.error = c:Connect(conn.endpointUrl)
-              else
-                trace("Error: client sent empty endpoint URL")
-                resp.error = "Empty endpointURL"
-              end
-            end
-]]
-
             if request.browse ~= nil then
               trace("Received Browse request")
               trace("Browsing node: "..request.browse.nodeId)
