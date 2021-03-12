@@ -1,3 +1,0 @@
-
-local lt=require"ltrace"
-lt.start()
