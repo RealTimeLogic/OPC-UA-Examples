@@ -5,12 +5,13 @@ dist:
 	cd uaserver_zip && (find -L | zip -@ -x . .. @ ../${outdir}/uaserver) && cd ..
 	cd uaclient_zip && (find -L | zip -@ -x . .. @ ../${outdir}/uaclient) && cd ..
 	cp mako.conf ${outdir}
+	cp mako.exe ${outdir}
 	cp ${BAROOT}/examples/MakoServer/obj/release/mako ${outdir}
 	cp ${BAROOT}/examples/MakoServer/obj/release/mako.zip ${outdir}
-	cp -r ${BAROOT}/src/opcua/doc/build/en/html ${outdir}/doc/en/html
-	cp -r ${BAROOT}/src/opcua/doc/build/en/singlehtml ${outdir}/doc/en/singlehtml
-	cp -r ${BAROOT}/src/opcua/doc/build/ru/html ${outdir}/doc/ru/html
-	cp -r ${BAROOT}/src/opcua/doc/build/ru/singlehtml ${outdir}/doc/ru/singlehtml
+	cp -r ${BAROOT}/xrc/lua/opcua/doc/build/en/html ${outdir}/doc/en/html
+	cp -r ${BAROOT}/xrc/lua/opcua/doc/build/en/singlehtml ${outdir}/doc/en/singlehtml
+	cp -r ${BAROOT}/xrc/lua/opcua/doc/build/ru/html ${outdir}/doc/ru/html
+	cp -r ${BAROOT}/xrc/lua/opcua/doc/build/ru/singlehtml ${outdir}/doc/ru/singlehtml
 	if [ -f mako_opcua_server.zip ] ; then  rm mako_opcua_server.zip ; fi
 	cd ${outdir} && zip -r ../mako_opcua_server.zip mako.conf mako mako.exe mako.zip uaserver.zip uaclient.zip doc && cd ..
 
@@ -20,3 +21,4 @@ distclean: clean
 
 clean:
 	if [ -d ${outdir} ] ; then rm -r ${outdir} ; fi
+
