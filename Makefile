@@ -5,6 +5,7 @@ dist:
 	cd uaserver_zip && (find -L | zip -@ -x . .. @ ../${outdir}/uaserver) && cd ..
 	cd uaclient_zip && (find -L | zip -@ -x . .. @ ../${outdir}/uaclient) && cd ..
 	cp mako.conf ${outdir}
+	cp mako.exe ${outdir}
 	cp ${BAROOT}/examples/MakoServer/obj/release/mako ${outdir}
 	cp ${BAROOT}/examples/MakoServer/obj/release/mako.zip ${outdir}
 	cp -r ${BAROOT}/xrc/lua/opcua/doc/build/en/html ${outdir}/doc/en/html
