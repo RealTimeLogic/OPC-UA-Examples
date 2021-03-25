@@ -16,17 +16,17 @@ else
     bufSize = 16384,
     logging = {
       socket = {
-        dbgOn = false,
+        dbgOn = true,
         infOn = true,
         errOn = true,
       },
       binary = {
-        dbgOn = false,
+        dbgOn = true,
         infOn = true,
         errOn = true,
       },
       services = {
-        dbgOn = false,
+        dbgOn = true,
         infOn = true,
         errOn = true,
       }
@@ -46,4 +46,3 @@ if conf.endpointUrl == nil then
 end
 
 return conf
-

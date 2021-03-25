@@ -1,12 +1,41 @@
 <?lsp
 
+local ua = require("opcua.api")
+local nodeIds = require("opcua.node_ids")
+
+local function createBrowseParams(nodeId)
+  return {
+  requestedMaxReferencesPerNode = 0,
+  nodesToBrowse = {
+    {
+      nodeId = nodeId,
+      browseDirection = ua.Types.BrowseDirection.Forward,
+      referenceTypeId = nodeIds.HierarchicalReferences,
+      nodeClassMask = ua.Types.NodeClass.Unspecified,
+      resultMask = ua.Types.BrowseResultMask.All,
+      includeSubtypes = 1,
+    }
+  },
+}
+end
+
+local function createReadParams(nodeId)
+  local nodeToRead = {}
+  for _,attrId in pairs(ua.Types.AttributeId) do
+    table.insert(nodeToRead, {nodeId=nodeId, attributeId=attrId})
+  end
+
+  return {
+    nodesToRead = nodeToRead
+  }
+end
+
 if request:header"Sec-WebSocket-Key" then
   trace"New WebSocket connection"
   local s = ba.socket.req2sock(request)
   if s then
     trace"Creating new UA client"
     trace"Reading data"
-    local ua = require("opcua.api")
     local mergeConfig = require("opcua.config")
 
     trace("---------------------------------------------")
@@ -60,16 +89,16 @@ if request:header"Sec-WebSocket-Key" then
             elseif request.browse ~= nil then
               trace("Received Browse request")
               trace("Browsing node: "..request.browse.nodeId)
-              local suc, result = pcall(uaClient.browse, uaClient, request.browse.nodeId)
+              local suc, result = pcall(uaClient.browse, uaClient, createBrowseParams(request.browse.nodeId))
               if suc then
-                resp.browse = result
+                resp.browse = result.results
               else
                 resp.error = result
               end
             elseif request.read ~= nil then
               trace("Received Read request")
               trace("Reading attribute of node: "..request.read.nodeId)
-              local suc, result = pcall(uaClient.read, uaClient, request.read.nodeId)
+              local suc, result = pcall(uaClient.read, uaClient, createReadParams(request.read.nodeId))
               if suc then
                 trace("Read successfull")
                 resp.read = result

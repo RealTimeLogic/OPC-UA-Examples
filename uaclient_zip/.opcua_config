@@ -16,18 +16,18 @@ else
     bufSize = 16384,
     logging = {
       socket = {
-        dbgOn = true,
-        infOn = true,
+        dbgOn = false,
+        infOn = false,
         errOn = true,
       },
       binary = {
-        dbgOn = true,
-        infOn = true,
+        dbgOn = false,
+        infOn = false,
         errOn = true,
       },
       services = {
-        dbgOn = true,
-        infOn = true,
+        dbgOn = false,
+        infOn = false,
         errOn = true,
       }
     }

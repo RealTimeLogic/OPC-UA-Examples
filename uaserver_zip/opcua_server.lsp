@@ -1,12 +1,41 @@
 <?lsp
 
+local ua = require("opcua.api")
+local nodeIds = require("opcua.node_ids")
+
+local function createBrowseParams(nodeId)
+  return {
+    requestedMaxReferencesPerNode = 0,
+    nodesToBrowse = {
+      {
+        nodeId = nodeId,
+        browseDirection = ua.Types.BrowseDirection.Forward,
+        referenceTypeId = nodeIds.HierarchicalReferences,
+        nodeClassMask = ua.Types.NodeClass.Unspecified,
+        resultMask = ua.Types.BrowseResultMask.All,
+        includeSubtypes = 1,
+      }
+    },
+  }
+end
+
+local function createReadParams(nodeId)
+  local nodeToRead = {}
+  for _,attrId in pairs(ua.Types.AttributeId) do
+    table.insert(nodeToRead, {nodeId=nodeId, attributeId=attrId})
+  end
+
+  return {
+    nodesToRead = nodeToRead
+  }
+end
+
+uaServices = _ENV.uaServices
+
 if request:header"Sec-WebSocket-Key" then
   trace"New WebSocket connection"
   local s = ba.socket.req2sock(request)
   if s then
-    trace"Creating new UA client"
-    local c = app.uaClient
-    trace"Reading data"
     while true do
       local data,err = s:read()
       if data == nil then
@@ -29,19 +58,21 @@ if request:header"Sec-WebSocket-Key" then
             if request.browse ~= nil then
               trace("Received Browse request")
               trace("Browsing node: "..request.browse.nodeId)
-              local suc, result = pcall(c.browse, c, request.browse.nodeId)
+              local suc, result = pcall(uaServices.browse, uaServices, createBrowseParams(request.browse.nodeId))
               if suc then
-                resp.browse = c:browse(request.browse.nodeId)
+                resp.browse = result.results
               else
                 resp.error = result
               end
             elseif request.read ~= nil then
               trace("Received Read request")
               trace("Reading attribute of node: "..request.read.nodeId)
-              local suc, result = pcall(c.read, c, request.read.nodeId)
+              local suc, result = pcall(uaServices.read, uaServices, createReadParams(request.read.nodeId))
               if suc then
+                trace("Read successfull")
                 resp.read = result
               else
+                trace("Read failed")
                 resp.error = result
               end
             else

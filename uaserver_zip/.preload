@@ -1,4 +1,4 @@
-trace("Starting opcua server")
+trace("Starting OPCUA server")
 
 local ua = require("opcua.api")
 local sock = require("socket")
@@ -27,4 +27,4 @@ uaServer = ua.newServer(conf)
 uaServer:initialize(demoAddon)
 uaServer:run()
 
-uaClient = io:dofile(".lua/lsp_api.lua").New(uaServer.services)
+_G.uaServices = uaServer.services

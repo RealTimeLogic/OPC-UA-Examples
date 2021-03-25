@@ -93,12 +93,13 @@
                     result = uaServer.readAttributes(this.nodeid, resp => {
                         if (!resp.read)
                         {
+                            this.attributes = []
                             return;
                         }
 
                         let attrs = []
                         resp.read.forEach( (attr,index) => {
-                            if (attr.statusCode != 0)
+                            if ((typeof(attr.statusCode) != "undefined" && attr.statusCode != 0) || typeof(attr.value) == "undefined")
                                 return
 
                             attrs.push({
@@ -155,7 +156,7 @@
                             result.references.forEach(ref => {
                                 nodes.push({
                                     nodeid: ref.nodeId,
-                                    label: ref.displayName.text,
+                                    label: ref.browseName.name,
                                     nodes: []
                                 })
                             })
@@ -188,7 +189,8 @@
                     {
                         let l = window.location
                         let protocol = l.protocol === 'https:' ? "wss://" : "ws://"
-                        let url = protocol + l.host + l.pathname + "opcua_client.lsp"
+                        let url = protocol + l.host + l.pathname + "opcua_server.lsp"
+                        console.info("Connecting to Websocket " + url)
                         uaServer.connect(url)
                     }
                     else
