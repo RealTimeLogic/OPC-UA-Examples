@@ -101,7 +101,7 @@ if request:header"Sec-WebSocket-Key" then
               local suc, result = pcall(uaClient.read, uaClient, createReadParams(request.read.nodeId))
               if suc then
                 trace("Read successfull")
-                resp.read = result
+                resp.read = result.results
               else
                 trace("Read failed")
                 resp.error = result
