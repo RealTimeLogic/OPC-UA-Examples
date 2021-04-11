@@ -1,0 +1,19 @@
+Server cases
+
+1. Start server
+2. Browse nodes
+3. Read attribures
+4. Write attributes
+5. Add Variable nodes
+6. Add Folder node
+7. Attach custom data source
+8. Configuring server
+
+
+Client Cases
+1. Connect to server
+2. Browse nodes
+3. Read attribures
+4. Write attributes
+5. Add Variable node
+6. Add Folder node
