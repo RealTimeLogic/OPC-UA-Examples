@@ -1,0 +1,21 @@
+Server cases
+
+1. Start minimum server configuration
+2. Configuring server. 
+   Shows in details how to cusomize server configuraition: listening port, network interface, endpoint URL etc.
+
+3. Browse nodes
+4. Read attribures
+5. Write attributes
+6. Add Variable nodes
+7. Add Folder node
+8. Attach custom data source
+
+
+Client Cases
+1. Connect to server
+2. Browse nodes
+3. Read attribures
+4. Write attributes
+5. Add Variable node
+6. Add Folder node
