@@ -5,10 +5,10 @@ Server cases
    Shows in details how to cusomize server configuraition: listening port, network interface, endpoint URL etc.
 
 3. Browse nodes
-4. Read attribures
-5. Write attributes
-6. Add Variable nodes
+4. Read attributes
 7. Add Folder node
+6. Add Variable nodes
+5. Write attributes
 8. Attach custom data source
 
 
