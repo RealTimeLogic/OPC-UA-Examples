@@ -1,21 +1,26 @@
-Server cases
+Server step-by-step guide:
 
 1. Start minimum server configuration
+   Minimum server require only four lines to start.
+
 2. Configuring server. 
-   Shows in details how to cusomize server configuraition: listening port, network interface, endpoint URL etc.
+   Shows in details how to cusomize server configuraition: listening portm, 
+   network interface, endpoint URL etc.
 
-3. Browse nodes
-4. Read attributes
-7. Add Folder node
-6. Add Variable nodes
-5. Write attributes
-8. Attach custom data source
+3. Browse nodes.
+   Address space is represented by set of nodes with references between them.
+   This example shows how to browse nodes in address space.
 
+4. Read attributes.
+   Every node in address space can consist of set of attributes.
+   The main attributes of node are: NodeID, BrowseName, Value, NodeClass, etc.
 
-Client Cases
-1. Connect to server
-2. Browse nodes
-3. Read attribures
-4. Write attributes
-5. Add Variable node
-6. Add Folder node
+5. Add nodes to Address Space
+   After initializing of a server there is only standard space exist.
+   Usually need publish our own data in the address space. We will consider 
+   how to add new variable nodes which will containg user data.
+
+6. Write Node attributes
+   After adding nodes to address can publish data there.
+   To publish data in address space we need to write values to node attribues.
+
