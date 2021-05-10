@@ -1,0 +1,30 @@
+trace("Starting OPCUA server")
+
+local ua = require("opcua.api")
+local sock = require("socket")
+
+-- Connect logging traces
+ua.trace.dbg = function(msg)
+  trace(sock.gettime(), "[DBG] ", msg)
+end
+
+ua.trace.inf = function(msg)
+  trace(sock.gettime(), "[INF]", msg)
+end
+
+ua.trace.err = function(msg)
+  trace(sock.gettime(), "[ERR]", msg)
+end
+
+
+conf = io:dofile(".opcua_config")
+local function demoAddon(services)
+  local objects = "i=40"
+  io:dofile(".lua/add_variables.lua")(services, objects)
+end
+
+uaServer = ua.newServer(conf)
+uaServer:initialize(demoAddon)
+uaServer:run()
+
+_G.uaServices = uaServer.services

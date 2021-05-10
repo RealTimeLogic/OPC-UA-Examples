@@ -1,0 +1,48 @@
+local listenPort=4841
+local ip = "localhost"
+
+local s,err = ba.socket.connect("google.com",80)
+if s then
+  local _,_,ips = string.find(s:sockname(), "(%d+.%d+.%d+.%d+)")
+  ip = ips
+  s:close()
+end
+
+local suc, conf = pcall(require, "loadconf")
+if suc then
+  conf = conf.opcua
+else
+  conf = {
+    bufSize = 16384,
+    logging = {
+      socket = {
+        dbgOn = true,
+        infOn = true,
+        errOn = true,
+      },
+      binary = {
+        dbgOn = true,
+        infOn = true,
+        errOn = true,
+      },
+      services = {
+        dbgOn = true,
+        infOn = true,
+        errOn = true,
+      }
+    }
+  }
+end
+
+if conf.listenPort == nil then
+  conf.listenPort=listenPort
+end
+if conf.listenAddress == nil then
+  listenAddress=ip
+end
+
+if conf.endpointUrl == nil then
+  conf.endpointUrl=string.format("opc.tcp://%s:%s", ip, listenPort)
+end
+
+return conf

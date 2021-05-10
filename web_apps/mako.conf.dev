@@ -1,0 +1,29 @@
+opcua = {
+-- uncomment to customize
+-- by default will listen the first IP address
+--  listenPort=4841,
+--  listenAddress="*",
+--  endpointUrl="opc.tcp://localhost:4841"
+  logging = {
+    socket = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
+    },
+    binary = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
+    },
+    services = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
+    }
+  }
+}
+
+apps={
+  {name="",path="uaclient_zip"},
+  {name="uaserver",path="uaserver_zip"},
+}
