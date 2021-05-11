@@ -38,8 +38,33 @@ local nodes = {
   }
 }
 
-local result = server:write(nodes)
-ua.Tools.printTable("Write Result", result)
+local resp = server:write(nodes)
+ua.Tools.printTable("Write Result", resp)
 
--- Run server. Start listening to port
+-- Run server. Start listening on default OPC-UA port
 server:run()
+
+
+-- Create a timer that increments the int64 value every second
+
+local function timerFunc()
+   local value = nodes.nodesToWrite[1].value.value
+   while true do
+      value.int64 = value.int64 + 1
+      local resp = server:write(nodes)
+      if resp.results[1] == ua.Status.Good then
+         trace("value.int64=",value.int64)
+      else
+         trace("Updating node failed!")
+      end
+      coroutine.yield(true)
+   end
+end
+ 
+local timer = ba.timer(timerFunc)
+timer:set(1000)
+
+function onunload()
+   trace("Stopping server example 6")
+   timer:cancel()
+end

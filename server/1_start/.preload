@@ -1,1 +1,1 @@
-io:dofile("start_server.lua")
+io:dofile("start_server.lua",_ENV)

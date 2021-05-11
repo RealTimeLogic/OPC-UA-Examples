@@ -9,3 +9,8 @@ server:initialize()
 
 -- Run server. Start listening to ports
 server:run()
+
+
+function onunload()
+   trace("Stopping server example 1")
+end
