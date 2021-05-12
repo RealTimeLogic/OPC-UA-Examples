@@ -26,3 +26,8 @@ ua.Tools.printTable("children", children)
 
 -- Run server. Start listening to port
 server:run()
+
+function onunload()
+  trace("Stopping server example 1")
+  server:shutdown()
+end

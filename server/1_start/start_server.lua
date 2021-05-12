@@ -13,4 +13,5 @@ server:run()
 
 function onunload()
    trace("Stopping server example 1")
+   server:shutdown()
 end

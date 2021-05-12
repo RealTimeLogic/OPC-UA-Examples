@@ -44,6 +44,11 @@ ua.Tools.printTable("Write Result", resp)
 -- Run server. Start listening on default OPC-UA port
 server:run()
 
+function onunload()
+  trace("Stopping server example 1")
+  server:shutdown()
+end
+
 
 -- Create a timer that increments the int64 value every second
 
@@ -60,7 +65,7 @@ local function timerFunc()
       coroutine.yield(true)
    end
 end
- 
+
 local timer = ba.timer(timerFunc)
 timer:set(1000)
 
