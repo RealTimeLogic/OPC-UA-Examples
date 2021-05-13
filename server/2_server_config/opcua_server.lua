@@ -16,3 +16,8 @@ server:initialize()
 
 -- Run server. Start listening to port
 server:run()
+
+function onunload()
+   trace("Stopping server example 2")
+   server:shutdown()
+end

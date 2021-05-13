@@ -33,3 +33,8 @@ ua.Tools.printTable("CurrentTime", attrs)
 
 -- Run server. Start listening to port
 server:run()
+
+function onunload()
+   trace("Stopping server example 4")
+   server:shutdown()
+end

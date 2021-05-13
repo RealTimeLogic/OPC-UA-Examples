@@ -67,4 +67,5 @@ timer:set(1000)
 function onunload()
    trace("Stopping server example 6")
    timer:cancel()
+   server:shutdown()
 end

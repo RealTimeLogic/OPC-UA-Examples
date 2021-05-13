@@ -64,3 +64,8 @@ addVariables(server.services, folderId)
 
 -- Run server. Start listening to port
 server:run()
+
+function onunload()
+   trace("Stopping server example 5")
+   server:shutdown()
+end
