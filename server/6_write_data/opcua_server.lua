@@ -19,7 +19,7 @@ local value = {int64 = 0}
 local variableParams = ua.newVariableParams(nodeIds.ObjectsFolder, {name="variable", ns=0}, "variable", value, variableNodeId)
 local resp = server.services:addNodes({nodesToAdd={variableParams}})
 local res = resp.results
-if res[1].statusCode ~= ua.Status.Good and res[1].statusCode ~= ua.Status.BadNodeIdExists then
+if res[1].statusCode ~= ua.StatusCode.Good and res[1].statusCode ~= ua.StatusCode.BadNodeIdExists then
   error(res.statusCode)
 end
 
@@ -57,7 +57,7 @@ local function timerFunc()
    while true do
       value.int64 = value.int64 + 1
       local resp = server:write(nodes)
-      if resp.results[1] == ua.Status.Good then
+      if resp.results[1] == ua.StatusCode..Good then
          trace("value.int64=",value.int64)
       else
          trace("Updating node failed!")

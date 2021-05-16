@@ -11,7 +11,7 @@ local function addFolderNode(services)
 
   local resp = services:addNodes(request)
   local res = resp.results
-  if res[1].statusCode ~= ua.Status.Good and res[1].statusCode ~= ua.Status.BadNodeIdExists then
+  if res[1].statusCode ~= ua.StatusCode.Good and res[1].statusCode ~= ua.StatusCode.BadNodeIdExists then
     error(res.statusCode)
   end
 
@@ -46,7 +46,7 @@ local function addVariables(services, parentNodeId)
 
   local resp = services:addNodes(request)
   local res = resp.results
-  if res[1].statusCode ~= ua.Status.Good and res[1].statusCode ~= ua.Status.BadNodeIdExists then
+  if res[1].statusCode ~= ua.StatusCode.Good and res[1].statusCode ~= ua.StatusCode.BadNodeIdExists then
     error(res.statusCode)
   end
 end
