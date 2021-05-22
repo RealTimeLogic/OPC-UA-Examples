@@ -1,0 +1,1 @@
+io:dofile("opcua_server.lua", _ENV)
