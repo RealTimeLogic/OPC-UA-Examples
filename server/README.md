@@ -27,3 +27,8 @@ Server step-by-step guide:
    This example adds an int64 node to the address space, starts the
    server, and then increments the int64 node every second.
 
+7. How to set up a read/write callback for variable node.
+   This example sets callback for float variable node, starts the
+   server, and then callback will be called on each read and write 
+   requests from client.
+
