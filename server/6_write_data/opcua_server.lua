@@ -57,7 +57,7 @@ local function timerFunc()
    while true do
       value.int64 = value.int64 + 1
       local resp = server:write(nodes)
-      if resp.results[1] == ua.StatusCode..Good then
+      if resp.results[1] == ua.StatusCode.Good then
          trace("value.int64=",value.int64)
       else
          trace("Updating node failed!")

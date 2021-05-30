@@ -4,7 +4,7 @@ local nodeIds = require("opcua.node_ids")
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
-local server = ua.newServer()
+local server = ua.newServer(config)
 
 -- Node ID of data source
 local dataSouceId = "ns=3;s=custom_data_source"
@@ -28,40 +28,22 @@ end
 local function initializeDataSource(services)
   print("Adding a node into address space")
 
-  local newVariableParams = {
-    parentNodeId = nodeIds.ObjectsFolder,
-    referenceTypeId = nodeIds.Organizes,
-    requestedNewNodeId = dataSouceId,
-    browseName = {name="browseName", ns=0},
-    nodeClass = ua.Types.NodeClass.Variable,
-    nodeAttributes = {
-      typeId = "i=357",
-      body = {
-        specifiedAttributes = ua.Types.VariableAttributesMask,
-        displayName = {text="CustomDataSource"},
-        description = {text="An example of callback for reading/writing data"},
-        writeMask = 0,
-        userWriteMask = 0,
-        value = {float=variable},
-        dataType = nodeIds.Float,
-        valueRank = ua.Types.ValueRank.Scalar,
-        arrayDimensions = nil,
-        accessLevel = 0,
-        userAccessLevel = 0,
-        minimumSamplingInterval = 1000,
-        historizing = 0
-      }
-    },
-    typeDefinition = nodeIds.BaseDataVariableType
-  }
+  local statusCode = 0
+  local newVariableParams = ua.newVariableParams(nodeIds.ObjectsFolder, {name="CustomDataSource", ns=0}, "CustomDataSource", {float=1.0}, dataSouceId)
+  local res = services:addNodes({nodesToAdd={newVariableParams}})
+  for _,result in ipairs(res.results) do
+    if result.statusCode ~= 0 then
+      statusCode = result.statusCode
+    end
+  end
 
-  services:addNodes({nodesToAdd={newVariableParams}})
-
+  if statusCode ~= 0 then
+    error(statusCode)
+  end
   print("Setting address space")
 
   services:setVariableSource(dataSouceId, processDataSource)
 end
-
 
 -- Initialize server.
 server:initialize(initializeDataSource)
@@ -74,4 +56,3 @@ function onunload()
   trace("Stopping OPC-UA server")
   server:shutdown()
 end
-

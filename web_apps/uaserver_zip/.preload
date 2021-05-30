@@ -27,4 +27,10 @@ uaServer = ua.newServer(conf)
 uaServer:initialize(demoAddon)
 uaServer:run()
 
+function onunload()
+  trace("Stopping OPC-UA server")
+  uaServer:shutdown()
+end
+
+
 _G.uaServices = uaServer.services

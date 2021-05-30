@@ -1,5 +1,5 @@
 local ua = require("opcua.api")
-local s = ua.Status
+local s = ua.StatusCode
 
 local Boolean = "i=1"
 local SByte = "i=2"
@@ -34,9 +34,9 @@ local traceI = ua.trace.inf
 local function addNodes(services, newVariable)
   local results = services:addNodes(newVariable)
   for i,res in ipairs(results) do
-    if res.statusCode == ua.Status.BadNodeIdExists then
+    if res.statusCode == ua.StatusCode.BadNodeIdExists then
       traceI(string.format("   Node '%s' with id '%s' already exists", newVariable.nodesToAdd[i].browseName.name, newVariable.nodesToAdd[i].requestedNewNodeId))
-    elseif res.statusCode ~= ua.Status.Good then
+    elseif res.statusCode ~= ua.StatusCode.Good then
       traceE(string.format("Failed to add node '%s': 0x%X", newVariable.nodesToAdd[i].browseName.name, res.statusCode))
       error(resp.statusCode)
     else
@@ -66,23 +66,18 @@ local function addBoolean(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="boolean_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Boolean"},
-            description = {text="Example of Boolean Scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {boolean=true},
-            dataType = Boolean,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Boolean"},
+        description = {text="Example of Boolean Scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {boolean=true},
+        dataType = Boolean,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -103,23 +98,18 @@ local function addBooleanArray(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="boolean_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="BooleanArray"},
-            description = {text="Example of Boolean Array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {boolean={true,false,true,false,true,false,true,false,true,false}},
-            dataType = Boolean,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="BooleanArray"},
+        description = {text="Example of Boolean Array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {boolean={true,false,true,false,true,false,true,false,true,false}},
+        dataType = Boolean,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -141,23 +131,18 @@ local function addByte(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="byte_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Byte"},
-            description = {text="Example of Byte Scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {byte=17},
-            dataType = Byte,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Byte"},
+        description = {text="Example of Byte Scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {byte=17},
+        dataType = Byte,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -180,23 +165,18 @@ local function addByteArray(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="byte_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ByteArray"},
-            description = {text="Example of Byte Array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {byte=data},
-            dataType = Byte,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {#data},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="ByteArray"},
+        description = {text="Example of Byte Array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {byte=data},
+        dataType = Byte,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {#data},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -219,23 +199,18 @@ local function addSByte(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="sbyte_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="SByte"},
-            description = {text="Example of SByte scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {sbyte=-100},
-            dataType = SByte,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="SByte"},
+        description = {text="Example of SByte scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {sbyte=-100},
+        dataType = SByte,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -257,23 +232,18 @@ local function addSByteArray(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="sbyte_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="SByteArray"},
-            description = {text="Example of SByte array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {sbyte={-2,-1,0,1,2,3,4,5,6,7}},
-            dataType = SByte,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="SByteArray"},
+        description = {text="Example of SByte array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {sbyte={-2,-1,0,1,2,3,4,5,6,7}},
+        dataType = SByte,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -295,23 +265,18 @@ local function addInt16(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="int16_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Int16"},
-            description = {text="Example of Int16 scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {int16=30000},
-            dataType = Int16,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Int16"},
+        description = {text="Example of Int16 scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {int16=30000},
+        dataType = Int16,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -332,23 +297,18 @@ local function addInt16Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="int16_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Int16Array"},
-            description = {text="Example of Int16 array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {int16={-2000,-1000,0,100,200,300,400,5000,6000,7000}},
-            dataType = Int16,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Int16Array"},
+        description = {text="Example of Int16 array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {int16={-2000,-1000,0,100,200,300,400,5000,6000,7000}},
+        dataType = Int16,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -371,23 +331,18 @@ local function addUInt16_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="uint16_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="UInt16"},
-            description = {text="Example of UInt16 scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {uint16=30000},
-            dataType = UInt16,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="UInt16"},
+        description = {text="Example of UInt16 scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {uint16=30000},
+        dataType = UInt16,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -396,23 +351,18 @@ local function addUInt16_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="uint16_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="UInt16Array"},
-            description = {text="Example of UInt16 array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {uint16={2000,1000,0,100,200,300,400,5000,6000,40000}},
-            dataType = UInt16,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="UInt16Array"},
+        description = {text="Example of UInt16 array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {uint16={2000,1000,0,100,200,300,400,5000,6000,40000}},
+        dataType = UInt16,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
 
@@ -435,23 +385,18 @@ local function addInt32_UInt32_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="uint32_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="UInt32"},
-            description = {text="Example of UInt16 scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {uint32=30000},
-            dataType = UInt32,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="UInt32"},
+        description = {text="Example of UInt16 scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {uint32=30000},
+        dataType = UInt32,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -460,23 +405,18 @@ local function addInt32_UInt32_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="uint32_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="UInt32Array"},
-            description = {text="Example of UInt32 array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {uint32={2000,1000,0,100,200,300,4000000,5000,6000,40000}},
-            dataType = UInt32,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="UInt32Array"},
+        description = {text="Example of UInt32 array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {uint32={2000,1000,0,100,200,300,4000000,5000,6000,40000}},
+        dataType = UInt32,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #3
@@ -485,23 +425,18 @@ local function addInt32_UInt32_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="int32_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Int32"},
-            description = {text="Example of Int32 scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {int32=30000},
-            dataType = Int32,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Int32"},
+        description = {text="Example of Int32 scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {int32=30000},
+        dataType = Int32,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #4
@@ -510,23 +445,18 @@ local function addInt32_UInt32_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="int32_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Int32Array"},
-            description = {text="Example of Int32 array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {int32={-2000,1000,0,100,-200,300,-4000000,5000,6000,40000}},
-            dataType = Int32,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Int32Array"},
+        description = {text="Example of Int32 array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {int32={-2000,1000,0,100,-200,300,-4000000,5000,6000,40000}},
+        dataType = Int32,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -549,23 +479,18 @@ local function addInt64_UInt64_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="uint64_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="UInt64"},
-            description = {text="Example of UInt64 scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {uint64=3000000000},
-            dataType = UInt64,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="UInt64"},
+        description = {text="Example of UInt64 scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {uint64=3000000000},
+        dataType = UInt64,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -574,23 +499,18 @@ local function addInt64_UInt64_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="uint64_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="UInt64Array"},
-            description = {text="Example of UInt64 array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {uint64={2000,1000,0,100,200,300,4000000000,5000,6000,40000}},
-            dataType = UInt64,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="UInt64Array"},
+        description = {text="Example of UInt64 array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {uint64={2000,1000,0,100,200,300,4000000000,5000,6000,40000}},
+        dataType = UInt64,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #3
@@ -599,23 +519,18 @@ local function addInt64_UInt64_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="int64_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Int64"},
-            description = {text="Example of Int64 scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {int64=1000000000},
-            dataType = Int64,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Int64"},
+        description = {text="Example of Int64 scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {int64=1000000000},
+        dataType = Int64,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #4
@@ -624,23 +539,18 @@ local function addInt64_UInt64_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="int64_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Int64Array"},
-            description = {text="Example of Int64 array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {int64={-2000,1000,0,100,-200,300,-10000000000,5000,6000,40000}},
-            dataType = Int64,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Int64Array"},
+        description = {text="Example of Int64 array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {int64={-2000,1000,0,100,-200,300,-10000000000,5000,6000,40000}},
+        dataType = Int64,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -662,23 +572,18 @@ local function addFloat_Double_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="float_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Float"},
-            description = {text="Example of Float scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {float=3000000000},
-            dataType = Float,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Float"},
+        description = {text="Example of Float scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {float=3000000000},
+        dataType = Float,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -687,23 +592,18 @@ local function addFloat_Double_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="float_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="FloatArray"},
-            description = {text="Example of Float array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {float={0.1,-2.2,3.3,-4.4,5.5,6.6,-7.7,8.8,9.9,0}},
-            dataType = Float,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="FloatArray"},
+        description = {text="Example of Float array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {float={0.1,-2.2,3.3,-4.4,5.5,6.6,-7.7,8.8,9.9,0}},
+        dataType = Float,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #3
@@ -712,23 +612,18 @@ local function addFloat_Double_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="double_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Double"},
-            description = {text="Example of Double scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {double=1000000000},
-            dataType = Double,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Double"},
+        description = {text="Example of Double scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {double=1000000000},
+        dataType = Double,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #4
@@ -737,23 +632,18 @@ local function addFloat_Double_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="double_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DoubleArray"},
-            description = {text="Example of Double array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {double={-0.0,13.4,5,100.1,-12345679.123456789,987654321.123456789,-10000000000,5000,6000,40000}},
-            dataType = Double,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="DoubleArray"},
+        description = {text="Example of Double array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {double={-0.0,13.4,5,100.1,-12345679.123456789,987654321.123456789,-10000000000,5000,6000,40000}},
+        dataType = Double,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -775,23 +665,18 @@ local function addString_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="string_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="String"},
-            description = {text="String scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {string="This is a string variable"},
-            dataType = String,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="String"},
+        description = {text="String scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {string="This is a string variable"},
+        dataType = String,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -800,23 +685,18 @@ local function addString_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="string_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="StringArray"},
-            description = {text="Example of String array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {string={"Element1", "Element2", "Element3", "Element4", "Element5", "Element6", "Element7", "Element8", "Element9", "Element10"}},
-            dataType = String,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="StringArray"},
+        description = {text="Example of String array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {string={"Element1", "Element2", "Element3", "Element4", "Element5", "Element6", "Element7", "Element8", "Element9", "Element10"}},
+        dataType = String,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -854,23 +734,18 @@ local function addGuid_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="guid_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="Guid"},
-            description = {text="Guid scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {guid=genGuid()},
-            dataType = Guid,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="Guid"},
+        description = {text="Guid scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {guid=genGuid()},
+        dataType = Guid,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -879,23 +754,18 @@ local function addGuid_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="guid_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-            body = {
-            displayName = {text="GuidArray"},
-            description = {text="Example of Guid array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {guid={genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid()}},
-            dataType = Guid,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="GuidArray"},
+        description = {text="Example of Guid array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {guid={genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid(),genGuid()}},
+        dataType = Guid,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -919,23 +789,18 @@ local function addDateTime_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="datetime_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DateTime"},
-            description = {text="DateTime scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {dateTime=curTime + 0.123},
-            dataType = DateTime,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="DateTime"},
+        description = {text="DateTime scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {dateTime=curTime + 0.123},
+        dataType = DateTime,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -944,23 +809,18 @@ local function addDateTime_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="datetime_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DateTimeArray"},
-            description = {text="Example of DateTime array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {dateTime={curTime,curTime+0.1,curTime+0.2,curTime+0.3,curTime+0.4,curTime+0.5,curTime+0.6,curTime+0.7,curTime+0.8,curTime+0.9}},
-            dataType = DateTime,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="DateTimeArray"},
+        description = {text="Example of DateTime array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {dateTime={curTime,curTime+0.1,curTime+0.2,curTime+0.3,curTime+0.4,curTime+0.5,curTime+0.6,curTime+0.7,curTime+0.8,curTime+0.9}},
+        dataType = DateTime,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -981,23 +841,18 @@ local function addByteString_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="bytestring_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ByteString"},
-            description = {text="ByteString scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {byteString={1,2,3,4,5,6,7,8,9}},
-            dataType = ByteString,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="ByteString"},
+        description = {text="ByteString scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {byteString={1,2,3,4,5,6,7,8,9}},
+        dataType = ByteString,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1006,23 +861,18 @@ local function addByteString_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="bytestring_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ByteStringArray"},
-            description = {text="Example of ByteString array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {byteString={{1,2,3,4,5}, {2,3,4,5,6,7}, {3,4,5,6,7}, {4,5,6,7,8,9}, {5,6,7,8,9}, {6,7,8,9}, {7,8,9,0}, {8,9,0}, {9,0}, {0}} },
-            dataType = ByteString,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="ByteStringArray"},
+        description = {text="Example of ByteString array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {byteString={{1,2,3,4,5}, {2,3,4,5,6,7}, {3,4,5,6,7}, {4,5,6,7,8,9}, {5,6,7,8,9}, {6,7,8,9}, {7,8,9,0}, {8,9,0}, {9,0}, {0}} },
+        dataType = ByteString,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -1044,23 +894,18 @@ local function addXmlElement_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="xmlelement_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="XmlElement"},
-            description = {text="XmlElement scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {xmlElement={value="asdfasdfasd"}},
-            dataType = XmlElement,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="XmlElement"},
+        description = {text="XmlElement scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {xmlElement={value="asdfasdfasd"}},
+        dataType = XmlElement,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1069,34 +914,29 @@ local function addXmlElement_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="xmlelement_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="XmlElementArray"},
-            description = {text="Example of XmlElement array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {xmlElement={
-              {value="12345"},
-              {value="23456"},
-              {value="34678"},
-              {value="4578"},
-              {value="56899"},
-              {value="2345234523"},
-              {value='<xml version="1.0"><opcua></opcua>'},
-              {value="7654"},
-              {value="hmmm"},
-              {value='123415546'}
-            }},
-            dataType = XmlElement,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="XmlElementArray"},
+        description = {text="Example of XmlElement array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {xmlElement={
+          {value="12345"},
+          {value="23456"},
+          {value="34678"},
+          {value="4578"},
+          {value="56899"},
+          {value="2345234523"},
+          {value='<xml version="1.0"><opcua></opcua>'},
+          {value="7654"},
+          {value="hmmm"},
+          {value='123415546'}
+        }},
+        dataType = XmlElement,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -1117,23 +957,18 @@ local function addNodeId_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="nodeid_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="NodeId"},
-            description = {text="NodeId scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {nodeId="ns=10;s=string_id"},
-            dataType = NodeId,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="NodeId"},
+        description = {text="NodeId scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {nodeId="ns=10;s=string_id"},
+        dataType = NodeId,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1142,36 +977,31 @@ local function addNodeId_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="nodeid_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="NodeIdArray"},
-            description = {text="Example of NodeId array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {
-              nodeId={
-                "ns=11;s=string_id",
-                "ns=1;i=10",
-                "ns=2;i=9",
-                "ns=3;i=8",
-                "ns=4;i=7",
-                "ns=5;i=6",
-                "ns=6;i=5",
-                "ns=7;i=4",
-                "ns=8;i=3",
-                "ns=9;i=2",
-              }
-            },
-            dataType = NodeId,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+        displayName = {text="NodeIdArray"},
+        description = {text="Example of NodeId array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {
+          nodeId={
+            "ns=11;s=string_id",
+            "ns=1;i=10",
+            "ns=2;i=9",
+            "ns=3;i=8",
+            "ns=4;i=7",
+            "ns=5;i=6",
+            "ns=6;i=5",
+            "ns=7;i=4",
+            "ns=8;i=3",
+            "ns=9;i=2",
           }
         },
+        dataType = NodeId,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -1193,23 +1023,18 @@ local function addExpandedNodeId_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="expanded_nodeid_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ExpandedNodeId"},
-            description = {text="ExpadedNodeId scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {expandedNodeId="ns=10;s=expanded_string_id"},
-            dataType = ExpandedNodeId,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="ExpandedNodeId"},
+        description = {text="ExpadedNodeId scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {expandedNodeId="ns=10;s=expanded_string_id"},
+        dataType = ExpandedNodeId,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1218,36 +1043,31 @@ local function addExpandedNodeId_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="expaded_nodeid_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ExpandedNodeIdArray"},
-            description = {text="Example of ExpandedNodeId array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {
-              expandedNodeId={
-                "nsu=uri;s=expanded_string_id",
-                "ns=1;i=10",
-                "ns=2;i=9",
-                "ns=3;i=8",
-                "ns=4;i=7",
-                "ns=5;i=6",
-                "ns=6;i=5",
-                "ns=7;i=4",
-                "ns=8;i=3",
-                "ns=9;i=2",
-              }
-            },
-            dataType = ExpandedNodeId,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+        displayName = {text="ExpandedNodeIdArray"},
+        description = {text="Example of ExpandedNodeId array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {
+          expandedNodeId={
+            "nsu=uri;s=expanded_string_id",
+            "ns=1;i=10",
+            "ns=2;i=9",
+            "ns=3;i=8",
+            "ns=4;i=7",
+            "ns=5;i=6",
+            "ns=6;i=5",
+            "ns=7;i=4",
+            "ns=8;i=3",
+            "ns=9;i=2",
           }
         },
+        dataType = ExpandedNodeId,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
     }
@@ -1269,23 +1089,18 @@ local function addStatusCode_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="statuscode_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="StatusCode"},
-            description = {text="Example of StatusCode scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {statusCode=s.BadOutOfMemory},
-            dataType = StatusCode,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="StatusCode"},
+        description = {text="Example of StatusCode scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {statusCode=s.BadOutOfMemory},
+        dataType = StatusCode,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1294,34 +1109,29 @@ local function addStatusCode_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="statuscode_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="StatusCodeArray"},
-            description = {text="Example of StatusCode array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {statusCode={
-              s.BadUnexpectedError,
-              s.BadInternalError,
-              s.BadOutOfMemory,
-              s.BadResourceUnavailable,
-              s.BadCommunicationError,
-              s.BadEncodingError,
-              s.BadDecodingError,
-              s.BadEncodingLimitsExceeded,
-              s.BadRequestTooLarge,
-              s.BadResponseTooLarge
-            }},
-            dataType = StatusCode,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="StatusCodeArray"},
+        description = {text="Example of StatusCode array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {statusCode={
+          s.BadUnexpectedError,
+          s.BadInternalError,
+          s.BadOutOfMemory,
+          s.BadResourceUnavailable,
+          s.BadCommunicationError,
+          s.BadEncodingError,
+          s.BadDecodingError,
+          s.BadEncodingLimitsExceeded,
+          s.BadRequestTooLarge,
+          s.BadResponseTooLarge
+        }},
+        dataType = StatusCode,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -1343,23 +1153,18 @@ local function addQualifiedName_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="qualifiedname_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="QualifiedName"},
-            description = {text="Example of QualifiedName scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {qualifiedName={name="QualifiedNameValue", ns=10}},
-            dataType = QualifiedName,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="QualifiedName"},
+        description = {text="Example of QualifiedName scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {qualifiedName={name="QualifiedNameValue", ns=10}},
+        dataType = QualifiedName,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1368,34 +1173,29 @@ local function addQualifiedName_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="qualifiedname_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="QualifiedNameArray"},
-            description = {text="Example of QualifiedName array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {qualifiedName={
-              {name="QualifiedName1",ns=1},
-              {name="QualifiedName2",ns=2},
-              {name="QualifiedName3",ns=3},
-              {name="QualifiedName4",ns=4},
-              {name="QualifiedName5",ns=5},
-              {name="QualifiedName6",ns=6},
-              {name="QualifiedName7",ns=7},
-              {name="QualifiedName8",ns=8},
-              {name="QualifiedName9",ns=9},
-              {name="QualifiedName10",ns=10},
-            }},
-            dataType = QualifiedName,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="QualifiedNameArray"},
+        description = {text="Example of QualifiedName array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {qualifiedName={
+          {name="QualifiedName1",ns=1},
+          {name="QualifiedName2",ns=2},
+          {name="QualifiedName3",ns=3},
+          {name="QualifiedName4",ns=4},
+          {name="QualifiedName5",ns=5},
+          {name="QualifiedName6",ns=6},
+          {name="QualifiedName7",ns=7},
+          {name="QualifiedName8",ns=8},
+          {name="QualifiedName9",ns=9},
+          {name="QualifiedName10",ns=10},
+        }},
+        dataType = QualifiedName,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -1417,23 +1217,18 @@ local function addLocalizedText_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="localizedtext_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="LocalizedText"},
-            description = {text="Example of LocalizedText scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {localizedText={text="LocalizedTextScalar", locale="en-US"}},
-            dataType = LocalizedText,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="LocalizedText"},
+        description = {text="Example of LocalizedText scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {localizedText={text="LocalizedTextScalar", locale="en-US"}},
+        dataType = LocalizedText,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1442,34 +1237,29 @@ local function addLocalizedText_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="localizedtext_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="LocalizedTextArray"},
-            description = {text="Example of LocalizedText array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {localizedText={
-              {text="LocalizedTextValue0", locale="en-US"},
-              {text="LocalizedTextValue1", locale="en-US"},
-              {text="LocalizedTextValue2", locale="en-US"},
-              {text="LocalizedTextValue3", locale="en-US"},
-              {text="LocalizedTextValue4", locale="en-US"},
-              {text="LocalizedTextValue5", locale="en-US"},
-              {text="LocalizedTextValue6", locale="en-US"},
-              {text="LocalizedTextValue7", locale="en-US"},
-              {text="LocalizedTextValue8", locale="en-US"},
-              {text="LocalizedTextValue9", locale="en-US"},
-            }},
-            dataType = LocalizedText,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="LocalizedTextArray"},
+        description = {text="Example of LocalizedText array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {localizedText={
+          {text="LocalizedTextValue0", locale="en-US"},
+          {text="LocalizedTextValue1", locale="en-US"},
+          {text="LocalizedTextValue2", locale="en-US"},
+          {text="LocalizedTextValue3", locale="en-US"},
+          {text="LocalizedTextValue4", locale="en-US"},
+          {text="LocalizedTextValue5", locale="en-US"},
+          {text="LocalizedTextValue6", locale="en-US"},
+          {text="LocalizedTextValue7", locale="en-US"},
+          {text="LocalizedTextValue8", locale="en-US"},
+          {text="LocalizedTextValue9", locale="en-US"},
+        }},
+        dataType = LocalizedText,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -1491,28 +1281,23 @@ local function addExtensionObject_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="extension_object_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ExtensionObject"},
-            description = {text="Example of ExtensionObject scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {
-              extensionObject={
-                typeId="i=10000",
-                body={1,2,3,4,5,6}
-              }
-            },
-            dataType = Byte,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+        displayName = {text="ExtensionObject"},
+        description = {text="Example of ExtensionObject scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {
+          extensionObject={
+            typeId="i=10000",
+            body={1,2,3,4,5,6}
           }
         },
+        dataType = Byte,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1521,34 +1306,29 @@ local function addExtensionObject_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="extension_object_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="ExtensionObjectArray"},
-            description = {text="Example of ExtensionObject array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {extensionObject={
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-              {typeId="i=10000",body={1,2,3,4,5,6}},
-            }},
-            dataType = Byte,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
-          }
-        },
+        displayName = {text="ExtensionObjectArray"},
+        description = {text="Example of ExtensionObject array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {extensionObject={
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+          {typeId="i=10000",body={1,2,3,4,5,6}},
+        }},
+        dataType = Byte,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -1569,32 +1349,27 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="datavalue_object_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DataValue"},
-            description = {text="Example of DataValue scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {
-              dataValue={
-                value={ byte=1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time() - 1,
-                serverTimestamp = os.time(),
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              }
-            },
-            dataType = DataValue,
-            valueRank = -1,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+        displayName = {text="DataValue"},
+        description = {text="Example of DataValue scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {
+          dataValue={
+            value={ byte=1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time() - 1,
+            serverTimestamp = os.time(),
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
           }
         },
+        dataType = DataValue,
+        valueRank = -1,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1603,104 +1378,99 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="datavalue_object_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DataValueArray"},
-            description = {text="Example of DataValue array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {dataValue={
-              {--#1
-                value={ byte=1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time() - 1,
-                serverTimestamp = os.time(),
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#2
-                value={ sbyte=1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time() - 1,
-                serverTimestamp = os.time(),
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#3
-                value={ int16=1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time() - 1,
-                serverTimestamp = os.time(),
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#4
-                value={ uint16=1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time() - 1,
-                serverTimestamp = os.time(),
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#5
-                value={ double=1.1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time(),
-                serverTimestamp = os.time() + 1,
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#6
-                value={ float=1.1 },
-                statusCode = s.Good,
-                sourceTimestamp = os.time(),
-                serverTimestamp = os.time() + 1,
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#7
-                value={ uint64=122234567789},
-                statusCode = s.Good,
-                sourceTimestamp = os.time(),
-                serverTimestamp = os.time() + 1,
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#8
-                value={ string="StringElement"},
-                statusCode = s.Good,
-                sourceTimestamp = os.time(),
-                serverTimestamp = os.time() + 1,
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#9
-                value={ statusCode=s.BadInternalError},
-                statusCode = s.Good,
-                sourceTimestamp = os.time(),
-                serverTimestamp = os.time() + 1,
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              },
-              {--#10
-                value={ dateTime=os.time()},
-                statusCode = s.Good,
-                sourceTimestamp = os.time(),
-                serverTimestamp = os.time() + 1,
-                sourcePicoseconds = 100,
-                serverPicoseconds = 200
-              }
-            }},
-            dataType = DataValue,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+        displayName = {text="DataValueArray"},
+        description = {text="Example of DataValue array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {dataValue={
+          {--#1
+            value={ byte=1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time() - 1,
+            serverTimestamp = os.time(),
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#2
+            value={ sbyte=1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time() - 1,
+            serverTimestamp = os.time(),
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#3
+            value={ int16=1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time() - 1,
+            serverTimestamp = os.time(),
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#4
+            value={ uint16=1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time() - 1,
+            serverTimestamp = os.time(),
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#5
+            value={ double=1.1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time(),
+            serverTimestamp = os.time() + 1,
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#6
+            value={ float=1.1 },
+            statusCode = s.Good,
+            sourceTimestamp = os.time(),
+            serverTimestamp = os.time() + 1,
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#7
+            value={ uint64=122234567789},
+            statusCode = s.Good,
+            sourceTimestamp = os.time(),
+            serverTimestamp = os.time() + 1,
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#8
+            value={ string="StringElement"},
+            statusCode = s.Good,
+            sourceTimestamp = os.time(),
+            serverTimestamp = os.time() + 1,
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#9
+            value={ statusCode=s.BadInternalError},
+            statusCode = s.Good,
+            sourceTimestamp = os.time(),
+            serverTimestamp = os.time() + 1,
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
+          },
+          {--#10
+            value={ dateTime=os.time()},
+            statusCode = s.Good,
+            sourceTimestamp = os.time(),
+            serverTimestamp = os.time() + 1,
+            sourcePicoseconds = 100,
+            serverPicoseconds = 200
           }
-        },
+        }},
+        dataType = DataValue,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -1722,40 +1492,35 @@ local function addDiagnosticInfo_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="disgnosticinfo_object_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DiagnosticInfo"},
-            description = {text="Example of DiagnosticInfo scalar variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {
-              diagnosticInfo = {
-                symbolicId = -1,
-                nsUri = -1,
-                locale = -1,
-                localizedText = -1,
-                additionalInfo = "AdditionalInfo",
-                innerStatusCode = s.BadNodeAttributesInvalid,
-                innerDiagnosticInfo = {
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "InnerAdditionalInfo",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                }
-              }
-            },
-            dataType = DiagnosticInfo,
-            valueRank = ua.Types.ValueRank.Scalar,
-            arrayDimensions = nil,
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+        displayName = {text="DiagnosticInfo"},
+        description = {text="Example of DiagnosticInfo scalar variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {
+          diagnosticInfo = {
+            symbolicId = -1,
+            nsUri = -1,
+            locale = -1,
+            localizedText = -1,
+            additionalInfo = "AdditionalInfo",
+            innerStatusCode = s.BadNodeAttributesInvalid,
+            innerDiagnosticInfo = {
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "InnerAdditionalInfo",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+            }
           }
         },
+        dataType = DiagnosticInfo,
+        valueRank = ua.Types.ValueRank.Scalar,
+        arrayDimensions = nil,
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       },
       { -- #2
@@ -1764,186 +1529,181 @@ local function addDiagnosticInfo_Scalar_And_Array(services, parentNodeId)
         requestedNewNodeId = nextId(),
         browseName = {name="diagnosticinfo_object_array_variable", ns=0},
         nodeClass = ua.Types.NodeClass.Variable,
-        nodeAttributes = {
-          typeId = "i=357",
-          body = {
-            displayName = {text="DiagnosticInfoArray"},
-            description = {text="Example of DiagnosticInfo array variable"},
-            writeMask = 0,
-            userWriteMask = 0,
-            value = {
-              diagnosticInfo={
-                {--#1
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo1",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo12",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#2
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo2",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo22",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#3
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo3",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    dymbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo32",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#4
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo4",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo42",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#5
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo5",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo52",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#6
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo6",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo62",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#7
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo7",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo72",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#8
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo8",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo82",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#9
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  AdditionalInfo = "AdditionalInfo9",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo92",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
-                {--#10
-                  symbolicId = -1,
-                  nsUri = -1,
-                  locale = -1,
-                  localizedText = -1,
-                  additionalInfo = "AdditionalInfo10",
-                  innerStatusCode = s.BadNodeAttributesInvalid,
-                  innerDiagnosticInfo = {
-                    symbolicId = -1,
-                    nsUri = -1,
-                    locale = -1,
-                    localizedText = -1,
-                    additionalInfo = "InnerAdditionalInfo102",
-                    innerStatusCode = s.BadNodeAttributesInvalid,
-                  }
-                },
+        displayName = {text="DiagnosticInfoArray"},
+        description = {text="Example of DiagnosticInfo array variable"},
+        writeMask = 0,
+        userWriteMask = 0,
+        value = {
+          diagnosticInfo={
+            {--#1
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo1",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo12",
+                innerStatusCode = s.BadNodeAttributesInvalid,
               }
             },
-            dataType = DiagnosticInfo,
-            valueRank = ua.Types.ValueRank.OneDimension,
-            arrayDimensions = {10},
-            accessLevel = 0,
-            userAccessLevel = 0,
-            minimumSamplingInterval = 1000,
-            historizing = 0
+            {--#2
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo2",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo22",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#3
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo3",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                dymbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo32",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#4
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo4",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo42",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#5
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo5",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo52",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#6
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo6",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo62",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#7
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo7",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo72",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#8
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo8",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo82",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#9
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              AdditionalInfo = "AdditionalInfo9",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo92",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
+            {--#10
+              symbolicId = -1,
+              nsUri = -1,
+              locale = -1,
+              localizedText = -1,
+              additionalInfo = "AdditionalInfo10",
+              innerStatusCode = s.BadNodeAttributesInvalid,
+              innerDiagnosticInfo = {
+                symbolicId = -1,
+                nsUri = -1,
+                locale = -1,
+                localizedText = -1,
+                additionalInfo = "InnerAdditionalInfo102",
+                innerStatusCode = s.BadNodeAttributesInvalid,
+              }
+            },
           }
         },
+        dataType = DiagnosticInfo,
+        valueRank = ua.Types.ValueRank.OneDimension,
+        arrayDimensions = {10},
+        accessLevel = 0,
+        userAccessLevel = 0,
+        minimumSamplingInterval = 1000,
+        historizing = 0,
         typeDefinition = BaseDataVariableType
       }
     }
@@ -1961,16 +1721,11 @@ local function addVaraibleFolder(services, parentNodeId)
     requestedNewNodeId = folderId,
     browseName = {name="Variables", ns=3},
     nodeClass = ua.Types.NodeClass.Object,
-    nodeAttributes = {
-      typeId = "i=354",
-      body = {
-        displayName = {text="Variables"},
-        description = {text="Folder with different variables"},
-        writeMask = 0,
-        userWriteMask = 0,
-        eventNotifier = 0
-      }
-    },
+    displayName = {text="Variables"},
+    description = {text="Folder with different variables"},
+    writeMask = 0,
+    userWriteMask = 0,
+    eventNotifier = 0,
     typeDefinition = FolderType
   }
 
@@ -1980,7 +1735,7 @@ local function addVaraibleFolder(services, parentNodeId)
 
   local resp = services:addNodes(request)
   local res = resp.results
-  if res[1].statusCode ~= ua.Status.Good and res[1].statusCode ~= ua.Status.BadNodeIdExists then
+  if res[1].statusCode ~= ua.StatusCode.Good and res[1].statusCode ~= ua.StatusCode.BadNodeIdExists then
     error(res.statusCode)
   end
 
