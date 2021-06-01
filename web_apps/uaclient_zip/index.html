@@ -29,7 +29,7 @@
 
     <div id="app">
         <header>
-            <button v-on:click="connect">Conect/disconnect</button>
+            <button v-on:click="connect">Connect/disconnect</button>
             <input v-if="connected" type="text" v-model="endpointUrl">
             <button v-if="connected" v-on:click="connectEndpoint">Connect to endpoint</button>
         </header>

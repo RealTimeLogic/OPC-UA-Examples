@@ -1,16 +1,17 @@
 trace("Starting OPCUA client")
 local ua = require("opcua.api")
 local sock = require("socket")
+local gettime=os.time
 
 -- Connect logging traces
 ua.trace.dbg = function(msg)
-  trace(sock.gettime(), "[DBG] ", msg)
+  trace(gettime(), "[DBG] ", msg)
 end
 
 ua.trace.inf = function(msg)
-  trace(sock.gettime(), "[INF]", msg)
+  trace(gettime(), "[INF]", msg)
 end
 
 ua.trace.err = function(msg)
-  trace(sock.gettime(), "[ERR]", msg)
+  trace(gettime(), "[ERR]", msg)
 end
