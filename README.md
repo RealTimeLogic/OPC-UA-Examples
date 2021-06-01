@@ -3,8 +3,13 @@
 
 ## OPC-UA examples
 
+### Introductory examples
+
 * [Server Examples](server/README.md)
 
+### OPC UA Web
+
+* [OPC-UA web client and OPC-UA server example](web_apps/README.md)
 
 
 ## Nano Embedded Device Profile
