@@ -7,7 +7,9 @@ HTML view of the OPC-UA address space. You can navigate the address
 space by clicking on the nodes with a plus (+) symbol.
 
 You may also connect other (external) OPC-UA clients to the server
-example. See FIXME for a tutorial on connecting various OPC-UA
+example. See the
+[OPC-UA client to server tutorial](https://realtimelogic.com/ba/opcua/thirdparty_clients.html)
+in the OPC-UA main documentation for how to connect various OPC-UA
 clients.
 
 This directory includes a mako.conf file that instructs the mako
