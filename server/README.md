@@ -1,4 +1,15 @@
-Server step-by-step guide:
+# Learn how to build OPC-UA Servers; a step-by-step guide.
+
+The numbers below correspond with the example sub-directories. We
+recommend starting with example one, which is started as follows:
+
+```console
+mako -l::1_start
+```
+
+See the
+[Mako Server command line video tutorial](https://youtu.be/vwQ52ZC5RRg)
+for more information on how to start the Mako Server.
 
 1. How to set up an OPC-UA server in four lines of code.
 
@@ -27,8 +38,9 @@ Server step-by-step guide:
    This example adds an int64 node to the address space, starts the
    server, and then increments the int64 node every second.
 
-7. How to set up a read/write callback for variable node.
-   This example sets callback for float variable node, starts the
-   server, and then callback will be called on each read and write 
-   requests from client.
+7. How to set up a read/write callback for a variable node.
+   This example sets callback for a float variable node, starts the
+   server. The callback will be called for each read and write 
+   requests from the client.
+
 
