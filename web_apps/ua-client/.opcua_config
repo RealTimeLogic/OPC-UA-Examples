@@ -11,7 +11,9 @@ end
 local suc, conf = pcall(require, "loadconf")
 if suc then
   conf = conf.opcua
-else
+end
+
+if not conf then
   conf = {
     bufSize = 16384,
     logging = {
