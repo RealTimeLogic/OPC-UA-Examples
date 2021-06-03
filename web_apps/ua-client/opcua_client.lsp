@@ -3,22 +3,6 @@
 local ua = require("opcua.api")
 local nodeIds = require("opcua.node_ids")
 
-local function createBrowseParams(nodeId)
-   return {
-      requestedMaxReferencesPerNode = 0,
-      nodesToBrowse = {
-         {
-            nodeId = nodeId,
-            browseDirection = ua.Types.BrowseDirection.Forward,
-            referenceTypeId = nodeIds.HierarchicalReferences,
-            nodeClassMask = ua.Types.NodeClass.Unspecified,
-            resultMask = ua.Types.BrowseResultMask.All,
-            includeSubtypes = 1,
-         }
-      },
-   }
-end
-
 local function createReadParams(nodeId)
    local nodeToRead = {}
    for _,attrId in pairs(ua.Types.AttributeId) do
@@ -46,7 +30,7 @@ if request:header"Sec-WebSocket-Key" then
       defaultConfig = mergeConfig(localConfig)
       ua.Tools.printTable("Full OPCUA configuration", defaultConfig)
 
-      uaClient = ua.newClient()
+      local uaClient
 
       local function wsCosocket()
          while true do
@@ -81,7 +65,8 @@ if request:header"Sec-WebSocket-Key" then
                            clienConfig = mergeConfig(conn, defaultConfig)
                            ua.Tools.printTable("Result configuration", clienConfig)
 
-                           uaClient:connect(clienConfig)
+                           uaClient = ua.newClient(clienConfig)
+                           uaClient:connect()
                            uaClient:openSecureChannel(3600000)
                            uaClient:createSession("RTL Web client", 1200000)
                         else
@@ -91,7 +76,7 @@ if request:header"Sec-WebSocket-Key" then
                      elseif request.browse ~= nil then
                         trace("Received Browse request")
                         trace("Browsing node: "..request.browse.nodeId)
-                        local suc, result = pcall(uaClient.browse, uaClient, createBrowseParams(request.browse.nodeId))
+                        local suc, result = pcall(uaClient.browse, uaClient, request.browse.nodeId)
                         if suc then
                            resp.browse = result.results
                         else
@@ -124,7 +109,8 @@ if request:header"Sec-WebSocket-Key" then
          trace("web-socket connection closed")
          return -- We are done
       end
-      s:event(wsCosocket)
+      -- s:event(wsCosocket)
+      wsCosocket()
    end
 end
 ?>
