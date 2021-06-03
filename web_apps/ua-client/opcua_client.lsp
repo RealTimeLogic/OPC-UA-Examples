@@ -73,6 +73,8 @@ if request:header"Sec-WebSocket-Key" then
                            trace("Error: client sent empty endpoint URL")
                            resp.error = "Empty endpointURL"
                         end
+                     elseif uaClient == nil then
+                        resp.error = "not connected"
                      elseif request.browse ~= nil then
                         trace("Received Browse request")
                         trace("Browsing node: "..request.browse.nodeId)
