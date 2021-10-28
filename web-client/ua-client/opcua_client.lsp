@@ -19,30 +19,17 @@ local function uaProcessRequest(ctx, payload)
    else
       if request.connectEndpoint ~= nil then
          trace("Received Connect request")
-         local conn = request.connectEndpoint
+         local config = request.connectEndpoint
 
-         if conn.endpointUrl ~= nil then
+         if config.endpointUrl ~= nil then
             trace"Creating new UA client"
-            local mergeConfig = require("opcua.config")
-      
-            trace("---------------------------------------------")
-            local localConfig = io:dofile(".opcua_config")
-            ua.Tools.printTable("Local configuration file", localConfig)
-      
-            trace("---------------------------------------------")
-            defaultConfig = mergeConfig(localConfig)
-            ua.Tools.printTable("Full OPCUA configuration", defaultConfig)
+     
+            ua.Tools.printTable("Client configuration", config)
 
-            trace("---------------------------------------------")
-            ua.Tools.printTable("Client configuration", conn)
-
-            trace("---------------------------------------------")
-            clienConfig = mergeConfig(conn, defaultConfig)
-            ua.Tools.printTable("Result configuration", clienConfig)
-            local uaClient = ua.newClient(clienConfig)
+            local uaClient = ua.newClient(config)
             ctx.uaClient = uaClient
             local suc, result = pcall(function() 
-               uaClient:connect()
+               uaClient:connect(config.endpointUrl)
                uaClient:openSecureChannel(3600000)
                uaClient:createSession("RTL Web client", 1200000)
             end)
