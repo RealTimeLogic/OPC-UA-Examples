@@ -1,7 +1,6 @@
 <?lsp
 
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
 
 local function opcUaClient(wsSock)
    local uaClient
@@ -16,23 +15,33 @@ local function opcUaClient(wsSock)
       if request then
          if request.connectEndpoint then
             trace("Received Connect request")
-            local config = request.connectEndpoint
-            if config.endpointUrl then
+            local endpointUrl = request.connectEndpoint.endpointUrl
+            if endpointUrl then
                if uaClient then
                   trace"Closing UA client"
-                  uaClient:closeSession()
-                  uaClient:disconnect()
+                  pcall(function()
+                     uaClient:closeSession()
+                     uaClient:disconnect()
+                  end)
                end
                trace"Creating new UA client"
                ua.Tools.printTable("Client configuration", config)
-               uaClient = ua.newClient(config)
+               -- Cosocket mode will automatically be enabled since are we in cosocket context
+               uaClient = ua.newClient()
+               trace("Connecting to server")
                local suc, result = pcall(function() 
-                                            uaClient:connect(config.endpointUrl)
-                                            uaClient:openSecureChannel(3600000)
-                                            uaClient:createSession("RTL Web client", 1200000)
+                                            local err
+                                            err = uaClient:connect(endpointUrl)
+                                            if not err then _,err = uaClient:openSecureChannel(3600000) end
+                                            if not err then _,err = uaClient:createSession("RTL Web client", 1200000) end
+                                            if not err then _,err = uaClient:activateSession() end
+                                            return err
                                          end)
-               if not suc then
+               if not suc or result then
+                  trace("Connection failed: ", result)
                   resp.error = result
+               else
+                  trace("Connected")
                end
             else
                trace("Error: client sent empty endpoint URL")
