@@ -15,3 +15,18 @@ end
 ua.trace.err = function(msg)
   trace(gettime(), "[ERR]", msg)
 end
+
+local function waitForDebugger()
+   
+   -- Load the Lua Debug Monitor "ldbgmon" and call the connect() method
+   -- client=false -> bind (act as server). Default is to act as client.
+   if require"ldbgmon".connect{client=false} then
+      trace"The debugger should stop the program on this line"
+      -- Hit F5 to continue
+   else
+      trace"Debugger connection failed"
+   end
+   
+end -- waitForDebugger
+
+--waitForDebugger()
