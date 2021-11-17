@@ -12,6 +12,15 @@
         .node-tree-panel {
             float: left;
         }
+        .node-tree-panel span {
+          cursor: pointer;
+        }
+        .node-tree-panel span.plus {
+            font-weight: bolder;
+            font-family:courier, courier new;
+            margin-right: 5px;
+        }
+
         .attribute-panel {
             width: 50%;
             float: right;
@@ -22,6 +31,10 @@
             border: 1px solid black;
             border-collapse: collapse;
           }
+
+          header button {
+          margin-bottom:5px;
+          }
     </style>
 </head>
 
@@ -29,9 +42,11 @@
 
     <div id="app">
         <header>
-            <button v-on:click="connect">Connect/disconnect</button>
+          <div>
+            <button v-on:click="connect">{{connButton}}</button>
+          </div>
             <input v-if="connected" type="text" v-model="endpointUrl">
-            <button v-if="connected" v-on:click="connectEndpoint">Connect to endpoint</button>
+            <button v-if="connected" v-on:click="connectEndpoint">Connect to OPC-UA Endpoint</button>
         </header>
         <section class="node-tree-panel">
             <ua-node v-if="connected"
@@ -150,6 +165,8 @@
                     result = uaServer.browse(this.nodeid, function(resp) {
                         if (!resp.browse)
                         {
+                            if(resp.error)
+                                alert(resp.error);
                             return;
                         }
 
@@ -178,6 +195,7 @@
                 root: root,
                 endpointUrl: "opc.tcp://localhost:4841",
                 connected: false,
+                connButton: "Connect WebSocket",
             },
             mounted() {
                 this.connect()
@@ -220,18 +238,20 @@
                         {
                             return;
                         }
-                        eventBus.$emit("node-selected", "i=84")
+                        eventBus.$emit("node-selected", "i=84");
                     })
                 },
 
                 onConnected: function() {
-                    console.log("OPCUA server connected")
-                    this.connected = true
+                    console.log("OPCUA server connected");
+                    this.connButton = "Disconnect WebSocket";
+                    this.connected = true;
                 },
                 onDisconnected: function(e) {
                     if (this.connected) {
-                        console.log("OPCUA server disconnected:" + (e ? e : ""))
-                        this.connected = false
+                        console.log("OPCUA server disconnected:" + (e ? e : ""));
+                        this.connected = false;
+                        this.connButton = "Connect WebSocket";
                     }
                 },
             }
