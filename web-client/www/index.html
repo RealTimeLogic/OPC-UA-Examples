@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="ua_client.js"></script>
     <script src="vue.js"></script>
 
@@ -109,6 +110,20 @@
     .nowrap {
         white-space: nowrap;
     }
+
+    @media screen and (max-width: 568px) {
+        header input {
+            width:150px;
+        }
+        #opcuatxt {
+            display: none;
+        }
+        nav {
+            flex: 2 0 150px;
+        }
+    }
+
+
     </style>
 </head>
 
@@ -121,7 +136,7 @@
             <span>Server WebSocket Connection:</span> <button v-on:click="connect">{{connButton}}</button>
           </div>
           <div>
-            <span v-if="connected">OPC-UA Endpoint:</span>
+            <span v-if="connected"><span id="opcuatxt">OPC-UA </span>Endpoint:</span>
             <input v-if="connected" type="text" v-model="endpointUrl">
             <button v-if="connected" v-on:click="connectEndpoint">Connect</button>
           </div>
