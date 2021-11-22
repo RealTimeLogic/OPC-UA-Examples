@@ -16,8 +16,10 @@ server example lets you quickly test the OPC UA client without having
 to start any third party OPC UA server.
 
 
-You may also connect other (external) OPC-UA clients to the server
-example. See the
+The client's default OPC-UA endpoint address is to the local OPC-UA server. You
+can use any OPC-UA server address, such as the following public OPC-UA
+server: opc.tcp://opcuaserver.com:48010. You can also connect other
+(external) OPC-UA clients to the server example. See the
 [OPC-UA client to server tutorial](https://realtimelogic.com/ba/opcua/thirdparty_clients.html)
 in the OPC-UA main documentation for how to connect various OPC-UA
 clients.
