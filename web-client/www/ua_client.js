@@ -135,7 +135,7 @@ class UAServer {
     }
 
     getAttributeName(attrId) {
-        return attributeNames[attrId - 1]
+        return attributeNames[attrId]
     }
 
 }
