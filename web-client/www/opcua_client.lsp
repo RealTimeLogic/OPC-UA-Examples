@@ -8,7 +8,7 @@ local function opcUaClient(wsSock)
       local data,err = wsSock:read()
       if not data then
          trace("WS close:",err)
-         return
+         break
       end
       local request = ba.json.decode(data)
       local resp = { id = request and request.id }
@@ -77,6 +77,15 @@ local function opcUaClient(wsSock)
       end
       wsSock:write(ba.json.encode(resp), true)
    end
+
+   if uaClient then
+      trace"Closing UA client"
+      pcall(function()
+         uaClient:closeSession()
+         uaClient:disconnect()
+      end)
+   end
+
 end
 
 
