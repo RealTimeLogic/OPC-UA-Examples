@@ -89,6 +89,10 @@
     #refreshbuttton {
         margin-top:3px;
     }
+    table{
+        width: calc(100% - 20px);
+        margin: 0,10px;
+    }
     table,th,td {
         text-align: left;
         border: 1px solid #969696;
@@ -131,7 +135,8 @@
 
     <div id="app">
         <header>
-          <img src="https://realtimelogic.com/GZ/images/icons/RealTimeLogicInv.svg">
+          <title>OPC-UA Web Client</title>
+          <a href="https://realtimelogic.com/products/opc-ua/"><img src="https://realtimelogic.com/GZ/images/icons/RealTimeLogicInv.svg"></a>
           <div>
             <span>Server WebSocket Connection:</span> <button v-on:click="connect">{{connButton}}</button>
           </div>
