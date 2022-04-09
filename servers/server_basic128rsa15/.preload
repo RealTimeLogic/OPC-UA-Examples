@@ -17,17 +17,17 @@ ua.trace.err = function(msg)
 end
 
 
-conf = io:dofile(".opcua_config")
+
+local conf = io:dofile(".opcua_config", _ENV)
+uaServer = ua.newServer(conf)
+
 local function demoAddon(services)
   local objects = "i=40"
   io:dofile(".lua/add_variables.lua")(services, objects)
 end
 
-uaServer = ua.newServer(conf)
 uaServer:initialize(demoAddon)
 uaServer:run()
-
-trace("OPC-UA server started")
 
 function onunload()
   trace("Stopping OPC-UA server")

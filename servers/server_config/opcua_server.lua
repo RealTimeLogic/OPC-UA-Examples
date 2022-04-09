@@ -6,7 +6,13 @@ local config = {
    listenAddress = "localhost", -- '*' to listen on all interfaces
    endpointUrl = "opc.tcp://localhost:4841", -- Endpoint URL is used by clients to establish secure channel.
 
-   logging = {
+   securePolicies ={
+    { -- #1
+      securityPolicyUri = "http://opcfoundation.org/UA/SecurityPolicy#None",
+    }
+  },
+
+  logging = {
     socket = {
       dbgOn = true,
       infOn = true,

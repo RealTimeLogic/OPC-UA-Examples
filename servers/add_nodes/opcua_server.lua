@@ -53,7 +53,16 @@ end
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
-local server = ua.newServer()
+local config = {
+  endpointUrl="opc.tcp://localhost:4841",
+  securePolicies ={
+    { -- #1
+      securityPolicyUri = "http://opcfoundation.org/UA/SecurityPolicy#None",
+    }
+  },
+}
+
+local server = ua.newServer(config)
 
 -- Initialize server.
 server:initialize()

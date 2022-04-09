@@ -1,3 +1,5 @@
+local ua = require("opcua.api")
+
 local listenPort=4841
 local ip = "localhost"
 
@@ -13,9 +15,16 @@ if suc then
   conf = conf.opcua
 end
 
-if not conf then 
+if not conf then
   conf = {
     bufSize = 16384,
+
+    securePolicies = {
+      {
+        securityPolicyUri = ua.Types.SecurityPolicy.None,
+      }
+    },
+
     logging = {
       socket = {
         dbgOn = false,

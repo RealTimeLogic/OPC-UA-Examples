@@ -25,14 +25,16 @@ local function opcUaClient(wsSock)
                   end)
                end
                trace"Creating new UA client"
+               local config = require("loadconf").opcua
+               config.cosocketMode = true
                ua.Tools.printTable("Client configuration", config)
                -- Cosocket mode will automatically be enabled since are we in cosocket context
-               uaClient = ua.newClient()
+               uaClient = ua.newClient(config)
                trace("Connecting to server")
                local suc, result = pcall(function() 
                                             local err
                                             err = uaClient:connect(endpointUrl)
-                                            if not err then _,err = uaClient:openSecureChannel(3600000) end
+                                            if not err then _,err = uaClient:openSecureChannel(3600000, ua.Types.SecurityPolicy.None, ua.Types.MessageSecurityMode.None) end
                                             if not err then _,err = uaClient:createSession("RTL Web client", 1200000) end
                                             if not err then _,err = uaClient:activateSession() end
                                             return err
