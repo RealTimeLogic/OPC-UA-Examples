@@ -1,0 +1,142 @@
+body {
+  margin: 0;
+  padding: 0;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.opcua-client-app {
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  position: fixed;
+  display: flex;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+}
+
+aside {
+  position: fixed;
+  display: flex;
+  left: 0;
+  top: 100px;
+  bottom: 0;
+  width: 300px;
+  border-right: 1px solid lightgray;
+  
+  overflow: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 3mm;
+  height: 3mm;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-track:hover {
+  background: #e1e1e1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(200, 200, 200);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #97a7b7;
+}
+
+main {
+  position: fixed;
+  left: 301px;
+  top: 101px;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  padding: 4px;
+}
+
+.opcua-header {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  border-bottom: 1px solid silver;
+  justify-content: space-between;
+  align-items: center;
+  background-image: linear-gradient(to bottom, #34495e, #2c3e50);
+}
+
+.realtimelogic-header-logo {
+  height: 2cm;
+}
+
+.endpoint-config-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.endpoint-url {
+  margin-bottom: 3mm;
+}
+
+.node-tree {
+  padding: 5px;
+  width: 100%;
+}
+
+.node-row {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: left;
+}
+
+.node-plus {
+  display: inline-block;
+  width: 14px;
+  height: 20px;
+  text-align: left;
+  vertical-align: middle;
+  padding: auto;
+}
+
+.node-name {
+  display: inline-block;
+}
+
+.node-name:hover {
+  background-color: rgb(225, 226, 226);
+}
+
+.node-children {
+  padding-left:10px;
+  width: 1fr;
+}
+
+.table-node-attributes {
+  width: 100%;
+  /* border: 1px solid gray; */
+  border-collapse: collapse;
+}
+
+.td-node-attribute {
+  border: 1px solid gray;
+  padding: 3px;
+}
+.td-node-attribute-name {
+  width: 20%;
+}
+
+.td-node-attribute-value {
+
+}

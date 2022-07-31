@@ -16,6 +16,8 @@ ua.trace.err = function(msg)
   trace(gettime(), "[ERR]", msg)
 end
 
+_G.clientConfig = _ENV.app.io:dofile(".opcua_config", _ENV)
+
 local function waitForDebugger()
    
    -- Load the Lua Debug Monitor "ldbgmon" and call the connect() method

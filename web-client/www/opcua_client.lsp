@@ -25,21 +25,20 @@ local function opcUaClient(wsSock)
                   end)
                end
                trace"Creating new UA client"
-               local config = require("loadconf").opcua
-               config.cosocketMode = true
-               ua.Tools.printTable("Client configuration", config)
+               clientConfig.cosocketMode = true
+               ua.Tools.printTable("Client configuration", clientConfig)
                -- Cosocket mode will automatically be enabled since are we in cosocket context
-               uaClient = ua.newClient(config)
+               uaClient = ua.newClient(clientConfig)
                trace("Connecting to server")
                local suc, result = pcall(function() 
-                                            local err
-                                            err = uaClient:connect(endpointUrl)
+                                            local err = uaClient:connect(endpointUrl)
                                             if not err then _,err = uaClient:openSecureChannel(3600000, ua.Types.SecurityPolicy.None, ua.Types.MessageSecurityMode.None) end
                                             if not err then _,err = uaClient:createSession("RTL Web client", 1200000) end
                                             if not err then _,err = uaClient:activateSession() end
                                             return err
                                          end)
                if not suc or result then
+                  uaClient = nil
                   trace("Connection failed: ", result)
                   resp.error = result
                else
@@ -52,6 +51,17 @@ local function opcUaClient(wsSock)
          else
             if not uaClient then
                resp.error = "OPC UA Client not connected"
+            elseif request.getEndpoints then
+               trace("Selecting endpoints: ")
+               local suc, result = pcall(uaClient.getEndpoints, uaClient, request.getEndpoints)
+               for _,endpoint in ipairs(result.endpoints) do 
+                 endpoint.serverCertificate = nil -- Erase until because need to 
+               end
+               if suc then
+                  resp.endpoints = result.endpoints
+               else
+                  resp.error = result
+               end
             elseif request.browse then
                trace("Browsing node: "..request.browse.nodeId)
                local suc, result = pcall(uaClient.browse, uaClient, request.browse.nodeId)
@@ -77,7 +87,8 @@ local function opcUaClient(wsSock)
       else
          resp.error = "JSON parse error"
       end
-      wsSock:write(ba.json.encode(resp), true)
+      local data = ba.json.encode(resp)
+      wsSock:write(data, true)
    end
 
    if uaClient then
@@ -89,7 +100,6 @@ local function opcUaClient(wsSock)
    end
 
 end
-
 
 if request:header"Sec-WebSocket-Key" then
    trace"New WebSocket connection"

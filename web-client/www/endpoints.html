@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="endpoints.css">
+    <link rel="stylesheet" href="endpoints_app.css">
+  </head>
+  <body>
+    <div id="app-get-endpoints">
+      <div id="endpoints-window">
+        <endpoints :websocketUrl="websocketUrl"></endpoints>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+      }
+    </script>
+    <script src="ua_server.js" type="module"></script>
+    <script src="endpoints_app.js" type="module"></script>
+  </body>
+</html>
