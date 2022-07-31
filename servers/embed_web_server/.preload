@@ -21,7 +21,7 @@ uaServer = ua.newServer(conf)
 
 local function demoAddon(services)
   local objects = "i=40"
-  io:dofile(".lua/add_variables.lua")(services, objects)
+  io:dofile(".add_variables.lua")(services, objects)
 end
 
 uaServer:initialize(demoAddon)

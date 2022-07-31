@@ -36,7 +36,6 @@
                 :nodeid="root.nodeid"
                 :label="root.label"
                 :nodes="root.nodes"
-                :depth="0"
             />
         </section>
 
@@ -117,12 +116,7 @@
         })
 
         Vue.component("ua-node", {
-            props:['nodeid', 'label', 'nodes', 'depth'],
-            computed: {
-                ident() {
-                    return {transform: `translate(${this.depth * 20}px)`}
-                },
-            },
+            props:['nodeid', 'label', 'nodes'],
             template:
                 '<div :style="ident">\
                     <div>\
@@ -133,7 +127,6 @@
                         :nodeid="node.nodeid" \
                         :label="node.label" \
                         :nodes="node.nodes" \
-                        :depth="depth + 1" \
                     />\
                 </div>',
 

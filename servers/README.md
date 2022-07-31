@@ -43,5 +43,7 @@ for more information on how to start the Mako Server.
    the server. The callback will be called for each read and write
    requests from the client.
 
-8. "server": A complete server example designed to be used with
-   [../web-client](../web-client/README.md)
+8. "embed_web_server": A web application that provides interface to OPC-UA server.
+   This example shows how to call server methods directly without network 
+   interaction. Server instance is created at application start and then 
+   LSP page calls its methods.
