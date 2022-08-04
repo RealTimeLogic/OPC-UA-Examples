@@ -26,32 +26,32 @@ var app = createApp({
         webSocketUrl: getWebSocketUrl(),
         endpointUrl: "opc.tcp://localhost:4841",
         connected: false,
-        websocketConnected: false
+        websocketConnected: false,
+        endpoints: [],
+        selectedEndpointIndex: 0
       }
     },
     mounted() {
-        this.connect()
+      uaServer = new UAServer(this)
+      this.connect()
     },
     methods: {
         connect: function() {
-            if (!uaServer) {
-                uaServer = new UAServer(this)
-            }
-
             if (!this.connected)
             {
-                console.info("Connecting to Websocket " + this.webSocketUrl)
-                uaServer.connect(this.webSocketUrl)
+              console.info("Connecting to Websocket " + this.webSocketUrl)
+              uaServer.connect(this.webSocketUrl)
             }
             else
             {
-                uaServer.disconnect()
+              uaServer.disconnect()
             }
         },
 
         connectEndpoint() {
             var self = this
             this.connected = false;
+            let endpoint = this.endpoints[this.selectedEndpointIndex]
             root.nodes = []
 
             var config = {
@@ -60,7 +60,9 @@ var app = createApp({
               productUri: "urn:opcua-lua:web_client",
 
               endpointUrl: this.endpointUrl,
-              securityPolicyUri: "http://opcfoundation.org/UA/SecurityPolicy#None",
+              securityPolicyUri: endpoint.securityPolicyUri,
+              securityMode: endpoint.securityMode,
+              serverCertificate: endpoint.serverCertificate
             }
             uaServer.connectEndpoint(config, resp => {
                 if (resp.error)
@@ -81,6 +83,49 @@ var app = createApp({
             console.log("Web socket disconnected:" + (e ? e : ""));
             this.websocketConnected = false
         },
+        fillSecurePolicies ()
+        {
+          this.connected = false
+          var config = {
+            applicationName: 'RealTimeLogic web client',
+            applicationUri: "urn:opcua-lua:web_client",
+            productUri: "urn:opcua-lua:web_client",
+
+            endpointUrl: this.endpointUrl,
+            securityPolicyUri: "http://opcfoundation.org/UA/SecurityPolicy#None",
+          }
+
+          let fillEndpointsList = (resp) => {
+            if (resp.error)
+            {
+              alert(resp.error)
+              return
+            }
+      
+            let endpoints = resp.endpoints;
+            endpoints.forEach((val, idx, arr) => {
+              arr[idx].policyName = uaServer.getPolicyName(val.securityPolicyUri);
+              arr[idx].securityModeName = uaServer.getMessageModeName(val.securityMode);
+              arr[idx].id = arr[idx].policyName + "-" + arr[idx].securityModeName
+            })
+      
+            endpoints.sort((a,b) => {
+              if (a.securityLevel != b.securityLevel)
+                return b.securityLevel - a.securityLevel;
+      
+              if (a.securityPolicyUri == b.securityPolicyUri)
+                return a.securityMode - b.securityMode;
+      
+              return a.securityPolicyUri.localeCompare(b.securityPolicyUri)
+            })
+      
+            this.endpoints = endpoints
+          }
+
+          uaServer.connectEndpoint(config, (resp) => {
+            uaServer.getEndpoints({}, fillEndpointsList);
+          })
+        }    
     }
 })
 

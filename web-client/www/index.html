@@ -10,8 +10,14 @@
     <header>
       <div class="opcua-header">
         <form class="endpoint-config-form">
-          <input class="endpoint-url" type="url" v-model="endpointUrl" placeholder="OPC-UA Endpoint URL">
-          <input class="connect-button" v-on:click="connectEndpoint" type="button" value="Connect &#8677;">
+          <div class="endpoint-select-row">
+            <input id="endpointUrl" class="endpoint-url" type="url" v-model="endpointUrl" placeholder="OPC-UA Endpoint URL">
+            <input class="fill-endpoints-button" v-on:click="fillSecurePolicies" type="button" value="*">
+          </div>
+          <select id="securityMode" class="endpoints-select" v-bind:disabled="endpoints.length == 0" v-model="selectedEndpointIndex">
+            <option v-for="(endpoint, index) in endpoints" :value="index">{{ endpoint.policyName }} - {{endpoint.securityModeName}}</option>
+          </select>
+          <input class="connect-button"type="button" value="Connect &#8677;" v-bind:disabled="endpoints.length == 0"  v-on:click="connectEndpoint">
         </form>
         <a href="http://realtimelogic.com" target="_blank">
           <img class="realtimelogic-header-logo" src="https://realtimelogic.com/GZ/images/icons/RealTimeLogicInv.svg">

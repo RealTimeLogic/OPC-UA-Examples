@@ -23,7 +23,7 @@ aside {
   position: fixed;
   display: flex;
   left: 0;
-  top: 100px;
+  top: 101px;
   bottom: 0;
   width: 300px;
   border-right: 1px solid lightgray;
@@ -81,12 +81,32 @@ main {
 }
 
 .endpoint-config-form {
+  width: 280px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding-left: 10px;
+  height: 90px;
+}
+
+.endpoint-select-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 .endpoint-url {
-  margin-bottom: 3mm;
+  flex-grow: 1;
+}
+
+.fill-endpoints-button {
+  width: 20px;
+}
+
+.endpoints-select {
+}
+
+.connect-button {
 }
 
 .node-tree {

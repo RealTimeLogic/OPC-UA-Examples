@@ -31,6 +31,7 @@ const attributeNames = [
 const GetPolicyNames = {
   "http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15": "Basic128Rsa15",
   "http://opcfoundation.org/UA/SecurityPolicy#Basic256": "Basic256",
+  "http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256": "Basic256Sha256",
   "http://opcfoundation.org/UA/SecurityPolicy#None": "None",
   "http://opcfoundation.org/UA/SecurityPolicy#Aes128_Sha256_RsaOaep": "Aes128_Sha256_RsaOaep",
   "http://opcfoundation.org/UA/SecurityPolicy#Aes256_Sha256_RsaPss": "Aes256_Sha256_RsaPss"
