@@ -16,13 +16,6 @@ local function opcUaClient(wsSock)
          if request.connectEndpoint then
             trace("Received Connect request")
             local endpointUrl = request.connectEndpoint.endpointUrl
-            local securityPolicyUri = request.connectEndpoint.securityPolicyUri or ua.Types.SecurityPolicy.None
-            local securityMode = request.connectEndpoint.securityMode or ua.Types.MessageSecurityMode.None
-            local serverCertificate = request.connectEndpoint.serverCertificate
-            if serverCertificate then
-              serverCertificate = ba.b64decode(serverCertificate)
-            end
-          
             if endpointUrl then
                if uaClient then
                   trace"Closing UA client"
@@ -36,18 +29,9 @@ local function opcUaClient(wsSock)
                ua.Tools.printTable("Client configuration", clientConfig)
                -- Cosocket mode will automatically be enabled since are we in cosocket context
                uaClient = ua.newClient(clientConfig)
-               trace("Connecting to server")
+               trace("Connecting to endpoint '".. endpointUrl .. "'")
                local suc, result = pcall(function()
-                                            trace("Connecting to endpoint '".. endpointUrl .. "'")
-                                            local err = uaClient:connect(endpointUrl)
-                                            local session
-                                            trace("Opening secureChannel")
-                                            if not err then _,err = uaClient:openSecureChannel(3600000, securityPolicyUri, securityMode, serverCertificate) end
-                                            trace("Creating Session")
-                                            if not err then session,err = uaClient:createSession("RTL Web client", 1200000) end
-                                            trace("Activating Session")
-                                            if not err then _,err = uaClient:activateSession(session) end
-                                            return err
+                                          return uaClient:connect(endpointUrl)
                                          end)
                if not suc or result then
                   uaClient = nil
@@ -63,37 +47,64 @@ local function opcUaClient(wsSock)
          else
             if not uaClient then
                resp.error = "OPC UA Client not connected"
+            elseif request.openSecureChannel then
+              local timeoutMs = request.openSecureChannel.timeoutMs or 3600000
+              local securityPolicyUri = request.openSecureChannel.securityPolicyUri or ua.Types.SecurityPolicy.None
+              local securityMode = request.openSecureChannel.securityMode or ua.Types.MessageSecurityMode.None
+              local serverCertificate = request.openSecureChannel.serverCertificate
+              if serverCertificate then
+                serverCertificate = ba.b64decode(serverCertificate)
+              end
+              trace("Opening secureChannel")
+              resp.data, resp.error = uaClient:openSecureChannel(timeoutMs, securityPolicyUri, securityMode, serverCertificate)
+            elseif request.closeSecureChannel then
+              trace("Closing Secure Channel")
+              resp.error = uaClient:closeSecureChannel()
+            elseif request.createSession then
+              trace("Creating Session")
+              local sessionName = request.createSession.sessionName
+              local sessionTimeout = request.createSession.sessionTimeout
+              resp.data, resp.error = uaClient:createSession(sessionName, sessionTimeout)
+              if not resp.error then 
+                for _, endpoint in ipairs(resp.data.serverEndpoints) do
+                  if endpoint.serverCertificate then
+                    endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
+                  end
+                end
+                if resp.data.serverSignature.signature then
+                  resp.data.serverSignature.signature = ba.b64encode(resp.data.serverSignature.signature)
+                end
+
+                if resp.data.serverCertificate then
+                  resp.data.serverCertificate = ba.b64encode(resp.data.serverCertificate)
+                end
+
+                if resp.data.serverNonce then
+                  resp.data.serverNonce = ba.b64encode(resp.data.serverNonce)
+                end
+                
+              end
+
+            elseif request.activateSession then
+              trace("Activating Session")
+              resp.data, resp.error = uaClient:activateSession({})
+            elseif request.closeSession then
+              trace("Closing Session")
+              resp.data, resp.error = uaClient:closeSession()
             elseif request.getEndpoints then
               trace("Selecting endpoints: ")
-              local suc, result = pcall(uaClient.getEndpoints, uaClient, request.getEndpoints)
-              for _,endpoint in ipairs(result.endpoints) do 
+              resp.data, resp.error = uaClient:getEndpoints(request.getEndpoints)
+              for _,endpoint in ipairs(resp.data.endpoints) do 
                 if endpoint.serverCertificate then
-                  endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate) -- Erase until because need to 
+                  endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
                 end
-              end
-              if suc then
-                resp.endpoints = result.endpoints
-              else
-                resp.error = result
               end
             elseif request.browse then
                trace("Browsing node: "..request.browse.nodeId)
-               local suc, result = pcall(uaClient.browse, uaClient, request.browse.nodeId)
-               if suc then
-                  resp.browse = result.results
-               else
-                  resp.error = result
-               end
+               resp.data, resp.error = uaClient:browse(request.browse.nodeId)
             elseif request.read then
                trace("Reading attribute of node: "..request.read.nodeId)
-               local suc, result = pcall(uaClient.read, uaClient, request.read.nodeId)
-               if suc then
-                  trace("Read successfull")
-                  resp.read = result.results
-               else
-                  trace("Read failed")
-                  resp.error = result
-               end
+               resp.data, resp.error = uaClient:read(request.read.nodeId)
             else
                resp.error = "Unknown request type"
             end

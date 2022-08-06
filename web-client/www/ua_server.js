@@ -1,3 +1,5 @@
+"use strict";
+
 const attributeNames = [
     "NodeId",
     "NodeClass",
@@ -39,120 +41,183 @@ const GetPolicyNames = {
 
 
 class UAServer {
-  constructor(comp) {
-      this.Comp = comp
-      this.Requests = []
-      this.RequestCounter = 0
-      this.Sock = null
-      this.SiteURL = null
-  }
+  constructor(siteURL) {
+    this.Requests = new Map() // List of currently issued requests with its parameters
+    this.RequestCounter = 0 // Request ID counter
 
-  reset() {
-      this.Sock = null
-      this.SiteURL = null
-  }
-
-  connect(siteURL) {
-      if (this.SiteURL == siteURL)
-          return
-
-      let _this = this
-      let comp = this.Comp
-      try  {
-          this.Sock = new WebSocket(siteURL)
-          this.Sock.onopen = () => {
-              comp.onConnected(_this)
-              this.SiteURL = siteURL
-          }
-          this.Sock.onclose =  () => {
-            let th = _this;
-            _this.reset()
-            comp.onDisconnected(th)
-          }
-          this.Sock.onmessage =  function(msg) {
-              let resp = JSON.parse(msg.data)
-              let request = _this.Requests.filter(el => el.id == resp.id)
-              if (request.length == 0) {
-                  alert("reseived response on unknown request: " + msg.data)
-                  return
-              }
-
-              request[0].callback(resp)
-          }
-          this.Sock.onerror = (e) => {
-              _this.reset()
-              comp.onDisconnected(e)
-          }
+    return new Promise((resolve, reject) => {
+      this.Sock = new WebSocket(siteURL);
+      this.Sock.onopen = () => {
+        console.log("Connected to websocket " + siteURL);
+        resolve(this)
       }
-      catch(e) {
-          _this.reset()
-          comp.onDisconnected(e)
+
+      let reset = (e) => {
+        for (const request of this.Requests.entries()) {
+          let val = request[1]
+          val.reject(e);
+        }
+        this.Sock = null
+        this.SiteURL = null
+        this.Requests = new Map()
       }
+
+      this.Sock.onclose = () => {
+        console.log("Disconnected websocket " + siteURL);
+        reset();
+        reject()
+      }
+
+      this.Sock.onerror = (e) => {
+        console.log("Websocket " + siteURL + "error: " + e);
+        reset();
+        reject(e)
+      }
+
+      this.Sock.onmessage =  (msg) => {
+        let resp
+        try {
+          resp = JSON.parse(msg.data)
+        } catch (e) {
+          alert("Invalid JSON response: " + e)
+        }
+
+        let request = this.Requests.get(resp.id)
+        clearTimeout(request.timeout)
+        this.Requests.delete(resp.id)
+        if (resp.error)
+          request.reject(new Error(resp.error));
+        else
+          request.resolve(resp.data);
+      }
+    })
   }
 
   disconnect() {
+    return new Promise ((resolve, reject) => {
       if (this.Sock != null) {
-          this.Sock.close()
-          this.reset()
+        this.Sock.close()
+        resolve();
+      } else {
+        reject()
       }
+    })
   }
 
-  requestId() {
+  nextRequestId() {
       this.RequestCounter += 1
       return this.RequestCounter
   }
 
-  sendRequest(request, callback) {
+  sendRequest(request) {
+    return new Promise((resolve, reject) => {
       if (this.Sock == null){
-          alert("No connection to web socket server.")
-          return;
+        reject(new Error("No connection to web socket server."))
+        return;
       }
 
-      request.id =  this.requestId(),
-      this.Requests.push({id: request.id, callback: callback})
-      try {
-          this.Sock.send(JSON.stringify(request))
+      let requestId = this.nextRequestId()
+      let requestData = {
+        resolve: resolve,
+        reject: reject,
+        timeout: setTimeout(() => {reject("timeout")}, 5000)
       }
-      catch (e){
-          this.Requests.filter(el => {el.requestId == request.id})
-          alert("failed to send  request")
-      }
+
+      this.Requests.set(requestId, requestData)
+
+      request.id = requestId
+      this.Sock.send(JSON.stringify(request))
+    });
   }
 
-  connectEndpoint(config, callback){
-      let request = {
-          connectEndpoint: config
+  connectEndpoint(endpoint){
+    let config
+    if (typeof(endpoint) == 'string') {
+      config = {
+        endpointUrl: endpoint
       }
-      this.sendRequest(request, callback)
-  }
-
-  getEndpoints(config, callback) {
-    let request = {
-      getEndpoints: config
+    } else {
+      config = endpoint
     }
-    this.sendRequest(request, callback)
+
+    let request = {
+        connectEndpoint: config
+    }
+
+    return this.sendRequest(request)
   }
 
-  browse(nodeId, callback){
-      let request = {
-          browse: {
-              nodeId: nodeId
-          }
+  openSecureChannel(timeoutMs, securityPolicyUri, securityMode, serverCertificate) {
+    let request = {
+      openSecureChannel: {
+        timeoutMs: timeoutMs,
+        securityPolicyUri: securityPolicyUri,
+        securityMode: securityMode,
+        serverCertificate: serverCertificate
       }
-      this.sendRequest(request, callback)
+    }
+    return this.sendRequest(request)
   }
 
-  readAttributes(nodeId, callback){
-      let request = {
-          read: {
-              nodeId: nodeId
-          }
+  closeSecureChannel() {
+    let request = {
+      closeSecureChannel: {}
+    }
+    return this.sendRequest(request)
+  }
+
+
+  createSession(sessionName, timeoutMs) {
+    let request = {
+      createSession: {
+        sessionName: sessionName,
+        sessionTimeout: timeoutMs
       }
-      this.sendRequest(request, callback)
+    }
+    return this.sendRequest(request)
+  }
+
+  activateSession() {
+    let request = {
+      activateSession: {}
+    }
+    return this.sendRequest(request)
+  }
+
+  closeSession() {
+    let request = {
+      closeSession: {}
+    }
+    return this.sendRequest(request)
+  }
+
+  getEndpoints() {
+    let request = {
+      getEndpoints: {}
+    }
+    return this.sendRequest(request)
+  }
+
+  browse(nodeId) {
+    let request = {
+        browse: {
+            nodeId: nodeId
+        }
+    }
+    return this.sendRequest(request)
+  }
+
+  read(nodeId){
+    let request = {
+        read: {
+            nodeId: nodeId
+        }
+    }
+    return this.sendRequest(request)
   }
 
   getAttributeName(attrId) {
-      return attributeNames[attrId]
+    return attributeNames[attrId]
   }
 
   getPolicyName(uri) {

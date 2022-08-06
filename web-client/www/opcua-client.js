@@ -1,14 +1,14 @@
-import { createApp } from './vue.esm-browser.js'
+import { createApp, toHandlers } from './vue.esm-browser.js'
 import { UAServer } from "./ua_server.js"
 
 var onNodeSelected = () => {}
 var uaServer = null
 
 function getWebSocketUrl() {
-  // let l = window.location
-  // let protocol = l.protocol === 'https:' ? "wss://" : "ws://"
-  // let url = protocol + l.host + l.pathname + "opcua_client.lsp"
-  const url = "ws://localhost/opcua_client.lsp";
+  let l = window.location
+  let protocol = l.protocol === 'https:' ? "wss://" : "ws://"
+  let url = protocol + l.host + l.pathname + "opcua_client.lsp"
+  // const url = "ws://localhost/opcua_client.lsp";
   return url;
 }
 
@@ -23,109 +23,70 @@ var app = createApp({
     data() {
       return {
         root: root,
-        webSocketUrl: getWebSocketUrl(),
         endpointUrl: "opc.tcp://localhost:4841",
         connected: false,
-        websocketConnected: false,
         endpoints: [],
         selectedEndpointIndex: 0
       }
     },
-    mounted() {
-      uaServer = new UAServer(this)
-      this.connect()
-    },
     methods: {
-        connect: function() {
-            if (!this.connected)
-            {
-              console.info("Connecting to Websocket " + this.webSocketUrl)
-              uaServer.connect(this.webSocketUrl)
-            }
-            else
-            {
-              uaServer.disconnect()
-            }
-        },
-
-        connectEndpoint() {
-            var self = this
-            this.connected = false;
-            let endpoint = this.endpoints[this.selectedEndpointIndex]
-            root.nodes = []
-
-            var config = {
-              applicationName: 'RealTimeLogic web client',
-              applicationUri: "urn:opcua-lua:web_client",
-              productUri: "urn:opcua-lua:web_client",
-
-              endpointUrl: this.endpointUrl,
-              securityPolicyUri: endpoint.securityPolicyUri,
-              securityMode: endpoint.securityMode,
-              serverCertificate: endpoint.serverCertificate
-            }
-            uaServer.connectEndpoint(config, resp => {
-                if (resp.error)
-                {
-                  this.connected = false;
-                  return;
-                }
-                this.connected = true;
-                // onNodeSelected("i=84");
-            })
-        },
-
-        onConnected: function() {
-            console.log("Web socket connected");
-            this.websocketConnected = true
-        },
-        onDisconnected: function(e) {
-            console.log("Web socket disconnected:" + (e ? e : ""));
-            this.websocketConnected = false
-        },
-        fillSecurePolicies ()
-        {
+      async connect() {
+        try {
+          this.root.nodes = []
+          onNodeSelected(null)
           this.connected = false
-          var config = {
-            applicationName: 'RealTimeLogic web client',
-            applicationUri: "urn:opcua-lua:web_client",
-            productUri: "urn:opcua-lua:web_client",
 
-            endpointUrl: this.endpointUrl,
-            securityPolicyUri: "http://opcfoundation.org/UA/SecurityPolicy#None",
-          }
+          console.info("Connecting to endpoint ")
+          uaServer = await new UAServer(getWebSocketUrl())
+          console.log("Web socket connected");
 
-          let fillEndpointsList = (resp) => {
-            if (resp.error)
-            {
-              alert(resp.error)
-              return
-            }
-      
-            let endpoints = resp.endpoints;
-            endpoints.forEach((val, idx, arr) => {
-              arr[idx].policyName = uaServer.getPolicyName(val.securityPolicyUri);
-              arr[idx].securityModeName = uaServer.getMessageModeName(val.securityMode);
-              arr[idx].id = arr[idx].policyName + "-" + arr[idx].securityModeName
-            })
-      
-            endpoints.sort((a,b) => {
-              if (a.securityLevel != b.securityLevel)
-                return b.securityLevel - a.securityLevel;
-      
-              if (a.securityPolicyUri == b.securityPolicyUri)
-                return a.securityMode - b.securityMode;
-      
-              return a.securityPolicyUri.localeCompare(b.securityPolicyUri)
-            })
-      
-            this.endpoints = endpoints
-          }
+          let endpoint = this.endpoints[this.selectedEndpointIndex]
+          await uaServer.connectEndpoint(this.endpointUrl)
+          await uaServer.openSecureChannel(3600000, endpoint.securityPolicyUri, endpoint.securityMode, endpoint.serverCertificate)
+          await uaServer.createSession("web_client_session", 3600000)
+          await uaServer.activateSession()
+          this.connected = true;
+        } catch (e) {
+          console.log("Web socket disconnected:" + (e ? e : ""));
+          this.connected = false
+          uaServer = null
+        }
+      },
 
-          uaServer.connectEndpoint(config, (resp) => {
-            uaServer.getEndpoints({}, fillEndpointsList);
+      async fillSecurePolicies ()
+      {
+        try {
+          let discoveryServer = await new UAServer(getWebSocketUrl());
+          await discoveryServer.connectEndpoint(this.endpointUrl)
+          await discoveryServer.openSecureChannel(5000)
+          let resp = await discoveryServer.getEndpoints()
+          let endpoints = resp.endpoints;
+          endpoints.forEach((val, idx, arr) => {
+            arr[idx].policyName = discoveryServer.getPolicyName(val.securityPolicyUri);
+            arr[idx].securityModeName = discoveryServer.getMessageModeName(val.securityMode);
+            arr[idx].id = arr[idx].policyName + "-" + arr[idx].securityModeName
           })
-        }    
+    
+          endpoints.sort((a,b) => {
+            if (a.securityLevel != b.securityLevel)
+              return b.securityLevel - a.securityLevel;
+    
+            if (a.securityPolicyUri == b.securityPolicyUri)
+              return a.securityMode - b.securityMode;
+    
+            return a.securityPolicyUri.localeCompare(b.securityPolicyUri)
+          })
+    
+          this.endpoints = endpoints
+
+          await discoveryServer.closeSecureChannel()
+          await discoveryServer.disconnect()
+        }
+        catch (err)
+        {
+          alert(err)
+        }
+      }    
     }
 })
 
@@ -152,27 +113,31 @@ app.component("ua-attributes", {
         }
     },
     methods: {
-        readAttributes(nodeId) {
-            var self = this
-            uaServer.readAttributes(nodeId, resp => {
-                if (!resp.read)
-                {
-                    this.attributes = []
-                    return;
-                }
+        async readAttributes(nodeId) {
+          try {
+            if (nodeId === null)
+            {
+              this.attributes = []
+              return
+            }
 
-                let attrs = []
-                resp.read.forEach( (attr,index) => {
-                    if ((typeof(attr.statusCode) != "undefined" && attr.statusCode != 0) || typeof(attr.value) == "undefined")
-                        return
+            let resp = await uaServer.read(nodeId)
+            let attrs = []
+            resp.results.forEach( (attr,index) => {
+                if ((typeof(attr.statusCode) != "undefined" && attr.statusCode != 0) || typeof(attr.value) == "undefined")
+                    return
 
-                    attrs.push({
-                        name: uaServer.getAttributeName(index),
-                        value: JSON.stringify(attr.value, null, "  ")
-                    })
-                });
-                this.attributes = attrs
-            })
+                attrs.push({
+                    name: uaServer.getAttributeName(index),
+                    value: JSON.stringify(attr.value, null, "  ")
+                })
+            });
+
+            this.attributes = attrs
+          } catch (e) {
+            this.attributes = []
+            console.error(e)
+          }
         },
     },
     mounted() {
@@ -196,34 +161,26 @@ app.component("ua-node", {
         </div>',
 
     methods: {
-        browse: function() {
-            if (this.root.nodes.length != 0)
-            {
-                this.root.nodes = []
-                return
-            }
+        async browse() {
+          if (this.root.nodes.length != 0)
+          {
+            this.root.nodes = []
+            return
+          }
 
-            uaServer.browse(this.root.nodeid, (resp) => {
-                if (!resp.browse)
-                {
-                    if(resp.error)
-                        alert(resp.error);
-                    return;
-                }
-
-                let nodes = []
-                resp.browse.forEach(result => {
-                    result.references.forEach(ref => {
-                        nodes.push({
-                            nodeid: ref.nodeId,
-                            label: ref.browseName.name,
-                            nodes: []
-                        })
-                    })
-                });
-
-                this.root.nodes = nodes
+          let resp = await uaServer.browse(this.root.nodeid)
+          let nodes = []
+          resp.results.forEach(result => {
+            result.references.forEach(ref => {
+              nodes.push({
+                  nodeid: ref.nodeId,
+                  label: ref.browseName.name,
+                  nodes: []
+              })
             })
+          });
+
+          this.root.nodes = nodes
         },
         selectNode: function() {
           onNodeSelected(this.root.nodeid);

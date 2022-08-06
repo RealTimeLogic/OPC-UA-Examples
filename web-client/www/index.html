@@ -17,7 +17,7 @@
           <select id="securityMode" class="endpoints-select" v-bind:disabled="endpoints.length == 0" v-model="selectedEndpointIndex">
             <option v-for="(endpoint, index) in endpoints" :value="index">{{ endpoint.policyName }} - {{endpoint.securityModeName}}</option>
           </select>
-          <input class="connect-button"type="button" value="Connect &#8677;" v-bind:disabled="endpoints.length == 0"  v-on:click="connectEndpoint">
+          <input class="connect-button"type="button" value="Connect &#8677;" v-bind:disabled="endpoints.length == 0"  v-on:click="connect">
         </form>
         <a href="http://realtimelogic.com" target="_blank">
           <img class="realtimelogic-header-logo" src="https://realtimelogic.com/GZ/images/icons/RealTimeLogicInv.svg">
