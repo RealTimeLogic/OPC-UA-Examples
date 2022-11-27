@@ -23,5 +23,5 @@ command line guide for additional instructions.
 
 ## Examples / Tutorials
 
-* [Server Examples](server/README.md)
+* [Server Examples](servers/README.md)
 * [OPC-UA Client and Web Client Example](web-client/README.md)
