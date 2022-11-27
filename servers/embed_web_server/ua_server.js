@@ -49,7 +49,7 @@ class UAServer {
 
         let _this = this
         let comp = this.Comp
-        try  {
+        try  { 
             this.Sock = new WebSocket(siteURL)
             this.Sock.onopen = () => {
                 comp.onConnected()
@@ -109,13 +109,6 @@ class UAServer {
         }
     }
 
-    connectEndpoint(config, callback){
-        let request = {
-            connectEndpoint: config
-        }
-        this.sendRequest(request, callback)
-    }
-
     browse(nodeId, callback){
         let request = {
             browse: {
@@ -135,7 +128,7 @@ class UAServer {
     }
 
     getAttributeName(attrId) {
-        return attributeNames[attrId]
+        return attributeNames[attrId - 1]
     }
 
 }

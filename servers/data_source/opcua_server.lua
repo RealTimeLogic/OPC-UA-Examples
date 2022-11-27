@@ -4,6 +4,14 @@ local nodeIds = require("opcua.node_ids")
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
+local config = {
+  endpointUrl="opc.tcp://localhost:4841",
+  securePolicies ={
+    { -- #1
+      securityPolicyUri = "http://opcfoundation.org/UA/SecurityPolicy#None",
+    }
+  },
+}
 local server = ua.newServer(config)
 
 -- Node ID of data source

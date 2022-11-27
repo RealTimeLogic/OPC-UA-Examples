@@ -2,358 +2,41 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="ua_client.js"></script>
-    <script src="vue.js"></script>
-
-    <style type="text/css">
-
-    *,
-    *::before,
-    *::after {
-        box-sizing: border-box;
-    }
-
-    html,body{
-        margin: 0;
-        padding: 0;
-    }
-
-    html,body,#app {
-
-        height:100%;
-    }
-
-    #app {
-        display: flex;
-        flex-flow: column;
-    }
-
-    header {
-        height:75px;
-        border-bottom: 1px solid silver;
-    }
-    header img{
-        margin:10px;
-        float:right;
-        max-height:55px;
-        width: auto;
-    }
-    @media screen and (max-width: 794px) {
-        header img{
-            display: none;
-        }
-    }
-    header button,header input {
-        margin:8px;
-    }
-    header,nav {
-        background: #191818;
-        color: white;
-    }
-    header button {
-        min-width:100px;
-    }
-    header input {
-        width:300px;
-    }
-
-    #container {
-        display: flex;
-        flex-direction: row;
-        flex:1;
-    }
-
-    nav {
-        flex: 2 0 250px;
-        padding: 5px 5px 5px 0;
-        margin-left: -10px;
-    }
-    nav span {
-        cursor: pointer;
-    }
-    nav span.plus {
-        font-weight: bolder;
-        font-family:courier, courier new;
-        margin-right: 5px;
-        color: Lime;
-        float: left;
-    }
-
-    main pre {
-        white-space: pre-wrap;
-    }
-    main {
-        padding-left:8px;
-        width:100%;
-    }
-    #refreshbuttton {
-        margin-top:3px;
-    }
-    table{
-        width: calc(100% - 20px);
-        margin: 0,10px;
-    }
-    table,th,td {
-        text-align: left;
-        border: 1px solid #969696;
-        border-collapse: collapse;
-        color: black;
-    }
-    th {
-        background: #efefef;
-    }
-
-    header button {
-        margin-bottom:5px;
-    }
-
-    .node-tree-panel div {
-        margin-left:10px;
-    }
-
-    .nowrap {
-        white-space: nowrap;
-    }
-
-    @media screen and (max-width: 568px) {
-        header input {
-            width:150px;
-        }
-        #opcuatxt {
-            display: none;
-        }
-        nav {
-            flex: 2 0 150px;
-        }
-    }
-
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
-    <div id="app">
-        <header>
-          <title>OPC-UA Web Client</title>
-          <a href="https://realtimelogic.com/products/opc-ua/"><img src="https://realtimelogic.com/GZ/images/icons/RealTimeLogicInv.svg"></a>
-          <div>
-            <span>Server WebSocket Connection:</span> <button v-on:click="connect">{{connButton}}</button>
+  <div id="opcua-client-app" class="opcua-client-app">
+    <header>
+      <div class="opcua-header">
+        <form class="endpoint-config-form">
+          <div class="endpoint-select-row">
+            <input id="endpointUrl" class="endpoint-url" type="url" v-model="endpointUrl" placeholder="OPC-UA Endpoint URL">
+            <input class="fill-endpoints-button" v-on:click="fillSecurePolicies" type="button" value="*">
           </div>
-          <div>
-            <span v-if="connected"><span id="opcuatxt">OPC-UA </span>Endpoint:</span>
-            <input v-if="connected" type="text" v-model="endpointUrl">
-            <button v-if="connected" v-on:click="connectEndpoint">Connect</button>
-          </div>
-        </header>
-        <div id="container">
-          <nav class="node-tree-panel">
-            <ua-node v-if="connected"
-                :nodeid="root.nodeid"
-                :label="root.label"
-                :nodes="root.nodes"
-                :depth="0"
-            />
-          </nav>
-          <main>
-            <ua-attributes/>
-          </main>
-        </div>
-    </div>
+          <select id="securityMode" class="endpoints-select" v-bind:disabled="endpoints.length == 0" v-model="selectedEndpointIndex">
+            <option v-for="(endpoint, index) in endpoints" :value="index">{{ endpoint.policyName }} - {{endpoint.securityModeName}}</option>
+          </select>
+          <input class="connect-button"type="button" value="Connect &#8677;" v-bind:disabled="endpoints.length == 0"  v-on:click="connect">
+        </form>
+        <a href="http://realtimelogic.com" target="_blank">
+          <img class="realtimelogic-header-logo" src="https://realtimelogic.com/GZ/images/icons/RealTimeLogicInv.svg">
+        </a>
+      </div>
+    </header>
 
-    <script>
-        var uaServer = null
-        var eventBus = new Vue()
+    <aside>
+      <div class="node-tree"> 
+        <ua-node :root="root" :connected="connected" v-if="connected"/>
+      </div>
+    </aside>
 
-        var root = {
-            nodeid: "i=84",
-            label: "Root",
-            nodes: []
-        }
+    <main>
+      <ua-attributes v-if="connected"/>
+    </main>
+  </div>
 
-        Vue.component("ua-attributes", {
-            template:
-            '\
-                <div v-if="visible">\
-                    <button id="refreshbuttton" v-on:click="readAttributes">Refresh</button>\
-                    <table >\
-                        <caption>Node Attributes</caption>\
-                        <tr>\
-                            <th>Attribute</th><th>Value</th>\
-                        </tr>\
-                        <tr v-for="attr in attributes">\
-                            <td>{{attr.name}}</td>\
-                            <td style="text-align: left"><pre>{{attr.value}}</pre></td>\
-                        </tr>\
-                    </table>\
-                </div>\
-            ',
-            data() {
-                return {
-                    attributes: [],
-                    nodeid: null
-                }
-            },
-            computed: {
-                visible() {
-                    return this.attributes.length != 0
-                }
-            },
-            methods: {
-                onNodeSelected(selectedId) {
-                    this.nodeid = selectedId
-                    this.readAttributes()
-                },
-                readAttributes() {
-                    var self = this
-                    result = uaServer.readAttributes(this.nodeid, resp => {
-                        if (!resp.read)
-                        {
-                            this.attributes = []
-                            return;
-                        }
-
-                        let attrs = []
-                        resp.read.forEach( (attr,index) => {
-                            if ((typeof(attr.statusCode) != "undefined" && attr.statusCode != 0) || typeof(attr.value) == "undefined")
-                                return
-
-                            attrs.push({
-                                name: uaServer.getAttributeName(index),
-                                value: JSON.stringify(attr.value, null, "  ")
-                            })
-                        });
-                        this.attributes = attrs
-                    })
-                },
-            },
-            mounted() {
-                eventBus.$on('node-selected', this.onNodeSelected)
-            }
-        })
-
-        Vue.component("ua-node", {
-            props:['nodeid', 'label', 'nodes', 'depth'],
-            computed: {
-            },
-            template:
-                '<div>\
-                    <div class="nowrap">\
-                        <span v-on:click.prevent="browse" class="plus">{{ nodes.length == 0 ? "+" : "-" }}</span> \
-                        <span v-on:click.prevent="selectNode">{{label}}</span> \
-                    </div>\
-                    <ua-node v-for="(node,index) in nodes" :key="index" \
-                        :nodeid="node.nodeid" \
-                        :label="node.label" \
-                        :nodes="node.nodes" \
-                        :depth="depth + 1" \
-                    />\
-                </div>',
-
-            methods: {
-                browse: function() {
-                    if (this.nodes.length != 0)
-                    {
-                        this.nodes = []
-                        return
-                    }
-                    var self = this
-                    result = uaServer.browse(this.nodeid, function(resp) {
-                        if (!resp.browse)
-                        {
-                            if(resp.error)
-                                alert(resp.error);
-                            return;
-                        }
-
-                        let nodes = []
-                        resp.browse.forEach(result => {
-                            result.references.forEach(ref => {
-                                nodes.push({
-                                    nodeid: ref.nodeId,
-                                    label: ref.browseName.name,
-                                    nodes: []
-                                })
-                            })
-                        });
-                        self.nodes = nodes
-                    })
-                },
-                selectNode: function() {
-                    eventBus.$emit("node-selected", this.nodeid)
-                }
-            }
-        })
-
-        var app = new Vue({
-            el: '#app',
-            data: {
-                root: root,
-                endpointUrl: "opc.tcp://localhost:4841",
-                connected: false,
-                connButton: "Connect",
-            },
-            mounted() {
-                this.connect()
-            },
-            methods: {
-                connect: function() {
-                    if (!uaServer) {
-                        uaServer = new UAServer(this)
-                    }
-
-                    if (!this.connected)
-                    {
-                        let l = window.location
-                        let protocol = l.protocol === 'https:' ? "wss://" : "ws://"
-                        let url = protocol + l.host + l.pathname + "opcua_client.lsp"
-                        console.info("Connecting to Websocket " + url)
-                        uaServer.connect(url)
-                    }
-                    else
-                    {
-                        uaServer.disconnect()
-                    }
-                },
-
-                connectEndpoint() {
-                    var self = this
-
-                    var config = {
-                            applicationName: 'RealTimeLogic web client',
-                            applicationUri: "urn:opcua-lua:web_client",
-                            productUri: "urn:opcua-lua:web_client",
-
-                            endpointUrl: this.endpointUrl,
-                            securityPolicyUri: "http://opcfoundation.org/UA/SecurityPolicy#None",
-                        }
-
-
-                    result = uaServer.connectEndpoint(config, resp => {
-                        if (!resp.connectEndpoint)
-                        {
-                            return;
-                        }
-                        eventBus.$emit("node-selected", "i=84");
-                    })
-                },
-
-                onConnected: function() {
-                    console.log("OPCUA server connected");
-                    this.connButton = "Disconnect";
-                    this.connected = true;
-                },
-                onDisconnected: function(e) {
-                    if (this.connected) {
-                        console.log("OPCUA server disconnected:" + (e ? e : ""));
-                        this.connected = false;
-                        this.connButton = "Connect";
-                    }
-                },
-            }
-        })
-
-    </script>
+  <script src="opcua-client.js" type="module"></script>
 
 </body>
 </html>

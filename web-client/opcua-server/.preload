@@ -16,14 +16,14 @@ ua.trace.err = function(msg)
   trace(gettime(), "[ERR]", msg)
 end
 
+local conf = io:dofile(".opcua_config", _ENV)
+uaServer = ua.newServer(conf)
 
-conf = io:dofile(".opcua_config")
 local function demoAddon(services)
   local objects = "i=40"
   io:dofile(".lua/add_variables.lua")(services, objects)
 end
 
-uaServer = ua.newServer(conf)
 uaServer:initialize(demoAddon)
 uaServer:run()
 

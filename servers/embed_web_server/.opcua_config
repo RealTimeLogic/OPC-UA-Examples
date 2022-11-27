@@ -1,0 +1,48 @@
+local ua = require("opcua.api")
+local dio = _ENV.app.io
+
+return {
+    applicationName="RealTimeLogic OPCUA",
+    applicationUri="realtimelogic.com",
+    listenPort = 4841,
+    listenAddress="localhost",
+    endpointUrl = "opc.tcp://localhost:4841",
+ 
+    bufSize = 16386,
+    securePolicies = {
+       { -- #1
+         securityPolicyUri = ua.Types.SecurityPolicy.None,
+       },
+       { -- #2
+         securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
+         securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
+         certificate = dio:realpath(".basic128rsa15_server.pem"),
+         key =         dio:realpath(".basic128rsa15_server.key"),
+       },
+       { -- #3
+         securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
+         securityMode = ua.Types.MessageSecurityMode.Sign,
+         certificate = dio:realpath(".basic128rsa15_server.pem"),
+         key =         dio:realpath(".basic128rsa15_server.key"),
+       }
+    },
+ 
+    logging = {
+       socket = {
+       dbgOn = false,  -- debug logs of socket
+       infOn = true,  -- information logs about sockets
+       errOn = true,  -- Errors on sockets
+       },
+       binary = {
+       dbgOn = false,  -- Debugging traces about binary protocol. Print encoded message hex data.
+       infOn = true,  -- Information traces about binary protocol
+       errOn = true,  -- Errors in binary protocol
+       },
+       services = {
+       dbgOn = false,  -- Debugging traces about UA services work
+       infOn = true,  -- Informations traces
+       errOn = true,  -- Errors
+       }
+    }
+ }
+ 

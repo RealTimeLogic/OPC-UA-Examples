@@ -25,19 +25,16 @@ local function opcUaClient(wsSock)
                   end)
                end
                trace"Creating new UA client"
-               ua.Tools.printTable("Client configuration", config)
+               clientConfig.cosocketMode = true
+               ua.Tools.printTable("Client configuration", clientConfig)
                -- Cosocket mode will automatically be enabled since are we in cosocket context
-               uaClient = ua.newClient()
-               trace("Connecting to server")
-               local suc, result = pcall(function() 
-                                            local err
-                                            err = uaClient:connect(endpointUrl)
-                                            if not err then _,err = uaClient:openSecureChannel(3600000) end
-                                            if not err then _,err = uaClient:createSession("RTL Web client", 1200000) end
-                                            if not err then _,err = uaClient:activateSession() end
-                                            return err
+               uaClient = ua.newClient(clientConfig)
+               trace("Connecting to endpoint '".. endpointUrl .. "'")
+               local suc, result = pcall(function()
+                                          return uaClient:connect(endpointUrl)
                                          end)
                if not suc or result then
+                  uaClient = nil
                   trace("Connection failed: ", result)
                   resp.error = result
                else
@@ -50,24 +47,64 @@ local function opcUaClient(wsSock)
          else
             if not uaClient then
                resp.error = "OPC UA Client not connected"
+            elseif request.openSecureChannel then
+              local timeoutMs = request.openSecureChannel.timeoutMs or 3600000
+              local securityPolicyUri = request.openSecureChannel.securityPolicyUri or ua.Types.SecurityPolicy.None
+              local securityMode = request.openSecureChannel.securityMode or ua.Types.MessageSecurityMode.None
+              local serverCertificate = request.openSecureChannel.serverCertificate
+              if serverCertificate then
+                serverCertificate = ba.b64decode(serverCertificate)
+              end
+              trace("Opening secureChannel")
+              resp.data, resp.error = uaClient:openSecureChannel(timeoutMs, securityPolicyUri, securityMode, serverCertificate)
+            elseif request.closeSecureChannel then
+              trace("Closing Secure Channel")
+              resp.error = uaClient:closeSecureChannel()
+            elseif request.createSession then
+              trace("Creating Session")
+              local sessionName = request.createSession.sessionName
+              local sessionTimeout = request.createSession.sessionTimeout
+              resp.data, resp.error = uaClient:createSession(sessionName, sessionTimeout)
+              if not resp.error then 
+                for _, endpoint in ipairs(resp.data.serverEndpoints) do
+                  if endpoint.serverCertificate then
+                    endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
+                  end
+                end
+                if resp.data.serverSignature.signature then
+                  resp.data.serverSignature.signature = ba.b64encode(resp.data.serverSignature.signature)
+                end
+
+                if resp.data.serverCertificate then
+                  resp.data.serverCertificate = ba.b64encode(resp.data.serverCertificate)
+                end
+
+                if resp.data.serverNonce then
+                  resp.data.serverNonce = ba.b64encode(resp.data.serverNonce)
+                end
+                
+              end
+
+            elseif request.activateSession then
+              trace("Activating Session")
+              resp.data, resp.error = uaClient:activateSession({})
+            elseif request.closeSession then
+              trace("Closing Session")
+              resp.data, resp.error = uaClient:closeSession()
+            elseif request.getEndpoints then
+              trace("Selecting endpoints: ")
+              resp.data, resp.error = uaClient:getEndpoints(request.getEndpoints)
+              for _,endpoint in ipairs(resp.data.endpoints) do 
+                if endpoint.serverCertificate then
+                  endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
+                end
+              end
             elseif request.browse then
                trace("Browsing node: "..request.browse.nodeId)
-               local suc, result = pcall(uaClient.browse, uaClient, request.browse.nodeId)
-               if suc then
-                  resp.browse = result.results
-               else
-                  resp.error = result
-               end
+               resp.data, resp.error = uaClient:browse(request.browse.nodeId)
             elseif request.read then
                trace("Reading attribute of node: "..request.read.nodeId)
-               local suc, result = pcall(uaClient.read, uaClient, request.read.nodeId)
-               if suc then
-                  trace("Read successfull")
-                  resp.read = result.results
-               else
-                  trace("Read failed")
-                  resp.error = result
-               end
+               resp.data, resp.error = uaClient:read(request.read.nodeId)
             else
                resp.error = "Unknown request type"
             end
@@ -75,7 +112,8 @@ local function opcUaClient(wsSock)
       else
          resp.error = "JSON parse error"
       end
-      wsSock:write(ba.json.encode(resp), true)
+      local data = ba.json.encode(resp)
+      wsSock:write(data, true)
    end
 
    if uaClient then
@@ -87,7 +125,6 @@ local function opcUaClient(wsSock)
    end
 
 end
-
 
 if request:header"Sec-WebSocket-Key" then
    trace"New WebSocket connection"
