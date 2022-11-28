@@ -94,6 +94,10 @@ local function opcUaClient(wsSock)
             elseif request.activateSession then
               trace("Activating Session")
               resp.data, resp.error = uaClient:activateSession({})
+              if resp.data.serverNonce then
+                resp.data.serverNonce = ba.b64encode(resp.data.serverNonce)
+              end
+
             elseif request.closeSession then
               trace("Closing Session")
               resp.data, resp.error = uaClient:closeSession()
