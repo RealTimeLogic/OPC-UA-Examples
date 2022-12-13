@@ -8,7 +8,8 @@ ua.trace.dbg = function(msg)
   trace(gettime(), "[DBG] ", msg)
 end
 
-ua.trace.inf = function(msg)
+-- Connect logging if not bundled with Lua tutorials
+ua.trace.inf = not _G.demo and function(msg)
   trace(gettime(), "[INF]", msg)
 end
 
@@ -17,7 +18,13 @@ ua.trace.err = function(msg)
 end
 
 local conf = io:dofile(".opcua_config", _ENV)
-uaServer = ua.newServer(conf)
+local ok
+ok,uaServer = pcall(ua.newServer,conf)
+if not ok then
+   trace"Error: server too old for OPCUA example"
+   dir:unlink()
+   return
+end
 
 local function demoAddon(services)
   local objects = "i=40"

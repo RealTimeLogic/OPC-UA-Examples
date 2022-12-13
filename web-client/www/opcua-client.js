@@ -84,7 +84,7 @@ var app = createApp({
         }
         catch (err)
         {
-          alert(err)
+            alert(err ? err : "fillSecurePolicies failed!")
         }
       }    
     }

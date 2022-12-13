@@ -82,13 +82,16 @@ class UAServer {
           alert("Invalid JSON response: " + e)
         }
 
-        let request = this.Requests.get(resp.id)
-        clearTimeout(request.timeout)
-        this.Requests.delete(resp.id)
-        if (resp.error)
-          request.reject(new Error(resp.error));
-        else
-          request.resolve(resp.data);
+          let request = this.Requests.get(resp.id);
+          if (resp.error) {
+              alert(resp.error);
+              request.reject(new Error(resp.error));
+          }
+          else {
+              clearTimeout(request.timeout)
+              this.Requests.delete(resp.id)
+              request.resolve(resp.data);
+          }
       }
     })
   }

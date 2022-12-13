@@ -3,7 +3,7 @@
 local ua = require("opcua.api")
 
 local function opcUaClient(wsSock)
-   local uaClient
+   local ok,uaClient
    while true do
       local data,err = wsSock:read()
       if not data then
@@ -28,7 +28,13 @@ local function opcUaClient(wsSock)
                clientConfig.cosocketMode = true
                ua.Tools.printTable("Client configuration", clientConfig)
                -- Cosocket mode will automatically be enabled since are we in cosocket context
-               uaClient = ua.newClient(clientConfig)
+               ok,uaClient = pcall(ua.newClient,clientConfig)
+               if not ok then
+                  resp={error = "Error: server too old for OPCUA example"}
+                  trace(resp.error)
+                  wsSock:write(ba.json.encode(resp), true)
+                  return
+               end
                trace("Connecting to endpoint '".. endpointUrl .. "'")
                local suc, result = pcall(function()
                                           return uaClient:connect(endpointUrl)

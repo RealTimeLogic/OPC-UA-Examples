@@ -8,7 +8,8 @@ ua.trace.dbg = function(msg)
   trace(gettime(), "[DBG] ", msg)
 end
 
-ua.trace.inf = function(msg)
+-- Connect logging if not bundled with Lua tutorials
+ua.trace.inf = not _G.demo and function(msg)
   trace(gettime(), "[INF]", msg)
 end
 
