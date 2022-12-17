@@ -4,12 +4,12 @@ local ua = require("opcua.api")
 local gettime=os.time
 
 -- Connect logging traces
+-- Logging level is controlled by config file.
 ua.trace.dbg = function(msg)
   trace(gettime(), "[DBG] ", msg)
 end
 
--- Connect logging if not bundled with Lua tutorials
-ua.trace.inf = not _G.demo and function(msg)
+ua.trace.inf = function(msg)
   trace(gettime(), "[INF]", msg)
 end
 

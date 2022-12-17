@@ -5,7 +5,7 @@ return {
   -- Application name
   applicationName="RealTimeLogic OPCUA",
 
-  -- Application URI should be equal to 
+  -- Application URI should be equal to
   -- URI subject alternative name extention in the certificate
   applicationUri="realtimelogic.com",
 
@@ -19,7 +19,7 @@ return {
 
   -- The host name will server be bind to
   -- optional. Will be taken from endpointUrl if absent.
-  listenAddress="localhost", 
+  listenAddress="localhost",
 
   -- Size of buffer is allocated for one chunk.
   -- Minimum size 8192.
@@ -48,19 +48,19 @@ return {
   logging = {
      socket = {
        dbgOn = false,  -- debug logs of socket
-       infOn = true,  -- information logs about sockets
+       infOn = false,  -- information logs about sockets
        errOn = true,  -- Errors on sockets
      },
      binary = {
        dbgOn = false,  -- Debugging traces about binary protocol. Print encoded message hex data.
-       infOn = true,  -- Information traces about binary protocol
+       infOn = false,  -- Information traces about binary protocol
        errOn = true,  -- Errors in binary protocol
      },
      services = {
        dbgOn = false,  -- Debugging traces about UA services work
-       infOn = true,  -- Informations traces
+       infOn = false,  -- Informations traces
        errOn = true,  -- Errors
      }
   }
 }
- 
+
