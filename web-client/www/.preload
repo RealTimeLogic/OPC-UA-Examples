@@ -17,7 +17,11 @@ ua.trace.err = function(msg)
   trace(gettime(), "[ERR]", msg)
 end
 
-_G.clientConfig = _ENV.app.io:dofile(".opcua_config", _ENV)
+-- Load and check client configuration file
+local clientConfig = _ENV.app.io:dofile(".opcua_config", _ENV)
+local checkConfig = require("opcua.config")
+checkConfig.client(clientConfig)
+_G.clientConfig = clientConfig
 
 local function waitForDebugger()
 
