@@ -12,11 +12,13 @@
         <form class="endpoint-config-form">
           <div class="endpoint-select-row">
             <input id="endpointUrl" class="endpoint-url" type="url" v-model="endpointUrl" placeholder="OPC-UA Endpoint URL">
+          </div>
+          <div class="security-modes">
+            <select id="securityMode" class="endpoints-select" v-bind:disabled="endpoints.length == 0" v-model="selectedEndpointIndex">
+              <option v-for="(endpoint, index) in endpoints" :value="index">{{ endpoint.policyName }} - {{endpoint.securityModeName}}</option>
+            </select>
             <input class="fill-endpoints-button" v-on:click="fillSecurePolicies" type="button" value="*">
           </div>
-          <select id="securityMode" class="endpoints-select" v-bind:disabled="endpoints.length == 0" v-model="selectedEndpointIndex">
-            <option v-for="(endpoint, index) in endpoints" :value="index">{{ endpoint.policyName }} - {{endpoint.securityModeName}}</option>
-          </select>
           <input class="connect-button"type="button" value="Connect &#8677;" v-bind:disabled="endpoints.length == 0"  v-on:click="connect">
         </form>
         <a href="http://realtimelogic.com" target="_blank">
@@ -32,8 +34,12 @@
     </aside>
 
     <main>
-      <ua-attributes v-if="connected"/>
+      <ua-attributes/>
     </main>
+
+    <footer>
+      <ua-messages/>
+    </footer>
   </div>
 
   <script src="opcua-client.js" type="module"></script>

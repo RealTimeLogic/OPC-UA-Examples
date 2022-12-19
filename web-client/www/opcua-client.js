@@ -1,6 +1,7 @@
 import { createApp, toHandlers } from './vue.esm-browser.js'
 import { UAServer } from "./ua_server.js"
 
+var onMessage = () => {}
 var onNodeSelected = () => {}
 var uaServer = null
 
@@ -36,18 +37,23 @@ var app = createApp({
           onNodeSelected(null)
           this.connected = false
 
-          console.info("Connecting to endpoint ")
+          onMessage("msg", "Connecting to websocket " + getWebSocketUrl())
           uaServer = await new UAServer(getWebSocketUrl())
-          console.log("Web socket connected");
+          onMessage("msg", "Web socket connected");
 
           let endpoint = this.endpoints[this.selectedEndpointIndex]
+          onMessage("msg", "Connecting to endpoint " + this.endpointUrl)
           await uaServer.connectEndpoint(this.endpointUrl)
+          onMessage("msg", "Opening secure channel")
           await uaServer.openSecureChannel(3600000, endpoint.securityPolicyUri, endpoint.securityMode, endpoint.serverCertificate)
+          onMessage("msg", "Creating session")
           await uaServer.createSession("web_client_session", 3600000)
+          onMessage("msg", "Activating session")
           await uaServer.activateSession()
+          onMessage("msg", "Connected")
           this.connected = true;
         } catch (e) {
-          console.log("Web socket disconnected:" + (e ? e : ""));
+          onMessage("msg", "Cannot connect to OPCUA server", e)
           this.connected = false
           uaServer = null
         }
@@ -56,11 +62,16 @@ var app = createApp({
       async fillSecurePolicies ()
       {
         try {
+          onMessage("msg", "Connecting to websocket " + getWebSocketUrl())
           let discoveryServer = await new UAServer(getWebSocketUrl());
+          onMessage("msg", "Connecting to endpoint " + this.endpointUrl)
           await discoveryServer.connectEndpoint(this.endpointUrl)
+          onMessage("msg", "Opening unsecure channel")
           await discoveryServer.openSecureChannel(5000)
+          onMessage("msg", "Selecting endpoints")
           let resp = await discoveryServer.getEndpoints()
           let endpoints = resp.endpoints;
+          onMessage("msg", "Selected " + endpoints.length + " endpoints")
           endpoints.forEach((val, idx, arr) => {
             arr[idx].policyName = discoveryServer.getPolicyName(val.securityPolicyUri);
             arr[idx].securityModeName = discoveryServer.getMessageModeName(val.securityMode);
@@ -79,12 +90,14 @@ var app = createApp({
     
           this.endpoints = endpoints
 
+          onMessage("msg", "Closing channel")
           await discoveryServer.closeSecureChannel()
+          onMessage("msg", "Disconnecting OPCUA server")
           await discoveryServer.disconnect()
         }
         catch (err)
         {
-            alert(err ? err : "fillSecurePolicies failed!")
+          onMessage("err", err)
         }
       }    
     }
@@ -93,7 +106,7 @@ var app = createApp({
 app.component("ua-attributes", {
     template:
     '\
-        <div v-if="visible">\
+        <div>\
           <table class="table-node-attributes">\
               <tr v-for="attr in attributes">\
                   <td class="td-node-attribute td-node-attribute-name" >{{attr.name}}</td>\
@@ -108,9 +121,9 @@ app.component("ua-attributes", {
         }
     },
     computed: {
-        visible() {
-            return this.attributes.length != 0
-        }
+        // visible() {
+        //     return this.attributes.length != 0
+        // }
     },
     methods: {
         async readAttributes(nodeId) {
@@ -121,6 +134,7 @@ app.component("ua-attributes", {
               return
             }
 
+            onMessage("msg", "reading attribites of nodeID " + nodeId)
             let resp = await uaServer.read(nodeId)
             let attrs = []
             resp.results.forEach( (attr,index) => {
@@ -136,7 +150,7 @@ app.component("ua-attributes", {
             this.attributes = attrs
           } catch (e) {
             this.attributes = []
-            console.error(e)
+            onMessage("err",  e)
           }
         },
     },
@@ -168,6 +182,7 @@ app.component("ua-node", {
             return
           }
 
+          onMessage("msg", "Browsing nodeID " + this.root.nodeid)
           let resp = await uaServer.browse(this.root.nodeid)
           let nodes = []
           resp.results.forEach(result => {
@@ -187,5 +202,46 @@ app.component("ua-node", {
         }
     }
 })
+
+app.component("ua-messages", {
+  template:
+  '\
+    <div class="ua-messages">\
+      <div class="ua-messages-top">\
+        <button v-on:click.prevent="cleaMessages">Clear messages</button>\
+      </div>\
+      <div class="ua-messages-content">\
+        <table class="ua-messages-table">\
+          <tr class="ua-messages-tr" v-for="msg in messages">\
+            <td class="ua-messages-td">{{msg.time}}</td>\
+            <td class="ua-messages-td">{{msg.message}}</td>\
+            <td class="ua-messages-td"><pre>{{msg.details}}</pre></td>\
+          </tr>\
+        </table>\
+      </div>\
+    </div>\
+  ',
+  data() {
+      return {
+          messages: [
+          ],
+      }
+  },
+  mounted() {
+    onMessage = (msg, det) => {
+      const tnow = new Date().toISOString()
+      this.messages.unshift({
+        time: tnow,
+        message: msg,
+        details: det})
+    } 
+  },
+  methods: {
+    cleaMessages() {
+      this.messages = []
+    }
+  }
+})
+
 
 app.mount('#opcua-client-app')
