@@ -22,13 +22,34 @@ header {
 aside {
   position: fixed;
   display: flex;
+  flex-direction: column;
   left: 0;
   top: 101px;
   bottom: 0;
   width: 300px;
   border-right: 1px solid lightgray;
   
+  overflow: scroll;
+}
+
+main {
+  position: fixed;
+  left: 301px;
+  top: 101px;
+  bottom: 20%;
+  right: 0;
   overflow: auto;
+  padding: 4px;
+}
+
+footer {
+  position: fixed;
+  display: flex;
+  left: 301px;
+  top: 80%;
+  bottom: 0px;
+  right: 0;
+  padding: 4px;
 }
 
 /* width */
@@ -56,15 +77,6 @@ aside {
   background: #97a7b7;
 }
 
-main {
-  position: fixed;
-  left: 301px;
-  top: 101px;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
-  padding: 4px;
-}
 
 .opcua-header {
   width: 100%;
@@ -99,11 +111,20 @@ main {
   flex-grow: 1;
 }
 
+.security-modes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
 .fill-endpoints-button {
   width: 20px;
+  flex: 0;
+  margin-left: 3px;
 }
 
 .endpoints-select {
+  flex-grow: 1;
 }
 
 .connect-button {
@@ -159,4 +180,45 @@ main {
 
 .td-node-attribute-value {
 
+}
+
+
+.ua-messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ua-messages-top{
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  padding: 2px;
+  font-size: 8px;
+}
+
+.ua-messages-content {
+  overflow: auto;
+}
+
+.ua-messages-table {
+  flex: 1;
+  border-collapse: collapse;
+  padding: 0px;
+  margin: 0px;
+  font-size: 10px;
+}
+
+.ua-messages-tr {
+  border-top: 1px solid lightgray;
+}
+
+.ua-messages-td {
+  width: 10%;
+  height: 12px;
+}
+
+.ua-messages-td-err {
+  width: 10%;
+  height: 12px;
+  color: red;
 }

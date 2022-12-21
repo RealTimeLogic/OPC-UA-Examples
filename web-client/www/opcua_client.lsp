@@ -28,18 +28,10 @@ local function opcUaClient(wsSock)
                clientConfig.cosocketMode = true
                ua.Tools.printTable("Client configuration", clientConfig)
                -- Cosocket mode will automatically be enabled since are we in cosocket context
-               ok,uaClient = pcall(ua.newClient,clientConfig)
-               if not ok then
-                  resp={error = "Error: server too old for OPCUA example"}
-                  trace(resp.error)
-                  wsSock:write(ba.json.encode(resp), true)
-                  return
-               end
+               uaClient = ua.newClient(clientConfig)
                trace("Connecting to endpoint '".. endpointUrl .. "'")
-               local suc, result = pcall(function()
-                                          return uaClient:connect(endpointUrl)
-                                         end)
-               if not suc or result then
+               local result = uaClient:connect(endpointUrl)
+               if result then
                   uaClient = nil
                   trace("Connection failed: ", result)
                   resp.error = result
@@ -71,7 +63,7 @@ local function opcUaClient(wsSock)
               local sessionName = request.createSession.sessionName
               local sessionTimeout = request.createSession.sessionTimeout
               resp.data, resp.error = uaClient:createSession(sessionName, sessionTimeout)
-              if not resp.error then 
+              if not resp.error then
                 for _, endpoint in ipairs(resp.data.serverEndpoints) do
                   if endpoint.serverCertificate then
                     endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
@@ -88,7 +80,7 @@ local function opcUaClient(wsSock)
                 if resp.data.serverNonce then
                   resp.data.serverNonce = ba.b64encode(resp.data.serverNonce)
                 end
-                
+
               end
 
             elseif request.activateSession then
@@ -100,7 +92,7 @@ local function opcUaClient(wsSock)
             elseif request.getEndpoints then
               trace("Selecting endpoints: ")
               resp.data, resp.error = uaClient:getEndpoints(request.getEndpoints)
-              for _,endpoint in ipairs(resp.data.endpoints) do 
+              for _,endpoint in ipairs(resp.data.endpoints) do
                 if endpoint.serverCertificate then
                   endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
                 end

@@ -76,22 +76,17 @@ class UAServer {
 
       this.Sock.onmessage =  (msg) => {
         let resp
-        try {
-          resp = JSON.parse(msg.data)
-        } catch (e) {
-          alert("Invalid JSON response: " + e)
-        }
+        resp = JSON.parse(msg.data)
 
-          let request = this.Requests.get(resp.id);
-          if (resp.error) {
-              alert(resp.error);
-              request.reject(new Error(resp.error));
-          }
-          else {
-              clearTimeout(request.timeout)
-              this.Requests.delete(resp.id)
-              request.resolve(resp.data);
-          }
+        let request = this.Requests.get(resp.id);
+        if (resp.error) {
+            request.reject(new Error(resp.error));
+        }
+        else {
+            clearTimeout(request.timeout)
+            this.Requests.delete(resp.id)
+            request.resolve(resp.data);
+        }
       }
     })
   }
