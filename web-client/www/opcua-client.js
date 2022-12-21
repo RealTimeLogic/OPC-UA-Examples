@@ -213,9 +213,9 @@ app.component("ua-messages", {
       <div class="ua-messages-content">\
         <table class="ua-messages-table">\
           <tr class="ua-messages-tr" v-for="msg in messages">\
-            <td class="ua-messages-td">{{msg.time}}</td>\
-            <td class="ua-messages-td">{{msg.message}}</td>\
-            <td class="ua-messages-td"><pre>{{msg.details}}</pre></td>\
+            <td :class="msg.isError ? \'ua-messages-td-err\': \'ua-messages-td\'">{{msg.time}}</td>\
+            <td :class="msg.isError ? \'ua-messages-td-err\': \'ua-messages-td\'">{{msg.message}}</td>\
+            <td :class="msg.isError ? \'ua-messages-td-err\': \'ua-messages-td\'"><pre>{{msg.details}}</pre></td>\
           </tr>\
         </table>\
       </div>\
@@ -232,6 +232,7 @@ app.component("ua-messages", {
       const tnow = new Date().toISOString()
       this.messages.unshift({
         time: tnow,
+        isError: msg == "err",
         message: msg,
         details: det})
     } 

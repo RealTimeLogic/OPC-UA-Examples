@@ -216,3 +216,9 @@ footer {
   width: 10%;
   height: 12px;
 }
+
+.ua-messages-td-err {
+  width: 10%;
+  height: 12px;
+  color: red;
+}
