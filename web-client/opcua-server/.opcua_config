@@ -1,7 +1,7 @@
 local ua = require("opcua.api")
-local dio = _ENV.app.io
 
 return {
+  io = _ENV.app.io,
   -- Application name
   applicationName="RealTimeLogic OPCUA",
 
@@ -40,8 +40,8 @@ return {
          ua.Types.MessageSecurityMode.Sign,
          ua.Types.MessageSecurityMode.SignAndEncrypt,
        },
-       certificate = dio:realpath(".basic128rsa15_server.pem"),
-       key =         dio:realpath(".basic128rsa15_server.key"),
+       certificate = ".basic128rsa15_server.pem",
+       key =         ".basic128rsa15_server.key",
      }
   },
 

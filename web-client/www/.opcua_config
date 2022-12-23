@@ -1,6 +1,5 @@
-local dio = _ENV.app.io
-
 return {
+  io = _ENV.app.io,
   bufSize = 65536,
 
   securePolicies ={
@@ -10,8 +9,8 @@ return {
     { -- #2
       securityPolicyUri = "http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15",
       securityMode = {2, 3}, -- Sign + SignAndEncrypt,
-      certificate = dio:realpath(".basic128rsa15_client.pem"),
-      key =         dio:realpath(".basic128rsa15_client.key"),
+      certificate = ".basic128rsa15_client.pem",
+      key =         ".basic128rsa15_client.key",
     }
   },
 
