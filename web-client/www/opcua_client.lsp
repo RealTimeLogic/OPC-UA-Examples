@@ -2,6 +2,14 @@
 
 local ua = require("opcua.api")
 
+local function isSupportedPolicy(policyUri)
+   for _,policy in ipairs(clientConfig.securePolicies) do
+     if policy.securityPolicyUri == policyUri then
+       return true
+      end
+   end
+end
+
 local function opcUaClient(wsSock)
    local ok,uaClient
    while true do
@@ -91,12 +99,22 @@ local function opcUaClient(wsSock)
               resp.data, resp.error = uaClient:closeSession()
             elseif request.getEndpoints then
               trace("Selecting endpoints: ")
-              resp.data, resp.error = uaClient:getEndpoints(request.getEndpoints)
-              for _,endpoint in ipairs(resp.data.endpoints) do
-                if endpoint.serverCertificate then
-                  endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
+              local content, error = uaClient:getEndpoints(request.getEndpoints)
+              if not error then
+                -- Leave only supported secure Policies
+                local endpoints = {}
+                for _,endpoint in ipairs(content.endpoints) do
+                  if isSupportedPolicy(endpoint.securityPolicyUri) then
+                     if endpoint.serverCertificate then
+                       endpoint.serverCertificate = ba.b64encode(endpoint.serverCertificate)
+                     end
+                     table.insert(endpoints, endpoint)
+                  end
                 end
+                content.endpoints = endpoints
               end
+              resp.data = content
+              resp.error = error
             elseif request.browse then
                trace("Browsing node: "..request.browse.nodeId)
                resp.data, resp.error = uaClient:browse(request.browse.nodeId)
