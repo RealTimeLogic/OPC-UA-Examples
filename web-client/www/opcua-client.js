@@ -53,7 +53,7 @@ var app = createApp({
           onMessage("msg", "Connected")
           this.connected = true;
         } catch (e) {
-          onMessage("msg", "Cannot connect to OPCUA server", e)
+          onMessage("err", "Cannot connect to OPCUA server", e)
           this.connected = false
           uaServer = null
         }
@@ -121,9 +121,6 @@ app.component("ua-attributes", {
         }
     },
     computed: {
-        // visible() {
-        //     return this.attributes.length != 0
-        // }
     },
     methods: {
         async readAttributes(nodeId) {
