@@ -118,7 +118,7 @@ class UAServer {
       let requestData = {
         resolve: resolve,
         reject: reject,
-        timeout: setTimeout(() => {reject("timeout")}, 5000)
+        timeout: setTimeout(() => {reject("timeout")}, 30000)
       }
 
       this.Requests.set(requestId, requestData)
