@@ -173,26 +173,30 @@ app.component("ua-node", {
 
     methods: {
         async browse() {
-          if (this.root.nodes.length != 0)
-          {
-            this.root.nodes = []
-            return
-          }
+          try {
+            if (this.root.nodes.length != 0)
+            {
+              this.root.nodes = []
+              return
+            }
 
-          onMessage("msg", "Browsing nodeID " + this.root.nodeid)
-          let resp = await uaServer.browse(this.root.nodeid)
-          let nodes = []
-          resp.results.forEach(result => {
-            result.references.forEach(ref => {
-              nodes.push({
-                  nodeid: ref.nodeId,
-                  label: ref.browseName.name,
-                  nodes: []
+            onMessage("msg", "Browsing nodeID " + this.root.nodeid)
+            let resp = await uaServer.browse(this.root.nodeid)
+            let nodes = []
+            resp.results.forEach(result => {
+              result.references.forEach(ref => {
+                nodes.push({
+                    nodeid: ref.nodeId,
+                    label: ref.browseName.name,
+                    nodes: []
+                })
               })
-            })
-          });
+            });
 
-          this.root.nodes = nodes
+            this.root.nodes = nodes
+          } catch (e) {
+            onMessage("err",  e)
+          }
         },
         selectNode: function() {
           onNodeSelected(this.root.nodeid);
