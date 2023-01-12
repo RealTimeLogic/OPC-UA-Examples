@@ -18,7 +18,7 @@ ua.trace.err = function(msg)
 end
 
 -- Load and check client configuration file
-local clientConfig = _ENV.app.io:dofile(".opcua_config", _ENV)
+local clientConfig = _ENV.app.io:dofile(".opcua_client_config", _ENV)
 local checkConfig = require("opcua.config")
 checkConfig.client(clientConfig)
 _G.clientConfig = clientConfig

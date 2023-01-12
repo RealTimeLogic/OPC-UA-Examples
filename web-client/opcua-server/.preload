@@ -17,7 +17,7 @@ ua.trace.err = function(msg)
   trace(gettime(), "[ERR]", msg)
 end
 
-local conf = io:dofile(".opcua_config", _ENV)
+local conf = io:dofile(".opcua_server_config", _ENV)
 local ok
 ok,uaServer = pcall(ua.newServer,conf)
 if not ok then
