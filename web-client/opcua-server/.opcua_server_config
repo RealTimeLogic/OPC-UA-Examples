@@ -3,15 +3,30 @@ local ua = require("opcua.api")
 local function autenticate(tokenType, token, user)
 
   if tokenType == "anonymous" then
+    trace("Anonymout token allowed")
     return true
   elseif tokenType == "username" then
-    return user == "admin" and token == "12345"
-  elseif tokenType == "x509" then
-    local cert = ba.parsecert(token)
-    if cert.subject.commonname ~= "admin" then
+    trace("Checking user name and password.")
+    if user ~= "admin" then
+      trace("User name '"..user.."' invalid")
       return false
     end
 
+    if token ~= "12345" then
+      trace("password invalid")
+      return false
+    end
+
+    trace("User name '"..user.."' autenticated")
+    return true
+  elseif tokenType == "x509" then
+    trace("Checking user certificate.")
+    local cert = ba.parsecert(token)
+    -- if cert.subject.commonname == "admin" then
+      return true
+    -- end
+  elseif tokenType == "jwt" then
+    trace("Checking JWT token.")
     return true
   end
 
@@ -45,6 +60,9 @@ return {
 
   autenticate = autenticate,
 
+  certificate = ".basic128rsa15_server.pem",
+  key =         ".basic128rsa15_server.key",
+
   securePolicies = {
      -- Secure policy "None" provides no security at all.
      -- if you need some security then remove this element from array
@@ -60,9 +78,59 @@ return {
          ua.Types.MessageSecurityMode.Sign,
          ua.Types.MessageSecurityMode.SignAndEncrypt,
        },
-       certificate = ".basic128rsa15_server.pem",
-       key =         ".basic128rsa15_server.key",
      }
+  },
+
+  userIdentityTokens = {
+    {
+      policyId = "anonymous",
+      tokenType = ua.Types.UserTokenType.Anonymous,
+      issuedTokenType = nil,
+      issuerEndpointUrl = nil,
+      securityPolicyUri = nil
+    },
+    {
+      policyId = "username_Basic128Rsa15",
+      tokenType = ua.Types.UserTokenType.UserName,
+      issuedTokenType = nil,
+      issuerEndpointUrl = nil,
+      securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15
+    },
+    {
+      policyId = "username",
+      tokenType = ua.Types.UserTokenType.UserName,
+      issuedTokenType = nil,
+      issuerEndpointUrl = nil,
+      securityPolicyUri = ua.Types.SecurityPolicy.None
+    },
+    {
+      policyId = "x509",
+      tokenType = ua.Types.UserTokenType.Certificate,
+      issuedTokenType = nil,
+      issuerEndpointUrl = nil,
+      securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15
+    },
+    {
+      policyId = "azure",
+      tokenType = ua.Types.UserTokenType.IssuedToken,
+      issuedTokenType = ua.Types.IssuedTokenType.Azure,
+      issuerEndpointUrl = nil,
+      -- securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15
+    },
+    {
+      policyId = "jwt",
+      tokenType = ua.Types.UserTokenType.IssuedToken,
+      issuedTokenType = ua.Types.IssuedTokenType.JWT,
+      issuerEndpointUrl = nil,
+      -- securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15
+    },
+    {
+      policyId = "oauth2",
+      tokenType = ua.Types.UserTokenType.IssuedToken,
+      issuedTokenType = ua.Types.IssuedTokenType.OAuth2,
+      issuerEndpointUrl = nil,
+      -- securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15
+    },
   },
 
   logging = {
@@ -77,8 +145,8 @@ return {
        errOn = true,  -- Errors in binary protocol
      },
      services = {
-       dbgOn = false,  -- Debugging traces about UA services work
-       infOn = false,  -- Informations traces
+       dbgOn = true,  -- Debugging traces about UA services work
+       infOn = true,  -- Informations traces
        errOn = true,  -- Errors
      }
   }

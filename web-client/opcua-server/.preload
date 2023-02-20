@@ -21,7 +21,7 @@ local conf = io:dofile(".opcua_server_config", _ENV)
 local ok
 ok,uaServer = pcall(ua.newServer,conf)
 if not ok then
-   trace"Error: server too old for OPCUA example"
+   trace("Error: server too old for OPCUA example: "..uaServer)
    return
 end
 
