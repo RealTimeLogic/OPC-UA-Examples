@@ -1,4 +1,4 @@
-trace("Starting OPCUA client")
+trace("Initializing OPCUA")
 local ua = require("opcua.api")
 local sock = require("socket")
 local gettime=os.time
@@ -22,6 +22,31 @@ local clientConfig = _ENV.app.io:dofile(".opcua_client_config", _ENV)
 local checkConfig = require("opcua.config")
 checkConfig.client(clientConfig)
 _G.clientConfig = clientConfig
+
+-- Start OPCUA server
+
+local conf = io:dofile(".opcua_server_config", _ENV)
+local ok
+ok, uaServer = pcall(ua.newServer, conf)
+if not ok then
+   trace("Error: server too old for OPCUA example: "..uaServer)
+   return
+end
+
+local function demoAddon(services)
+  local objects = "i=40"
+  io:dofile(".lua/add_variables.lua")(services, objects)
+end
+
+uaServer:initialize(demoAddon)
+uaServer:run()
+
+function onunload()
+  trace("Stopping OPC-UA server")
+  uaServer:shutdown()
+end
+
+_G.uaServices = uaServer.services
 
 local function waitForDebugger()
 
