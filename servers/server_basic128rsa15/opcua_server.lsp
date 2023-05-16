@@ -1,7 +1,7 @@
 <?lsp
 
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+local HierarchicalReferences = "i=33"
 
 local function createBrowseParams(nodeId)
    return {
@@ -10,7 +10,7 @@ local function createBrowseParams(nodeId)
          {
             nodeId = nodeId,
             browseDirection = ua.Types.BrowseDirection.Forward,
-            referenceTypeId = nodeIds.HierarchicalReferences,
+            referenceTypeId = HierarchicalReferences,
             nodeClassMask = ua.Types.NodeClass.Unspecified,
             resultMask = ua.Types.BrowseResultMask.All,
             includeSubtypes = 1,

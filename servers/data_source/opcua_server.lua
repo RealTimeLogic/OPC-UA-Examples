@@ -1,6 +1,5 @@
 -- Load the OPCUA API
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
@@ -38,9 +37,10 @@ end
 local function initializeDataSource(services)
   trace("Adding a node into address space")
 
+  local ObjectsFolder = "i=85"
   local statusCode = 0
   local newVariableParams = ua.newVariableParams(
-     nodeIds.ObjectsFolder, {name="CustomDataSource", ns=0}, "CustomDataSource", {float=1.0}, dataSouceId)
+     ObjectsFolder, {name="CustomDataSource", ns=0}, "CustomDataSource", {float=1.0}, dataSouceId)
   local res = services:addNodes({nodesToAdd={newVariableParams}})
   for _,result in ipairs(res.results) do
     if result.statusCode ~= 0 then

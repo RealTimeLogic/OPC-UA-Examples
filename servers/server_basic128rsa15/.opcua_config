@@ -33,7 +33,7 @@ local serverConfig = {
     { -- #2
       securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
       securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
-      certificate = createCert(readfile(".basic128rsa15_server.pem")),
+      certificate = readfile(".basic128rsa15_server.pem"),
       key =         readfile(".basic128rsa15_server.key"),
     }
   },

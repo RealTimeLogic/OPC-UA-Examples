@@ -1,11 +1,12 @@
 -- Load an OPCUA API
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+
+local ObjectsFolder = "i=85"
 
 local function addFolderNode(services)
   local request = {
      nodesToAdd = {
-        ua.newFolderParams(nodeIds.ObjectsFolder, {name="NewFolder", ns=0}, "NewFolder")
+        ua.newFolderParams(ObjectsFolder, {name="NewFolder", ns=0}, "NewFolder")
       }
   }
 

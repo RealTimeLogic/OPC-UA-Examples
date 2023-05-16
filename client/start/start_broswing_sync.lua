@@ -1,5 +1,9 @@
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+local nodeIds = {
+  RootFolder = "i=84",
+  TypesFolder = "i=86",
+  HierarchicalReferences = "i=33",
+}
 
 local config = {
   applicationName = 'RealTimeLogic example',

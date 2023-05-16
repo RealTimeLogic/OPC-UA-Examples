@@ -2,7 +2,7 @@
 
 -- Load an OPCUA API
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+local ObjectsFolder = "i=85"
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
@@ -24,7 +24,7 @@ server:initialize()
 -- Add variable node
 local variableNodeId = "i=1000000"
 local value = {int64 = 0}
-local variableParams = ua.newVariableParams(nodeIds.ObjectsFolder, {name="variable", ns=0}, "variable", value, variableNodeId)
+local variableParams = ua.newVariableParams(ObjectsFolder, {name="variable", ns=0}, "variable", value, variableNodeId)
 local resp = server.services:addNodes({nodesToAdd={variableParams}})
 local res = resp.results
 if res[1].statusCode ~= ua.StatusCode.Good and res[1].statusCode ~= ua.StatusCode.BadNodeIdExists then

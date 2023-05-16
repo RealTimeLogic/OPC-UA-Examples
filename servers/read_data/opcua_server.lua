@@ -1,6 +1,9 @@
 -- Load an OPCUA API
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+
+local ObjectsFolder = "i=85"
+local TypesFolder = "i=86"
+local Server_ServerStatus_CurrentTime = "i=2258"
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
@@ -18,18 +21,18 @@ local server = ua.newServer(config)
 server:initialize()
 
 -- Read all attributes of a node by its ID.
-local attrs = server:read(nodeIds.ObjectsFolder)
-ua.Tools.printTable("nodeIds.ObjectsFolder", attrs)
+local attrs = server:read(ObjectsFolder)
+ua.Tools.printTable("ObjectsFolder", attrs)
 
 -- Read all attributes of a node by its ID.
-local attrs = server:read({nodeIds.ObjectsFolder, nodeIds.TypesFolder, ViewsFolder})
+local attrs = server:read({ObjectsFolder, TypesFolder, ViewsFolder})
 ua.Tools.printTable("SeveralNodes", attrs)
 
 -- Read only specified attributes of a node by its ID.
 
 local requiredAttrs = {
-  {nodeId = nodeIds.Server_ServerStatus_CurrentTime, attributeId=ua.Types.AttributeId.BrowseName},
-  {nodeId = nodeIds.Server_ServerStatus_CurrentTime, attributeId=ua.Types.AttributeId.Value},
+  {nodeId = Server_ServerStatus_CurrentTime, attributeId=ua.Types.AttributeId.BrowseName},
+  {nodeId = Server_ServerStatus_CurrentTime, attributeId=ua.Types.AttributeId.Value},
 }
 
 local attrs = server:read(requiredAttrs)

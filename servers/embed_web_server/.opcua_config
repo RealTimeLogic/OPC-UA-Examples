@@ -7,7 +7,7 @@ return {
     listenPort = 4841,
     listenAddress="localhost",
     endpointUrl = "opc.tcp://localhost:4841",
- 
+
     bufSize = 16386,
     securePolicies = {
        { -- #1
@@ -15,18 +15,12 @@ return {
        },
        { -- #2
          securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-         securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
+         securityMode = {ua.Types.MessageSecurityMode.SignAndEncrypt,ua.Types.MessageSecurityMode.Sign},
          certificate = dio:realpath(".basic128rsa15_server.pem"),
          key =         dio:realpath(".basic128rsa15_server.key"),
        },
-       { -- #3
-         securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-         securityMode = ua.Types.MessageSecurityMode.Sign,
-         certificate = dio:realpath(".basic128rsa15_server.pem"),
-         key =         dio:realpath(".basic128rsa15_server.key"),
-       }
     },
- 
+
     logging = {
        socket = {
        dbgOn = false,  -- debug logs of socket
@@ -45,4 +39,4 @@ return {
        }
     }
  }
- 
+
