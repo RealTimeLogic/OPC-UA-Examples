@@ -23,23 +23,23 @@ server:initialize()
 
 -- Add variable node
 local variableNodeId = "i=1000000"
-local value = {int64 = 0}
-local variableParams = ua.newVariableParams(ObjectsFolder, {name="variable", ns=0}, "variable", value, variableNodeId)
-local resp = server.services:addNodes({nodesToAdd={variableParams}})
-local res = resp.results
-if res[1].statusCode ~= ua.StatusCode.Good and res[1].statusCode ~= ua.StatusCode.BadNodeIdExists then
-  error(res.statusCode)
+local value = {Value={Int64 = 0}}
+local variableParams = ua.newVariableParams(ObjectsFolder, {Name="variable", ns=0}, "variable", value, variableNodeId)
+local resp = server.services:addNodes({NodesToAdd={variableParams}})
+local res = resp.Results
+if res[1].StatusCode ~= ua.StatusCode.Good and res[1].StatusCode ~= ua.StatusCode.BadNodeIdExists then
+  error(res.StatusCode)
 end
 
 -- Update value of the added variable
 local nodes = {
-  nodesToWrite = {
+  NodesToWrite = {
     {
-      nodeId = variableNodeId,
-      attributeId = ua.Types.AttributeId.Value,
-      value = {
-        value = {
-          int64 = 1
+      NodeId = variableNodeId,
+      AttributeId = ua.Types.AttributeId.Value,
+      Value = {
+        Value = {
+          Int64 = 1
         }
       }
     }

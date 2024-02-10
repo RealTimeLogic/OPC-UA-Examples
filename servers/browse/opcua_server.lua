@@ -19,15 +19,14 @@ server:initialize()
 
 -- browse Objects folder
 local ObjectsFolder = "i=85"
-
-local resp = server:browse(ObjectsFolder)
-local children = resp.results
+local resp, err = server:browse(ObjectsFolder)
+local children = resp.Results
 ua.Tools.printTable("ObjectsRoot", children)
 
 local childIDs = {}
 -- Browse children nodes
-for i,child in ipairs(children[1].references) do
-  table.insert(childIDs, child.nodeId)
+for i,child in ipairs(children[1].References) do
+  table.insert(childIDs, child.NodeId)
 end
 
 local children = server:browse(childIDs)

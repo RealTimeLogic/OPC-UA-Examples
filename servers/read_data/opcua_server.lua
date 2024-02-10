@@ -31,8 +31,8 @@ ua.Tools.printTable("SeveralNodes", attrs)
 -- Read only specified attributes of a node by its ID.
 
 local requiredAttrs = {
-  {nodeId = Server_ServerStatus_CurrentTime, attributeId=ua.Types.AttributeId.BrowseName},
-  {nodeId = Server_ServerStatus_CurrentTime, attributeId=ua.Types.AttributeId.Value},
+  {NodeId = Server_ServerStatus_CurrentTime, AttributeId=ua.Types.AttributeId.BrowseName},
+  {NodeId = Server_ServerStatus_CurrentTime, AttributeId=ua.Types.AttributeId.Value},
 }
 
 local attrs = server:read(requiredAttrs)

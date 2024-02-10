@@ -19,12 +19,12 @@ end
 local conf = io:dofile(".opcua_config", _ENV)
 uaServer = ua.newServer(conf)
 
-local function demoAddon(services)
-  local objects = "i=40"
-  io:dofile(".add_variables.lua")(services, objects)
-end
+uaServer:initialize()
 
-uaServer:initialize(demoAddon)
+local objects = "i=40"
+io:dofile(".add_variables.lua")(uaServer, objects)
+
+
 uaServer:run()
 
 function onunload()

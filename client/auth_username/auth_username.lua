@@ -37,10 +37,10 @@ if err ~= nil then
 end
 
 local tokenPolicy
-for _, endpoint in ipairs(session.serverEndpoints) do
-  for _, policy in ipairs(endpoint.userIdentityTokens) do
-    if policy.tokenType == ua.Types.UserTokenType.UserName and
-      (policy.securityPolicyUri == nil or policy.securityPolicyUri == ua.Types.SecurityPolicy.None)
+for _, endpoint in ipairs(session.ServerEndpoints) do
+  for _, policy in ipairs(endpoint.UserIdentityTokens) do
+    if policy.TokenType == ua.Types.UserTokenType.UserName and
+      (policy.SecurityPolicyUri == nil or policy.SecurityPolicyUri == ua.Types.SecurityPolicy.None)
     then
       tokenPolicy = policy
       goto found
@@ -55,7 +55,7 @@ end
 
 local userName = "admin"
 local password = "12345"
-local resp, err = client:activateSession(tokenPolicy.policyId, userName, password)
+local resp, err = client:activateSession(tokenPolicy.PolicyId, userName, password)
 if err ~= nil then
   return
 end
