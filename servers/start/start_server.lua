@@ -3,7 +3,12 @@ local ua = require("opcua.api")
 
 -- Minimum configuration of server
 local config = {
-  endpointUrl="opc.tcp://localhost:4841",
+  endpoints = {
+    {
+      endpointUrl="opc.tcp://localhost:4841",
+    }
+  },
+
   securePolicies ={
     { -- #1
       securityPolicyUri = "http://opcfoundation.org/UA/SecurityPolicy#None",

@@ -1,0 +1,62 @@
+local ua = require("opcua.api")
+local createCert = require("opcua.binary.crypto.certificate")
+
+local listenPort=4841
+local ip = "localhost"
+
+local function readfile(filepath)
+  local f, err = io:open(filepath)
+  if err then error(string.format("failed to open '%s': %s", filepath, err)) end
+  local data = f:read("*a")
+  f:close()
+  return data
+end
+
+local s,err = ba.socket.connect("google.com",80)
+if s then
+  local _,_,ips = string.find(s:sockname(), "(%d+.%d+.%d+.%d+)")
+  ip = ips
+  s:close()
+end
+
+local serverConfig = {
+  listenPort = listenPort,
+  listenAddress=ip,
+  -- endpointUrl = string.format("opc.http://%s:%s", ip, listenPort),
+  endpointUrl = "http://192.168.153.128:9357/opcua_server.lsp",
+  -- endpointUrl = "opc.https://192.168.153.128:9443/opcua_server.lsp",
+
+  bufSize = 8192,
+  securePolicies = {
+    { -- #1
+      securityPolicyUri = ua.Types.SecurityPolicy.None,
+      securityMode = ua.Types.MessageSecurityMode.None,
+    },
+    { -- #2
+      securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
+      securityMode = ua.Types.MessageSecurityMode.Sign,
+      certificate = readfile(".basic128rsa15_server.pem"),
+      key =         readfile(".basic128rsa15_server.key"),
+    }
+  },
+
+  logging = {
+    socket = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
+    },
+    binary = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
+    },
+    services = {
+      dbgOn = true,
+      infOn = true,
+      errOn = true
+    }
+  }
+}
+
+return serverConfig

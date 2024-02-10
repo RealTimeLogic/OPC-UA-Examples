@@ -1,5 +1,5 @@
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+RootFolder = "i=84"
 
 local config = {
   applicationName = 'RealTimeLogic example',
@@ -19,7 +19,7 @@ local resp, err
 -- Connecting to OPCUA server
 trace("connecting to server")
 local endpointUrl = "opc.tcp://localhost:4841"
-err = client:connect(endpointUrl)
+err = client:connect(endpointUrl, ua.Types.TranportProfileUri.TcpBinary)
 if err ~= nil then
   return
 end
@@ -61,7 +61,7 @@ if err ~= nil then
 end
 
 -- Browse one node by ID.
-resp, err = client:browse(nodeIds.RootFolder)
+resp, err = client:browse(RootFolder)
 if err ~= nil then
   return
 end
