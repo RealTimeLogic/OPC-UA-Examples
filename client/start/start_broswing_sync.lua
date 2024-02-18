@@ -23,7 +23,7 @@ local resp, err
 -- Connecting to OPCUA server
 trace("connecting to server")
 local endpointUrl = "opc.tcp://localhost:4841"
-err = client:connect(endpointUrl, ua.Types.TranportProfileUri.TcpBinary)
+err = client:connect(endpointUrl)
 if err ~= nil then
   return
 end
