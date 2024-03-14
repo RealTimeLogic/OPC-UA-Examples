@@ -22,7 +22,9 @@ end
 local serverConfig = {
   listenPort = listenPort,
   listenAddress=ip,
-  endpointUrl = string.format("opc.tcp://%s:%s", ip, listenPort),
+  -- endpointUrl = string.format("opc.http://%s:%s", ip, listenPort),
+  endpointUrl = "http://192.168.153.128:9357/opcua_server.lsp",
+  -- endpointUrl = "opc.https://192.168.153.128:9443/opcua_server.lsp",
 
   bufSize = 8192,
   securePolicies = {
@@ -32,7 +34,7 @@ local serverConfig = {
     },
     { -- #2
       securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-      securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
+      securityMode = ua.Types.MessageSecurityMode.Sign,
       certificate = readfile(".basic128rsa15_server.pem"),
       key =         readfile(".basic128rsa15_server.key"),
     }

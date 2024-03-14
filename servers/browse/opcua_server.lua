@@ -1,6 +1,5 @@
 -- Load an OPCUA API
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
 
 -- New instance of an OPC UA server
 -- Pass configuration table to server.
@@ -19,14 +18,15 @@ local server = ua.newServer(config)
 server:initialize()
 
 -- browse Objects folder
-local resp = server:browse(nodeIds.ObjectsFolder)
-local children = resp.results
+local ObjectsFolder = "i=85"
+local resp, err = server:browse(ObjectsFolder)
+local children = resp.Results
 ua.Tools.printTable("ObjectsRoot", children)
 
 local childIDs = {}
 -- Browse children nodes
-for i,child in ipairs(children[1].references) do
-  table.insert(childIDs, child.nodeId)
+for i,child in ipairs(children[1].References) do
+  table.insert(childIDs, child.NodeId)
 end
 
 local children = server:browse(childIDs)

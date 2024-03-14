@@ -1,0 +1,18 @@
+mako.createloader(io)
+
+read_thread = ba.thread.create()
+read_thread:run(function()
+
+  trace("Starting server example 1")
+
+  local http=require"http"
+
+  -- Set default options
+  local op={
+     url="http://localhost:"..mako.port,
+     method="GET" -- Not needed since it is the default
+  }
+  local h=http.create(op)
+  h:request()
+  print(h:read"*a")
+end)

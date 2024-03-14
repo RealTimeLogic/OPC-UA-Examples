@@ -11,7 +11,7 @@ The examples are designed to be run using the
 which includes the OPC-UA plugin. Run any of the examples,
 using the Mako Server, as follows (unless stated otherwise):
 
-``` shell
+```shell
 mako -l::Directory-Name
 ```
 
@@ -23,5 +23,5 @@ command line guide for additional instructions.
 
 ## Examples / Tutorials
 
-* [Server Examples](servers/README.md)
-* [OPC-UA Client and Web Client Example](web-client/README.md)
+- [Server Examples](servers/README.md)
+- [Client Examples](client/README.md)

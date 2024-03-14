@@ -1,5 +1,9 @@
 local ua = require("opcua.api")
-local nodeIds = require("opcua.node_ids")
+local nodeIds = {
+  RootFolder = "i=84",
+  TypesFolder = "i=86",
+  HierarchicalReferences = "i=33",
+}
 
 local config = {
   applicationName = 'RealTimeLogic example',
@@ -47,13 +51,13 @@ if err ~= nil then
   return
 end
 
-for _,res in ipairs(resp.results) do
-  if res.statusCode ~= ua.StatusCode.Good then
-    trace(string.format("Cannot browse node: 0x%X", res.statusCode))
+for _,res in ipairs(resp.Results) do
+  if res.StatusCode ~= ua.StatusCode.Good then
+    trace(string.format("Cannot browse node: 0x%X", res.StatusCode))
   else
     trace("References:")
-    for i,ref in ipairs(res.references) do
-      trace(string.format("%d: NodeId=%s Name=%s", i, ref.nodeId, ref.displayName.text))
+    for i,ref in ipairs(res.References) do
+      trace(string.format("%d: NodeId=%s Name=%s", i, ref.NodeId, ref.DisplayName.Text))
     end
   end
 end
@@ -65,48 +69,47 @@ if err ~= nil then
   return
 end
 
-for _,res in ipairs(resp.results) do
-  if res.statusCode ~= ua.StatusCode.Good then
-    trace(string.format("Cannot browse node: 0x%X", res.statusCode))
+for _,res in ipairs(resp.Results) do
+  if res.StatusCode ~= ua.StatusCode.Good then
+    trace(string.format("Cannot browse node: 0x%X", res.StatusCode))
   else
     trace("References:")
-    for i,ref in ipairs(res.references) do
-      trace(string.format("%d: NodeId=%s Name=%s", i, ref.nodeId, ref.displayName.text))
+    for i,ref in ipairs(res.References) do
+      trace(string.format("%d: NodeId=%s Name=%s", i, ref.NodeId, ref.DisplayName.Text))
     end
   end
 end
 
 -- Full featured browsing
 local browseParams = {
-  requestedMaxReferencesPerNode = 0,
-  nodesToBrowse = {
+  NodesToBrowse = {
     {
-      nodeId = nodeIds.RootFolder,
-      referenceTypeId = nodeIds.HierarchicalReferences,
-      browseDirection = ua.Types.BrowseDirection.Forward,
-      nodeClassMask = ua.Types.NodeClass.Unspecified,
-      resultMask = ua.Types.BrowseResultMask.All,
-      includeSubtypes = 1,
+      NodeId = nodeIds.RootFolder,
+      ReferenceTypeId = nodeIds.HierarchicalReferences,
+      BrowseDirection = ua.Types.BrowseDirection.Forward,
+      NodeClassMask = ua.Types.NodeClass.Unspecified,
+      ResultMask = ua.Types.BrowseResultMask.All,
+      IncludeSubtypes = true,
     },
     {
-      nodeId = nodeIds.RootFolder,
-      referenceTypeId = nodeIds.HierarchicalReferences,
-      browseDirection = ua.Types.BrowseDirection.Forward,
-      nodeClassMask = ua.Types.NodeClass.Unspecified,
-      resultMask = ua.Types.BrowseResultMask.All,
-      includeSubtypes = 1,
+      NodeId = nodeIds.RootFolder,
+      ReferenceTypeId = nodeIds.HierarchicalReferences,
+      BrowseDirection = ua.Types.BrowseDirection.Forward,
+      NodeClassMask = ua.Types.NodeClass.Unspecified,
+      ResultMask = ua.Types.BrowseResultMask.All,
+      IncludeSubtypes = true,
     }
   },
 }
 
 local resp,err = client:browse(browseParams)
-for _,res in ipairs(resp.results) do
-  if res.statusCode ~= ua.StatusCode.Good then
-    trace(string.format("Cannot browse node: 0x%X", res.statusCode))
+for _,res in ipairs(resp.Results) do
+  if res.StatusCode ~= ua.StatusCode.Good then
+    trace(string.format("Cannot browse node: 0x%X", res.StatusCode))
   else
     trace("References:")
-    for i,ref in ipairs(res.references) do
-      trace(string.format("%d: NodeId=%s Name=%s", i, ref.nodeId, ref.displayName.text))
+    for i,ref in ipairs(res.References) do
+      trace(string.format("%d: NodeId=%s Name=%s", i, ref.NodeId, ref.DisplayName.Text))
     end
   end
 end
