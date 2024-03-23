@@ -27,7 +27,6 @@ local function FailIfError(err)
     trace("--------------- !!!!!! FAIL !!!!!!-----------------------")
     trace("--------------------------------------------------------")
 
-
     trace("Error: " .. tostring(err))
     os.exit(-1)
   end

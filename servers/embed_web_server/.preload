@@ -16,7 +16,8 @@ ua.trace.err = function(msg)
   trace(gettime(), "[ERR]", msg)
 end
 
-local conf = io:dofile(".opcua_config", _ENV)
+local conf = app.io:dofile(".opcua_config", _ENV)
+conf.io = app.io
 uaServer = ua.newServer(conf)
 
 uaServer:initialize()
