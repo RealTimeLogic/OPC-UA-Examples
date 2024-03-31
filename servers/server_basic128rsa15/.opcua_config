@@ -1,16 +1,7 @@
 local ua = require("opcua.api")
-local createCert = require("opcua.binary.crypto.certificate")
 
 local listenPort=4841
 local ip = "localhost"
-
-local function readfile(filepath)
-  local f, err = io:open(filepath)
-  if err then error(string.format("failed to open '%s': %s", filepath, err)) end
-  local data = f:read("*a")
-  f:close()
-  return data
-end
 
 local s,err = ba.socket.connect("google.com",80)
 if s then
@@ -20,6 +11,7 @@ if s then
 end
 
 local serverConfig = {
+  io = app.io,
   listenPort = listenPort,
   listenAddress=ip,
   endpointUrl = string.format("opc.tcp://%s:%s", ip, listenPort),
@@ -33,8 +25,8 @@ local serverConfig = {
     { -- #2
       securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
       securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
-      certificate = readfile(".basic128rsa15_server.pem"),
-      key =         readfile(".basic128rsa15_server.key"),
+      certificate = ".basic128rsa15_server.pem",
+      key =         ".basic128rsa15_server.key",
     }
   },
 
