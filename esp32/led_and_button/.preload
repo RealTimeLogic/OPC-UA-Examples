@@ -1,0 +1,146 @@
+-- Load an OPCUA API
+local ua = require("opcua.api")
+local config = {
+  endpointUrl="opc.tcp://localhost:4841",
+  securePolicies ={
+    { -- #1
+      securityPolicyUri = "http://opcfoundation.org/UA/SecurityPolicy#None",
+    }
+  }
+}
+
+local server = ua.newServer(config)
+server:initialize()
+
+local ObjectsFolder = "i=85"
+
+local scalarBoolean = {
+  Value={Boolean = false}
+}
+
+local redId =    "s=red"
+local greenId =  "s=green"
+local blueId =   "s=blue"
+local buttonId = "s=button"
+
+local request = {
+  NodesToAdd = {
+    ua.newVariableParams(ObjectsFolder, {Name="LedRed", ns=0},   "LedRed",   scalarBoolean, redId),
+    ua.newVariableParams(ObjectsFolder, {Name="LedGreen", ns=0}, "LedGreen", scalarBoolean, greenId),
+    ua.newVariableParams(ObjectsFolder, {Name="LedBlue", ns=0},  "LedBlue",  scalarBoolean, blueId),
+    ua.newVariableParams(ObjectsFolder, {Name="Button", ns=0},   "Button",   scalarBoolean, buttonId),
+  }
+}
+
+trace("Addind OPCUA nodes")
+local resp, err = server.services:addNodes(request)
+if err then
+  error("Failed to add new node: ", err)
+end
+
+local res = resp.Results
+if res[1].StatusCode ~= ua.StatusCode.Good and res[1].StatusCode ~= ua.StatusCode.BadNodeIdExists then
+  error(res.StatusCode)
+end
+
+local function ledPin(num)
+  local pin = esp32.gpio(num,"OUT", {pulldown=true})
+  pin:value(false)
+  return pin
+end
+
+trace("Configure RGB LED..")
+local led = {
+  [redId] = {
+    value = false,
+    pin = ledPin(4)
+  },
+  [greenId] = {
+    value = false,
+    pin = ledPin(5)
+  },
+  [blueId]  = {
+    value = false,
+    pin = ledPin(6)
+  }
+}
+
+local function writePin(nodeId, data)
+  trace("node ID: ", nodeId)
+  local color = led[nodeId]
+  if not color then
+    trace("Unknown node ID: ", nodeId)
+    return {Status = ua.StatusCode.BadNodeIdUnknown}
+  end
+
+  if data then
+    trace("Writing ", nodeId)
+    local value = data.Value.Boolean
+    trace("New "..nodeId.." Value: ", value)
+    if value == nil then
+      trace("BadTypeMismatch")
+      return ua.StatusCode.BadTypeMismatch
+    end
+
+    trace("Saving value")
+    color.value = value
+    trace("Setting pin")
+    color.pin:value(value)
+    trace("ua.StatusCode.Good")
+    return ua.StatusCode.Good
+  else
+    return {
+      Status = ua.StatusCode.Good,
+      Value = {Boolean = color.value}
+    }
+  end
+end
+
+trace("Set Red LED node callback")
+server:setVariableSource(redId,   writePin)
+trace("Set Green LED node callback")
+server:setVariableSource(greenId, writePin)
+trace("Set Blue LED node callback")
+server:setVariableSource(blueId,  writePin)
+
+trace("Configure Button pin..")
+local function buttonCallback(val)
+  trace(val)
+
+  local value = {
+    NodeId=buttonId,
+    AttributeId=ua.Types.AttributeId.Value,
+    Value = {
+      Value = {
+        Boolean = val
+      }
+    }
+  }
+
+  server:write({
+    NodesToWrite = {value}
+  })
+end
+
+local buttonPin = esp32.gpio(7,"IN", {
+  type = "ANYEDGE",
+  callback = buttonCallback
+})
+
+
+trace("Running server")
+server:run()
+trace("Server ready")
+
+function onunload()
+  trace("Stopping OPCUA server")
+  server:shutdown()
+
+  trace("Release GPIO pins")
+
+  for _, color in pairs(led) do
+    color.pin:close()
+  end
+
+  buttonPin:close()
+end
