@@ -25,10 +25,10 @@ local buttonId = "s=button"
 
 local request = {
   NodesToAdd = {
-    ua.newVariableParams(ObjectsFolder, {Name="LedRed", ns=0},   "LedRed",   scalarBoolean, redId),
-    ua.newVariableParams(ObjectsFolder, {Name="LedGreen", ns=0}, "LedGreen", scalarBoolean, greenId),
-    ua.newVariableParams(ObjectsFolder, {Name="LedBlue", ns=0},  "LedBlue",  scalarBoolean, blueId),
-    ua.newVariableParams(ObjectsFolder, {Name="Button", ns=0},   "Button",   scalarBoolean, buttonId),
+    ua.newVariableParams(ObjectsFolder, "LedRed",   scalarBoolean, redId),
+    ua.newVariableParams(ObjectsFolder, "LedGreen", scalarBoolean, greenId),
+    ua.newVariableParams(ObjectsFolder, "LedBlue",  scalarBoolean, blueId),
+    ua.newVariableParams(ObjectsFolder, "Button",   scalarBoolean, buttonId),
   }
 }
 

@@ -40,8 +40,7 @@ trace("Adding a node into address space")
 
 local ObjectsFolder = "i=85"
 local statusCode = 0
-local newVariableParams = ua.newVariableParams(
-  ObjectsFolder, {Name="CustomDataSource", ns=0}, "CustomDataSource", {Value={Float=1.0}}, dataSouceId)
+local newVariableParams = ua.newVariableParams(ObjectsFolder, "CustomDataSource", {Value={Float=1.0}}, dataSouceId)
 
 local res = server:addNodes({NodesToAdd={newVariableParams}})
 for _,result in ipairs(res.Results) do
