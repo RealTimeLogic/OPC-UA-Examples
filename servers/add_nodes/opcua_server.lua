@@ -22,7 +22,7 @@ server:initialize()
 -- add Folder node
 local request = {
   NodesToAdd = {
-     ua.newFolderParams(ObjectsFolder, {Name="NewFolder", ns=0}, "NewFolder")
+     ua.newFolderParams(ObjectsFolder, "NewFolder")
    }
 }
 
@@ -54,8 +54,8 @@ local arrBoolean = {
 
 local request = {
     NodesToAdd = {
-    ua.newVariableParams(folderId, {Name="scalar", ns=0}, "boolean", scalarBoolean, scalarBooleanId),
-    ua.newVariableParams(folderId, {Name="array", ns=0}, "boolean_array", arrBoolean, arrBooleanId),
+    ua.newVariableParams(folderId, "boolean", scalarBoolean, scalarBooleanId),
+    ua.newVariableParams(folderId, "boolean_array", arrBoolean, arrBooleanId),
   }
 }
 

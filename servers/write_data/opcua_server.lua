@@ -24,7 +24,7 @@ server:initialize()
 -- Add variable node
 local variableNodeId = "i=1000000"
 local value = {Value={Int64 = 0}}
-local variableParams = ua.newVariableParams(ObjectsFolder, {Name="variable", ns=0}, "variable", value, variableNodeId)
+local variableParams = ua.newVariableParams(ObjectsFolder, "variable", value, variableNodeId)
 local resp = server.services:addNodes({NodesToAdd={variableParams}})
 local res = resp.Results
 if res[1].StatusCode ~= ua.StatusCode.Good and res[1].StatusCode ~= ua.StatusCode.BadNodeIdExists then
