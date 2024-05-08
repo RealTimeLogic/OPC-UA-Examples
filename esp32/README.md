@@ -7,9 +7,9 @@
 
 This simple Xedge32 application implements a simple OPCUA server that can control RGB LED and expose button state into a Adddress Space.
 
-On thi picture you can see how to connect LED and Button:
+On the picture you can see how to connect LED and Button:
 
-![ESP32 LED and Button scheme](ignition/esp32-scheme.jpg)
+![ESP32 LED and Button scheme](esp32-scheme.png)
 
 First of all need to create an application package with `make` command:
 On windows you can just create zip archive from `led_and_button` folder.
