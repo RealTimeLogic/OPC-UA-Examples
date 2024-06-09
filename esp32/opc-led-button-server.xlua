@@ -1,58 +1,129 @@
--- Load an OPCUA API
+-- Load the OPCUA API
 local ua = require("opcua.api")
 
 local server = ua.newServer()
 server:initialize()
 
-local redPinNum    = 4
-local greenPinNum  = 5
-local bluePinNum   = 6
+-- The following variables specify the GPIO pin numbers where
+-- the Red, Green, and Blue LEDs are connected. When we
+-- set the pin to high, the LED will turn on. When we set the
+-- pin to low, the LED will turn off.
+-- The GPIO pin number is usually written on the board near the pin.
+-- You can connect LEDs to different pins, but you need to update
+-- the values of the following variables.
+local redPinNum    = 4  -- GPIO pin number for the Red LED
+local greenPinNum  = 5  -- GPIO pin number for the Green LED
+local bluePinNum   = 6  -- GPIO pin number for the Blue LED
+
+-- The following variable specifies the GPIO pin number where
+-- the button is connected. The button is used to change the state
+-- of the GPIO pin it is connected to. When the button is pressed,
+-- the state of the GPIO pin will toggle between high and low.
 local buttonPinNum = 7
 
+-- The following variable specifies the parent folder under which
+-- the OPCUA nodes for the LED and button will be created.
 local objectsFolder = "i=85"
 
+-- All nodes related to LED pins will be grouped in a separate folder
 local esp32FolderId = "s=esp32"
+
+-- The following variables specify the node IDs for each LED color.
+-- These IDs will be used to access the LED nodes from the OPCUA client
+-- and to turn the LEDs on and off.
 local ledFolderId = "s=led"
 local redId =    "s=red"
 local greenId =  "s=green"
 local blueId =   "s=blue"
 
+-- This variable specifies the node ID for the button node.
+-- This ID will be used to access the button node from the OPCUA client
+-- and to read the state of the button.
 local buttonId = "s=button"
 
-local booleanDataValue = {
-  Value={Boolean = false}
+-- The following variable specifies the initial value of the LED nodes.
+-- This variable should represent the DataValue type with the fields:
+-- * Value - the value of the variable
+-- * StatusCode - the error code of the last read/write operation
+-- * SourceTimestamp - the timestamp when the value was last updated
+-- * ServerTimestamp - the timestamp when the value was last read
+-- * ServerPicoseconds - the picoseconds part of the ServerTimestamp
+-- * ServerNanoseconds - the nanoseconds part of the ServerTimestamp
+
+-- All fields are optional, but we specify Value which will be used as the initial value of the LED nodes.
+-- (https://realtimelogic.com/ba/opcua/types.html#datavalue)
+local booleanDataValue = { -- DataValue type
+  Value={Boolean = false} -- Variant type
 }
 
+-- Create a request to add new nodes to the OPCUA server.
+-- In this request, we will add the following nodes:
+-- * Esp32 folder node with LED nodes:
+--   * Red LED node
+--   * Green LED node
+--   * Blue LED node
+-- * Button node
+--
+-- Parameters for creating each node have a complex structure depending on the type of node.
+-- We use helper functions ua.newVariableParams and ua.newFolderParams to simplify the process.
+-- These functions take the following parameters:
+--   1st parameter: the parent node ID
+--   2nd parameter: the node name
+--   3rd parameter: the node data value
+--   4th parameter: the node ID (this can be omitted, and the server will generate the ID automatically)
+-- Detailed information at https://realtimelogic.com/ba/opcua/adding_nodes.html#folder-and-variable-nodes
 local request = {
   NodesToAdd = {
+    -- Folder all new nodes will be added to
     ua.newFolderParams(objectsFolder, "Esp32",   esp32FolderId),
+    -- Button one directly in Esp32 folder
+    ua.newVariableParams(esp32FolderId, "Button", booleanDataValue, buttonId),
+
+    -- Folder for LED nodes
     ua.newFolderParams(esp32FolderId, "Led",   ledFolderId),
+    -- Nodes for each LED color inside the 'Led' folder
     ua.newVariableParams(ledFolderId, "Red",   booleanDataValue, redId),
     ua.newVariableParams(ledFolderId, "Green", booleanDataValue, greenId),
     ua.newVariableParams(ledFolderId, "Blue",  booleanDataValue, blueId),
-
-    ua.newVariableParams(esp32FolderId, "Button", booleanDataValue, buttonId),
   }
 }
 
-trace("Addind OPCUA nodes")
-local resp, err = server.services:addNodes(request)
+-- Add the nodes to the server. In response, we get the result and status of the operation.
+-- Status here is the result of the operation. If the status is not Good, then the operation
+-- failed to execute, and no nodes were added to the server.
+trace("Adding OPCUA nodes")
+local resp, err = server:addNodes(request)
 if err then
   error("Failed to add new node: ", err)
 end
 
+-- The result of the operation contains statuses for each requested node.
+-- This means that the request might be partially successful. Some nodes might be added
+-- while others might not. We need to check the status of each node to ensure that
+-- all nodes were added successfully.
 local res = resp.Results
 if res[1].StatusCode ~= ua.StatusCode.Good and res[1].StatusCode ~= ua.StatusCode.BadNodeIdExists then
   error(res.StatusCode)
 end
 
+-- The following helper function is used to configure the GPIO pin
+-- for the LED. The function takes the GPIO pin number and returns
+-- an instance of the GPIO pin object.
 local function ledPin(num)
+  -- Configure the GPIO pin as an output with a pull-down resistor
   local pin = esp32.gpio(num,"OUT", {pulldown=true})
+  -- Set the initial value of the pin to low, turning off the LED
   pin:value(false)
   return pin
 end
 
 trace("Configure RGB LED..")
+
+-- The following table stores information about each LED color and represents
+-- the mapping between the node ID and the GPIO pin. The table has the following structure:
+-- * key: the node ID of the LED node
+-- * value: the current state of the LED
+-- * pin: the GPIO pin object used to manage the LED hardware
 local rgbLed = {
   [redId] = {
     value = false,
@@ -68,14 +139,26 @@ local rgbLed = {
   }
 }
 
+-- The following is a callback function called when the LED node
+-- is read or written by the OPCUA client.
+-- If the client reads data, this function is called with the data parameter set to nil. In this
+-- case, the function should return the current value of the LED, which will be sent to
+-- the client.
+-- If the client writes data, this function is called with the data parameter set to the
+-- new value of the LED.
 local function writePin(nodeId, data)
   trace("node ID: ", nodeId)
+
+  -- Get the LED node by the node ID and check if it is either
+  -- the red, green, or blue LED node ID.
   local color = rgbLed[nodeId]
   if not color then
     trace("Unknown node ID: ", nodeId)
+    -- Return the BadNodeIdUnknown error code because we called with an unknown node ID
     return {Status = ua.StatusCode.BadNodeIdUnknown}
   end
 
+  -- If data is not nil, this means that the client wants to write a new value to the LED
   if data then
     trace("Writing ", nodeId)
     local value = data.Value.Boolean
@@ -86,12 +169,18 @@ local function writePin(nodeId, data)
     end
 
     trace("Saving value")
+    -- Save the new value of the LED for future reads
     color.value = value
     trace("Setting pin")
+    -- Set the value of the GPIO pin to the new value.
+    -- If the value is true, the pin will be set to high, turning on the LED
     color.pin:value(value)
     trace("ua.StatusCode.Good")
+    -- Data was written successfully. Return the Good status code to the client
     return ua.StatusCode.Good
   else
+    -- If data is nil, this means that the client wants to read the value of the LED
+    -- Return DataValue with the current value of the LED and the Good status code
     return {
       Status = ua.StatusCode.Good,
       Value = {Boolean = color.value}
@@ -99,6 +188,8 @@ local function writePin(nodeId, data)
   end
 end
 
+-- Set the callback function for each LED node
+-- This callback function will be called when the LED node is read or written by the client
 trace("Set Red LED node callback")
 server:setVariableSource(redId,   writePin)
 trace("Set Green LED node callback")
@@ -107,40 +198,58 @@ trace("Set Blue LED node callback")
 server:setVariableSource(blueId,  writePin)
 
 trace("Configure Button pin..")
+-- The following callback function is called when the button is pressed or released.
+-- The function takes the new value of the button and writes it to the button node in
+-- the OPCUA address space. The client can later read that value to get the state of the button.
 local function buttonCallback(val)
   trace(val)
 
+  -- Fill parameters of the attribute we want to change.
+  -- In this case, we change the Value attribute of the button node.
+  -- All other attributes (like node name) will remain the same.
   local value = {
+    -- Node ID of the button node
     NodeId=buttonId,
+    -- Value Attribute ID of the node
     AttributeId=ua.Types.AttributeId.Value,
+    -- New DataValue of the Value attribute
     Value = {
+      -- This field is of Variant type. We use the Boolean type here.
       Value = {
         Boolean = val
       }
     }
   }
 
+  -- Write the new value to the button node in the OPCUA address space
   server:write({
     NodesToWrite = {value}
   })
 end
 
+-- Configure the button pin as input with a pull-up resistor.
+-- When the button is pressed or released, the state of the pin will change
+-- and the callback function will be called.
 local buttonPin = esp32.gpio(buttonPinNum,"IN", {
   type = "ANYEDGE",
   callback = buttonCallback
 })
 
-
+-- Server initialization and configuration are done. Now we can run the server.
+-- The server will start listening for incoming connections and will process
+-- the requests from the clients.
 trace("Running server")
 server:run()
 trace("Server ready")
 
+-- The following function is called when the application is stopped.
 function onunload()
   trace("Stopping OPCUA server")
+  -- Shutdown the server. This will stop the server and close all connections.
   server:shutdown()
 
+  -- After the server is stopped, we need to release the GPIO pins
   trace("Release GPIO pins")
-
   for _, color in pairs(rgbLed) do
     color.pin:close()
   end
