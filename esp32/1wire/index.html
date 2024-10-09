@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>OPCUA MQTT PubSub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid black;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+        img {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 50%;
+        }
+    </style>
+
+
+  </head>
+  <body>
+    <div id="mqtt_data">
+
+      <h1 style="text-align: center;">DS18B20 Temperature Sensor Data</h1>
+
+      <img src="example.png">
+      <table>
+          <thead>
+              <tr>
+                  <th>ROM</th>
+                  <th>Time</th>
+                  <th>Temperature (°C)</th>
+              </tr>
+          </thead>
+          <tbody id="sensorData">
+              <!-- Rows will be inserted here by JavaScript -->
+          </tbody>
+      </table>
+
+    </div>
+
+    <script lang="javascript">
+
+      function insertSensorData(sensorName, time, temperature) {
+        let romCell = document.getElementById('rom_' + sensorName);
+        let timeCell = document.getElementById('time_' + sensorName);
+        let tempCell = document.getElementById('temp_' + sensorName);
+        if (romCell === null) {
+          const tableBody = document.getElementById('sensorData');
+          const newRow = document.createElement('tr');
+          romCell = document.createElement('td');
+          timeCell = document.createElement('td');
+          tempCell = document.createElement('td');
+          romCell.id = 'rom_' + sensorName
+          timeCell.id = 'time_' + sensorName
+          tempCell.id = 'temp_' + sensorName
+          newRow.appendChild(romCell);
+          newRow.appendChild(timeCell);
+          newRow.appendChild(tempCell);
+          tableBody.appendChild(newRow);
+        }
+
+        romCell.textContent = sensorName;
+        timeCell.textContent = time;
+        tempCell.textContent = temperature;
+      }
+
+      function clearTable() {
+        const tableBody = document.getElementById('sensorData');
+        tableBody.innerHTML = ''; // Clear existing rows
+      }
+
+      function generateRows(message) {
+        const jsonString = message.toString('utf8')
+        const parsedData = JSON.parse(jsonString)
+
+        clearTable(); // Clear existing rows before adding new ones
+        for (let msgIdx = 0; msgIdx < parsedData.Messages.length; msgIdx++) {
+          const msg = parsedData.Messages[msgIdx]
+          for (sensorName in msg.Payload) {
+            const sensorData = msg.Payload[sensorName]
+            insertSensorData(sensorName, sensorData.ServerTimestamp, sensorData.Value.Body)
+          }
+        }
+      }
+
+      const clientId = 'mqtt_opcua_pub_sub_' + Math.random().toString(16).substr(2, 8)
+      const topic = 'rtl/json/data/urn:arykovanov-note:opcua:server/group/dataset'
+
+      const options = {
+        keepalive: 30,
+        clientId,
+        protocolId: 'MQTT',
+        protocolVersion: 4,
+        clean: true,
+        reconnectPeriod: 1000,
+        connectTimeout: 30 * 1000,
+        will: {
+          topic: 'rtl/json/data/urn:arykovanov-note:opcua:server/group/dataset',
+          payload: 'Connection Closed abnormally..!',
+          qos: 0,
+          retain: false
+        },
+        rejectUnauthorized: false
+      }
+
+      const client = mqtt.connect('wss://test.mosquitto.org:8081')
+
+      client.on('error', (err) => {
+        console.log(err)
+        client.end()
+      })
+
+      client.on('connect', () => {
+        console.log('client connected:' + clientId)
+        client.subscribe(topic, { qos: 0 })
+      })
+
+      client.on('message', (topic, message, packet) => {
+        console.log('Received Message:= ' + message.toString() + '\nOn topic:= ' + topic)
+        generateRows(message)
+      })
+
+      client.on('close', () => {
+        console.log(clientId + ' disconnected')
+      })
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,13 @@
+package.loaded["mqtt_publish"] = nil
+package.loaded["ds18b20"] = nil
+package.loaded["1wire"] = nil
+
+xedge.createloader(io)
+
+local mqtt_publish = require("mqtt_publish")
+
+mqtt_publish.start()
+
+function onunload()
+  mqtt_publish.stop()
+end
