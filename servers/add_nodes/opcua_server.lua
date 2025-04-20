@@ -31,7 +31,7 @@ local res = resp.Results
 if res[1].StatusCode ~= ua.StatusCode.Good and res[1].StatusCode ~= ua.StatusCode.BadNodeIdExists then
  error(res.StatusCode)
 end
--- ua.debug()
+
 local folderId = res[1].AddedNodeId
 
 -- Add two variables:
@@ -43,13 +43,16 @@ local scalarBooleanId = "i=1000000"
 
 -- Initial boolean scalar value
 local scalarBoolean = {
-  Value={Boolean = true}
+  Type = ua.Types.VariantType.Boolean,
+  Value = true
 }
 
 local arrBooleanId = "i=1000001"
 -- Initial boolean array value
 local arrBoolean = {
-  Value={Boolean = {true, false, true, false}}
+  Type = ua.Types.VariantType.Boolean,
+  IsArray = true,
+  Value = {true, false, true, false}
 }
 
 local request = {

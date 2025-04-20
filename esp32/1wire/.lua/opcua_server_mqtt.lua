@@ -66,7 +66,10 @@ local function writeTemp(temperature, err)
         NodeId = sensorNodeId,
         AttributeId = ua.Types.AttributeId.Value,
         Value = {
-          Value = { Float=temperature },
+          Value = {
+            Type = ua.Types.VariantType.Float,
+            Value = temperature
+          },
           ServerTimestamp = secs,
           StatusCode = ua.StatusCode.Good
         },

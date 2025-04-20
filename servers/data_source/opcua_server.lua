@@ -22,14 +22,14 @@ local variable = 1
 
 -- Callback function is being called each time a read or write request
 -- is initiated by client
-local function processDataSource(nodeId, value)
-  if value == nil then
+local function processDataSource(nodeId, dataValue)
+  if dataValue == nil then
     variable = (variable < 10000000000) and variable * 13.13 or 1
     trace("Read value: ".. variable)
     return variable
   else
-    trace("Write value: ".. value.float)
-    variable = value.float
+    trace("Write value: ".. dataValue.Value)
+    variable = dataValue.Value
   end
 end
 
@@ -40,7 +40,11 @@ trace("Adding a node into address space")
 
 local ObjectsFolder = "i=85"
 local statusCode = 0
-local newVariableParams = ua.newVariableParams(ObjectsFolder, "CustomDataSource", {Value={Float=1.0}}, dataSouceId)
+local value = {
+  Type = ua.Types.VariantType.Float,
+  Value = 1.0
+}
+local newVariableParams = ua.newVariableParams(ObjectsFolder, "CustomDataSource", value, dataSouceId)
 
 local res = server:addNodes({NodesToAdd={newVariableParams}})
 for _,result in ipairs(res.Results) do

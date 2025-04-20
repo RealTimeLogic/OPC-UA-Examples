@@ -94,7 +94,10 @@ local function publishTemp(co)
     local secs, ns = ba.datetime("NOW"):ticks()
     secs = secs + ns / 1e9
     local value = {
-      Value = { Float=temperature },
+      Value = {
+        Type = ua.Types.VariantType.Float,
+        Value = temperature
+      },
       ServerTimestamp = secs,
       StatusCode = ua.StatusCode.Good
     }
@@ -122,7 +125,7 @@ local function readTemp()
     return
   end
 
-  trace("creating coutine")
+  trace("creating coroutine")
   local co = coroutine.create(function(co)
     local suc, err = pcall(publishTemp,co)
     trace("Publish Temp:", suc, err)

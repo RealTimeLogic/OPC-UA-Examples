@@ -58,10 +58,14 @@ local function addBoolean(services, parentNodeId)
   end
 
   -- Array with node id attributes of a new boolean variable
+  local value = {
+    Type = ua.Types.VariantType.Boolean,
+    Value = true
+  }
   local newVariable =
   {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "boolean_variable", {Value={Boolean=true}}, nextId())
+      ua.newVariableParams(parentNodeId, "boolean_variable", value, nextId())
     }
   }
 
@@ -72,9 +76,14 @@ local function addBooleanArray(services, parentNodeId)
   traceI("Adding Boolean Array variable")
 
   -- Array with node id attributes of a new boolean variable
+  local value = {
+    Type = ua.Types.VariantType.Boolean,
+    IsArray = true,
+    Value = {true,false,true,false,true,false,true,false,true,false}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "BooleanArray", {Value={Boolean={true,false,true,false,true,false,true,false,true,false}}}, nextId())
+      ua.newVariableParams(parentNodeId, "BooleanArray", value, nextId())
     }
   }
 
@@ -86,9 +95,13 @@ local function addByte(services, parentNodeId)
   traceI("Adding Byte variable")
 
   -- Array with node id attributes of a new boolean variable
+  local byteValue = {
+    Type = ua.Types.VariantType.Byte,
+    Value = 17
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "Byte", {Value={Byte=17}}, nextId())
+      ua.newVariableParams(parentNodeId, "Byte", byteValue, nextId())
     }
   }
 
@@ -99,11 +112,15 @@ end
 local function addByteArray(services, parentNodeId)
   traceI("Adding Byte Array variable")
 
-  local data = {1,2,3,4,5,6,7,8,9,10}
+  local byteValue = {
+    Type = ua.Types.VariantType.Byte,
+    IsArray = true,
+    Value = {1,2,3,4,5,6,7,8,9,10}
+  }
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "ByteArray", {Value={Byte=data}}, nextId())
+      ua.newVariableParams(parentNodeId, "ByteArray", byteValue, nextId())
     }
   }
 
@@ -115,9 +132,13 @@ local function addSByte(services, parentNodeId)
   traceI("Adding SByte variable")
 
   -- Array with node id attributes of a new boolean variable
+  local sbyteValue = {
+    Type = ua.Types.VariantType.SByte,
+    Value = -100
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "SByte", {Value={SByte=-100}}, nextId())
+      ua.newVariableParams(parentNodeId, "SByte", sbyteValue, nextId())
     }
   }
 
@@ -129,9 +150,14 @@ local function addSByteArray(services, parentNodeId)
   traceI("Adding SByte Array variable")
 
   -- Array with node id attributes of a new boolean variable
+  local sbyteValue = {
+    Type = ua.Types.VariantType.SByte,
+    IsArray = true,
+    Value = {-2,-1,0,1,2,3,4,5,6,7}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "SByteArray", {Value={SByte={-2,-1,0,1,2,3,4,5,6,7}}}, nextId())
+      ua.newVariableParams(parentNodeId, "SByteArray", sbyteValue, nextId())
     }
   }
 
@@ -143,9 +169,13 @@ local function addInt16(services, parentNodeId)
   traceI("Adding Int16 variable")
 
   -- Array with node id attributes of a new boolean variable
+  local int16Value = {
+    Type = ua.Types.VariantType.Int16,
+    Value = 30000
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "Int16", {Value={Int16=30000}}, nextId())
+      ua.newVariableParams(parentNodeId, "Int16", int16Value, nextId())
     }
   }
 
@@ -156,9 +186,14 @@ local function addInt16Array(services, parentNodeId)
   traceI("Adding Int16 Array variable")
 
   -- Array with node id attributes of a new boolean variable
+  local int16Array = {
+    Type = ua.Types.VariantType.Int16,
+    IsArray = true,
+    Value = {-2000,-1000,0,100,200,300,400,5000,6000,7000}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "Int16Array", {Value={Int16={-2000,-1000,0,100,200,300,400,5000,6000,7000}}}, nextId())
+      ua.newVariableParams(parentNodeId, "Int16Array", int16Array, nextId())
     }
   }
 
@@ -171,10 +206,19 @@ local function addUInt16_Scalar_And_Array(services, parentNodeId)
   traceI("Adding UInt16 variable and UInt16 array")
 
   -- Array with node id attributes of a new boolean variable
+  local uint16Value = {
+    Type = ua.Types.VariantType.UInt16,
+    Value = 30000
+  }
+  local uint16Array = {
+    Type = ua.Types.VariantType.UInt16,
+    IsArray = true,
+    Value = {2000,1000,0,100,200,300,400,5000,6000,40000}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "UInt16", {Value={UInt16=30000}}, nextId()),
-      ua.newVariableParams(parentNodeId, "UInt16Array", {Value={UInt16={2000,1000,0,100,200,300,400,5000,6000,40000}}}, nextId())
+      ua.newVariableParams(parentNodeId, "UInt16", uint16Value, nextId()),
+      ua.newVariableParams(parentNodeId, "UInt16Array", uint16Array, nextId())
     }
   }
 
@@ -186,12 +230,31 @@ local function addInt32_UInt32_Scalar_And_Array(services, parentNodeId)
   traceI("Adding Int32,UInt32 scalar and array")
 
   -- Array with node id attributes of a new boolean variable
+  local uint32Value = {
+    Type = ua.Types.VariantType.UInt32,
+    Value = 30000
+  }
+  local uint32Array = {
+    Type = ua.Types.VariantType.UInt32,
+    IsArray = true,
+    Value = {2000,1000,0,100,200,300,4000000,5000,6000,40000}
+  }
+  local int32Value = {
+    Type = ua.Types.VariantType.Int32,
+    Value = 1000000
+  }
+  local int32Array = {
+    Type = ua.Types.VariantType.Int32,
+    IsArray = true,
+    Value = {-2000,1000,0,100,-200,300,-10000,5000,6000,40000}
+  }
+
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "UInt32", {Value={UInt32=30000}}, nextId()),
-      ua.newVariableParams(parentNodeId, "UInt32Array", {Value={UInt32={2000,1000,0,100,200,300,4000000,5000,6000,40000}}}, nextId()),
-      ua.newVariableParams(parentNodeId, "Int32", {Value={Int32=30000}}, nextId()),
-      ua.newVariableParams(parentNodeId, "Int32Array", {Value={Int32={-2000,1000,0,100,-200,300,-4000000,5000,6000,40000}}}, nextId())
+      ua.newVariableParams(parentNodeId, "UInt32", uint32Value, nextId()),
+      ua.newVariableParams(parentNodeId, "UInt32Array", uint32Array, nextId()),
+      ua.newVariableParams(parentNodeId, "Int32", int32Value, nextId()),
+      ua.newVariableParams(parentNodeId, "Int32Array", int32Array, nextId())
     }
   }
 
@@ -204,12 +267,25 @@ local function addInt64_UInt64_Scalar_And_Array(services, parentNodeId)
   traceI("Adding Int64,UInt64 scalar and array")
 
   -- Array with node id attributes of a new boolean variable
+  local uint64Array = {
+    Type = ua.Types.VariantType.UInt64,
+    IsArray = true,
+    Value = {2000,1000,0,100,200,300,4000000000,5000,6000,40000}
+  }
+  local int64Value = {
+    Type = ua.Types.VariantType.Int64,
+    Value = 1000000000
+  }
+  local int64Array = {
+    Type = ua.Types.VariantType.Int64,
+    IsArray = true,
+    Value = {-2000,1000,0,100,-200,300,-10000000000,5000,6000,40000}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "UInt64", {Value={UInt64=3000000000}}, nextId()),
-      ua.newVariableParams(parentNodeId, "UInt64Array", {Value={UInt64={2000,1000,0,100,200,300,4000000000,5000,6000,40000}}}, nextId()),
-      ua.newVariableParams(parentNodeId, "Int64", {Value={Int64=1000000000}}, nextId()),
-      ua.newVariableParams(parentNodeId, "Int364Array", {Value={Int64={-2000,1000,0,100,-200,300,-10000000000,5000,6000,40000}}}, nextId())
+      ua.newVariableParams(parentNodeId, "UInt64Array", uint64Array, nextId()),
+      ua.newVariableParams(parentNodeId, "Int64", int64Value, nextId()),
+      ua.newVariableParams(parentNodeId, "Int64Array", int64Array, nextId())
     }
   }
 
@@ -221,12 +297,30 @@ local function addFloat_Double_Scalar_And_Array(services, parentNodeId)
   traceI("Adding Float,Double scalar and array")
 
   -- Array with node id attributes of a new boolean variable
+  local floatValue = {
+    Type = ua.Types.VariantType.Float,
+    Value = 1.1
+  }
+  local floatArray = {
+    Type = ua.Types.VariantType.Float,
+    IsArray = true,
+    Value = {2.2,3.3}
+  }
+  local doubleValue = {
+    Type = ua.Types.VariantType.Double,
+    Value = -1.1
+  }
+  local doubleArray = {
+    Type = ua.Types.VariantType.Double,
+    IsArray = true,
+    Value = {6000.222,40000.22}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "Float", {Value={Float=1.1}}, nextId()),
-      ua.newVariableParams(parentNodeId, "FloatArray", {Value={Float={2.2,3.3}}}, nextId()),
-      ua.newVariableParams(parentNodeId, "Double", {Value={Double=-1.1}}, nextId()),
-      ua.newVariableParams(parentNodeId, "Double", {Value={Double={6000.222,40000.22}}}, nextId())
+      ua.newVariableParams(parentNodeId, "Float", floatValue, nextId()),
+      ua.newVariableParams(parentNodeId, "FloatArray", floatArray, nextId()),
+      ua.newVariableParams(parentNodeId, "Double", doubleValue, nextId()),
+      ua.newVariableParams(parentNodeId, "DoubleArray", doubleArray, nextId())
     }
   }
 
@@ -238,12 +332,19 @@ local function addString_Scalar_And_Array(services, parentNodeId)
   traceI("Adding String scalar and array")
 
   -- Array with node id attributes of a new boolean variable
-  local strScalar = "This is a string variable"
-  local strArray = {"Element1", "Element2", "Element3", "Element4", "Element5", "Element6", "Element7", "Element8", "Element9", "Element10"}
+  local stringScalar = {
+    Type = ua.Types.VariantType.String,
+    Value = "This is a string variable"
+  }
+  local stringArray = {
+    Type = ua.Types.VariantType.String,
+    IsArray = true,
+    Value = {"Element1", "Element2", "Element3", "Element4", "Element5", "Element6", "Element7", "Element8", "Element9", "Element10"}
+  }
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "String", {Value={String=strScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "StringArray", {Value={String=strArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "String", stringScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "StringArray", stringArray, nextId()),
     }
   }
 
@@ -253,13 +354,20 @@ end
 local function addGuid_Scalar_And_Array(services, parentNodeId)
   traceI("Adding Guid scalar and array")
 
-  local guidScalar = ua.createGuid()
-  local guidArray = {ua.createGuid(),ua.createGuid(),ua.createGuid()}
+  local guidScalar = {
+    Type = ua.Types.VariantType.Guid,
+    Value = ua.createGuid()
+  }
+  local guidArray = {
+    Type = ua.Types.VariantType.Guid,
+    IsArray = true,
+    Value = {ua.createGuid(),ua.createGuid(),ua.createGuid()}
+  }
   -- Array with node id attributes of a new variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "Guid", {Value={Guid=guidScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "GuidArray", {Value={Guid=guidArray}}, nextId())
+      ua.newVariableParams(parentNodeId, "Guid", guidScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "GuidArray", guidArray, nextId())
     }
   }
 
@@ -271,13 +379,20 @@ local function addDateTime_Scalar_And_Array(services, parentNodeId)
   traceI("Adding DateTime scalar and array")
 
   local curTime = os.time()
-  local dateTimeScalar = curTime + 0.123
-  local dateTimeArray = {curTime, curTime - 1, curTime - 2, curTime - 3, curTime - 4, curTime - 5, curTime - 6, curTime - 7, curTime - 8, curTime - 9}
+  local dateTimeScalar = {
+    Type = ua.Types.VariantType.DateTime,
+    Value = curTime + 0.123
+  }
+  local dateTimeArray ={
+    Type = ua.Types.VariantType.DateTime,
+    IsArray = true,
+    Value = {curTime, curTime - 1, curTime - 2, curTime - 3, curTime - 4, curTime - 5, curTime - 6, curTime - 7, curTime - 8, curTime - 9}
+  }
   -- Array with node id attributes of a new variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "DateTime", {Value={DateTime=dateTimeScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "DateTimeArray", {Value={DateTime=dateTimeArray}}, nextId())
+      ua.newVariableParams(parentNodeId, "DateTime", dateTimeScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "DateTimeArray", dateTimeArray, nextId())
     }
   }
 
@@ -287,24 +402,31 @@ end
 local function addByteString_Scalar_And_Array(services, parentNodeId)
   traceI("Adding ByteString scalar and array")
 
-  local byteStringScalar = {1,2,3,4,5,6,7,8,9}
+  local byteStringScalar = {
+    Type = ua.Types.VariantType.ByteString,
+    Value = "\1\2\3\4\5\6\7\8\9"
+  }
   local byteStringArray = {
-    {1,2,3,4,5},
-    {2,3,4,5,6,7},
-    {3,4,5,6,7},
-    {4,5,6,7,8,9},
-    {5,6,7,8,9},
-    {6,7,8,9},
-    {7,8,9,0},
-    {8,9,0},
-    {9,0},
-    {0}
+    Type = ua.Types.VariantType.ByteString,
+    IsArray = true,
+    Value = {
+      "\1\2\3\4\5",
+      "\2\3\4\5\6\7",
+      "\3\4\5\6\7",
+      "\4\5\6\7\8\9",
+      "\5\6\7\8\9",
+      "\6\7\8\9",
+      "\7\8\9\0",
+      "\8\9\0",
+      "\9\0",
+      "\0"
+    }
   }
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "ByteString", {Value={ByteString=byteStringScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "DateTimeArray", {Value={ByteString=byteStringArray}}, nextId())
+      ua.newVariableParams(parentNodeId, "ByteString", byteStringScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "ByteStringArray", byteStringArray, nextId())
     }
   }
 
@@ -316,26 +438,31 @@ local function addXmlElement_Scalar_And_Array(services, parentNodeId)
   traceI("Adding XmlElement scalar and array")
 
   local xmlScalar = {
+    Type = ua.Types.VariantType.XmlElement,
     Value = '<xml version="1.0"><opcua></opcua>'
   }
   local xmlArray = {
-      {Value="12345"},
-      {Value="23456"},
-      {Value="34678"},
-      {Value="4578"},
-      {Value="56899"},
-      {Value="2345234523"},
-      {Value='<xml version="1.0"><opcua></opcua>'},
-      {Value="7654"},
-      {Value="hmmm"},
-      {Value='123415546'}
+    Type = ua.Types.VariantType.XmlElement,
+    IsArray = true,
+    Value = {
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
+      '<xml version="1.0"><opcua></opcua>',
     }
+  }
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "XmlElement", {Value={XmlElement=xmlScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "XmlElementArray", {Value={XmlElement=xmlArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "XmlElement", xmlScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "XmlElementArray", xmlArray, nextId()),
     }
   }
 
@@ -345,25 +472,29 @@ end
 local function addNodeId_Scalar_And_Array(services, parentNodeId)
   traceI("Adding NodeId scalar and array")
 
-  local nodeIdScalar = "ns=10;s=string_id"
+  local nodeIdScalar = {
+    Type = ua.Types.VariantType.NodeId,
+    Value = "ns=10;s=string_id"
+  }
   local nodeIdArray = {
-    "ns=11;s=string_id",
-    "ns=1;i=10",
-    "ns=2;i=9",
-    "ns=3;i=8",
-    "ns=4;i=7",
-    "ns=5;i=6",
-    "ns=6;i=5",
-    "ns=7;i=4",
-    "ns=8;i=3",
-    "ns=9;i=2",
+    Type = ua.Types.VariantType.NodeId,
+    IsArray = true,
+    Value = {
+      "ns=11;s=string_id",
+      "ns=1;i=10",
+      "ns=5;i=6",
+      "ns=6;i=5",
+      "ns=7;i=4",
+      "ns=8;i=3",
+      "ns=9;i=2",
+    }
   }
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "NodeId", {Value={NodeId=nodeIdScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "NodeIdArray", {Value={NodeId=nodeIdArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "NodeId", nodeIdScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "NodeIdArray", nodeIdArray, nextId()),
     }
   }
 
@@ -375,25 +506,29 @@ local function addExpandedNodeId_Scalar_And_Array(services, parentNodeId)
   traceI("Adding ExpandedNodeId scalar and array")
 
 
-  local nodeIdScalar = "ns=10;s=expanded_string_id"
+  local nodeIdScalar = {
+    Type = ua.Types.VariantType.ExpandedNodeId,
+    Value = "ns=10;s=expanded_string_id"
+  }
   local nodeIdArray = {
-    "nsu=uri;s=expanded_string_id",
-    "ns=1;i=10",
-    "ns=2;i=9",
-    "ns=3;i=8",
-    "ns=4;i=7",
-    "ns=5;i=6",
-    "ns=6;i=5",
-    "ns=7;i=4",
-    "ns=8;i=3",
-    "ns=9;i=2",
+    Type = ua.Types.VariantType.ExpandedNodeId,
+    IsArray = true,
+    Value = {
+      "nsu=uri;s=expanded_string_id",
+      "ns=1;i=10",
+      "ns=5;i=6",
+      "ns=6;i=5",
+      "ns=7;i=4",
+      "ns=8;i=3",
+      "ns=9;i=2",
+    }
   }
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "ExpandedNodeId", {Value={ExpandedNodeId=nodeIdScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "ExpandedNodeIdArray", {Value={ExpandedNodeId=nodeIdArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "ExpandedNodeId", nodeIdScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "ExpandedNodeIdArray", nodeIdArray, nextId()),
     }
   }
 
@@ -404,25 +539,32 @@ end
 local function addStatusCode_Scalar_And_Array(services, parentNodeId)
   traceI("Adding StatusCode variables scalar and array")
 
-  local statusCodeScalar = s.BadOutOfMemory
+  local statusCodeScalar = {
+    Type = ua.Types.VariantType.StatusCode,
+    Value = s.BadOutOfMemory
+  }
   local statusCodeArray = {
-    s.BadOutOfMemory,
-    s.BadNodeIdExists,
-    s.BadNodeIdUnknown,
-    s.BadAttributeIdInvalid,
-    s.BadUserAccessDenied,
-    s.BadNotWritable,
-    s.BadNotReadable,
-    s.BadInvalidArgument,
-    s.BadInvalidNodeId,
-    s.BadInvalidArgument
+    Type = ua.Types.VariantType.StatusCode,
+    IsArray = true,
+    Value = {
+      s.BadOutOfMemory,
+      s.BadNodeIdExists,
+      s.BadNodeIdUnknown,
+      s.BadAttributeIdInvalid,
+      s.BadUserAccessDenied,
+      s.BadNotWritable,
+      s.BadNotReadable,
+      s.BadInvalidArgument,
+      s.BadInvalidNodeId,
+      s.BadInvalidArgument
+    }
   }
 
   -- Array with node id attributes of a new boolean variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "StatusCode", {Value={StatusCode=statusCodeScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "StatusCodeArray", {Value={StatusCode=statusCodeArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "StatusCode", statusCodeScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "StatusCodeArray", statusCodeArray, nextId()),
     }
   }
 
@@ -433,25 +575,30 @@ end
 local function addQualifiedName_Scalar_And_Array(services, parentNodeId)
   traceI("Adding QualifiedName scalar and array")
 
-  local qualifiedNameScalar = {Name="QualifiedNameValue", ns=10}
+  local qualifiedNameScalar = {
+    Type = ua.Types.VariantType.QualifiedName,
+    Value = {Name="QualifiedNameValue", ns=10}
+  }
   local qualifiedNameArray = {
-    {Name="QualifiedName1",ns=1},
-    {Name="QualifiedName2",ns=2},
-    {Name="QualifiedName3",ns=3},
-    {Name="QualifiedName4",ns=4},
-    {Name="QualifiedName5",ns=5},
-    {Name="QualifiedName6",ns=6},
-    {Name="QualifiedName7",ns=7},
-    {Name="QualifiedName8",ns=8},
-    {Name="QualifiedName9",ns=9},
-    {Name="QualifiedName10",ns=10},
+    Type = ua.Types.VariantType.QualifiedName,
+    IsArray = true,
+    Value = {
+      {Name="QualifiedName1",ns=1},
+      {Name="QualifiedName2",ns=2},
+      {Name="QualifiedName3",ns=3},
+      {Name="QualifiedName6",ns=6},
+      {Name="QualifiedName7",ns=7},
+      {Name="QualifiedName8",ns=8},
+      {Name="QualifiedName9",ns=9},
+      {Name="QualifiedName10",ns=10},
+    }
   }
 
   -- Array with node id attributes of a new QualifiedName variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "QualifiedName", {Value={QualifiedName=qualifiedNameScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "QualifiedNameArray", {Value={QualifiedName=qualifiedNameArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "QualifiedName", qualifiedNameScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "QualifiedNameArray", qualifiedNameArray, nextId()),
     }
   }
 
@@ -462,25 +609,32 @@ end
 local function addLocalizedText_Scalar_And_Array(services, parentNodeId)
   traceI("Adding LocalizedText scalar and array")
 
-  local localizedTextScalar = {Text="LocalizedTextValue", Locale="en-US"}
+  local localizedTextScalar = {
+    Type = ua.Types.VariantType.LocalizedText,
+    Value = {Text="LocalizedTextValue", Locale="en-US"}
+  }
   local localizedTextArray = {
-    {Text="LocalizedTextValue0", Locale="en-US"},
-    {Text="LocalizedTextValue1", Locale="en-US"},
-    {Text="LocalizedTextValue2", Locale="en-US"},
-    {Text="LocalizedTextValue3", Locale="en-US"},
-    {Text="LocalizedTextValue4", Locale="en-US"},
-    {Text="LocalizedTextValue5", Locale="en-US"},
-    {Text="LocalizedTextValue6", Locale="en-US"},
-    {Text="LocalizedTextValue7", Locale="en-US"},
-    {Text="LocalizedTextValue8", Locale="en-US"},
-    {Text="LocalizedTextValue9", Locale="en-US"},
+    Type = ua.Types.VariantType.LocalizedText,
+    IsArray = true,
+    Value = {
+      {Text="LocalizedTextValue0", Locale="en-US"},
+      {Text="LocalizedTextValue1", Locale="en-US"},
+      {Text="LocalizedTextValue2", Locale="en-US"},
+      {Text="LocalizedTextValue3", Locale="en-US"},
+      {Text="LocalizedTextValue4", Locale="en-US"},
+      {Text="LocalizedTextValue5", Locale="en-US"},
+      {Text="LocalizedTextValue6", Locale="en-US"},
+      {Text="LocalizedTextValue7", Locale="en-US"},
+      {Text="LocalizedTextValue8", Locale="en-US"},
+      {Text="LocalizedTextValue9", Locale="en-US"},
+    }
   }
 
   -- Array with node id attributes of a new QualifiedName variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "LocalizedText", {Value={LocalizedText=localizedTextScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "LocalizedTextArray", {Value={LocalizedText=localizedTextArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "LocalizedText", localizedTextScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "LocalizedTextArray", localizedTextArray, nextId()),
     }
   }
 
@@ -492,29 +646,36 @@ local function addExtensionObject_Scalar_And_Array(services, parentNodeId)
   traceI("Adding ExtensionObject scalar and array")
 
   local extensionObjectScalar = {
-    TypeId="i=10000",
-    Body={1,2,3,4,5,6}
+    Type = ua.Types.VariantType.ExtensionObject,
+    Value = {
+      TypeId="i=10000",
+      Body="\1\2\3\4\5\6"
+    }
   }
 
   local extensionObjectArray = {
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
-    {TypeId="i=10000",Body={1,2,3,4,5,6}},
+    Type = ua.Types.VariantType.ExtensionObject,
+    IsArray = true,
+    Value = {
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+      {TypeId="i=10000",Body="\1\2\3\4\5\6"},
+    }
   }
 
 
   -- Array with node id attributes of a new ExtensionObject variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "ExtensionObject", {Value={ExtensionObject=extensionObjectScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "ExtensionObjectArray", {Value={ExtensionObject=extensionObjectArray}}, nextId())
+      ua.newVariableParams(parentNodeId, "ExtensionObject", extensionObjectScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "ExtensionObjectArray", extensionObjectArray, nextId())
     }
   }
 
@@ -524,103 +685,125 @@ end
 local function addDataValue_Scalar_And_Array(services, parentNodeId)
   traceI("Adding DataValue scalar and array")
 
-  local dataValueScalar = {
-    Value={ Byte=1 },
-    StatusCode = s.Good,
-    SourceTimestamp = os.time() - 1,
-    ServerTimestamp = os.time(),
-    SourcePicoseconds = 100,
-    ServerPicoseconds = 200
+  local dataValue = {
+    Type = ua.Types.VariantType.DataValue,
+    Value = {
+      Type = ua.Types.VariantType.Byte,
+      Value=1,
+      StatusCode = s.Good,
+      SourceTimestamp = os.time() - 1,
+      ServerTimestamp = os.time(),
+      SourcePicoseconds = 100,
+      ServerPicoseconds = 200
+    }
+  }
+  local dataValueScalar = {-- DataValue
+    Type = ua.Types.VariantType.DataValue,
+    Value = dataValue,
   }
 
   local dataValueArray = {
-    {--#1
-      Value={ Byte=1 },
-      StatusCode = s.Good,
-      SourceTimestamp = os.time() - 1,
-      ServerTimestamp = os.time(),
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#2
-      Value={ SByte=1 },
-      StatusCode = s.Good,
-      SourceTimestamp = os.time() - 1,
-      ServerTimestamp = os.time(),
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#3
-      Value={ Int16=1 },
-      StatusCode = s.Good,
-      SourceTimestamp = os.time() - 1,
-      ServerTimestamp = os.time(),
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#4
-      Value={ UInt16=1 },
-      StatusCode = s.Good,
-      SourceTimestamp = os.time() - 1,
-      ServerTimestamp = os.time(),
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#5
-      Value={ Double=1.1 },
-      StatusCode = s.Good,
-      SourceTimestamp = os.time(),
-      ServerTimestamp = os.time() + 1,
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#6
-      Value={ Float=1.1 },
-      StatusCode = s.Good,
-      SourceTimestamp = os.time(),
-      ServerTimestamp = os.time() + 1,
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#7
-      Value={ UInt64=122234567789},
-      StatusCode = s.Good,
-      SourceTimestamp = os.time(),
-      ServerTimestamp = os.time() + 1,
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#8
-      Value={ String="StringElement"},
-      StatusCode = s.Good,
-      SourceTimestamp = os.time(),
-      ServerTimestamp = os.time() + 1,
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#9
-      Value={ StatusCode=s.BadInternalError},
-      StatusCode = s.Good,
-      SourceTimestamp = os.time(),
-      ServerTimestamp = os.time() + 1,
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
-    },
-    {--#10
-      Value={ DateTime=os.time()},
-      StatusCode = s.Good,
-      SourceTimestamp = os.time(),
-      ServerTimestamp = os.time() + 1,
-      SourcePicoseconds = 100,
-      ServerPicoseconds = 200
+    Type = ua.Types.VariantType.DataValue,
+    IsArray = true,
+    Value = { -- Array of DataValue
+      {--#1
+        Type = ua.Types.VariantType.Byte,
+        Value=1,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time() - 1,
+        ServerTimestamp = os.time(),
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#2
+        Type = ua.Types.VariantType.SByte,
+        Value=1,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time() - 1,
+        ServerTimestamp = os.time(),
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#3
+        Type = ua.Types.VariantType.Int16,
+        Value=1,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time() - 1,
+        ServerTimestamp = os.time(),
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#4
+        Type = ua.Types.VariantType.UInt16,
+        Value=1,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time() - 1,
+        ServerTimestamp = os.time(),
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#5
+        Type = ua.Types.VariantType.Double,
+        Value=1.1,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time(),
+        ServerTimestamp = os.time() + 1,
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#6
+        Type = ua.Types.VariantType.Float,
+        Value=1.1,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time(),
+        ServerTimestamp = os.time() + 1,
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#7
+        Type = ua.Types.VariantType.UInt64,
+        Value=122234567789,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time(),
+        ServerTimestamp = os.time() + 1,
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#8
+        Type = ua.Types.VariantType.String,
+        Value="StringElement",
+        StatusCode = s.Good,
+        SourceTimestamp = os.time(),
+        ServerTimestamp = os.time() + 1,
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#9
+        Type = ua.Types.VariantType.StatusCode,
+        Value=s.BadInternalError,
+        StatusCode = s.Good,
+        SourceTimestamp = os.time(),
+        ServerTimestamp = os.time() + 1,
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      },
+      {--#10
+        Type = ua.Types.VariantType.DateTime,
+        Value=os.time(),
+        StatusCode = s.Good,
+        SourceTimestamp = os.time(),
+        ServerTimestamp = os.time() + 1,
+        SourcePicoseconds = 100,
+        ServerPicoseconds = 200
+      }
     }
   }
 
   -- Array with node id attributes of a new DataValue variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "DataValue", {Value={DataValue=dataValueScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "DataValueArray", {Value={DataValue=dataValueArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "DataValue",   dataValueScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "DataValueArray", dataValueArray, nextId()),
     }
   }
 
@@ -631,7 +814,7 @@ end
 local function addDiagnosticInfo_Scalar_And_Array(services, parentNodeId)
   traceI("Adding DiagnosticInfo scalar and array")
 
-  local diagnosticInfoScalar = {
+  local diagnosticInfo = {
     SymbolicId = -1,
     NsUri = -1,
     Locale = -1,
@@ -648,22 +831,31 @@ local function addDiagnosticInfo_Scalar_And_Array(services, parentNodeId)
     }
   }
 
-  local diagnosticInfoArray = {
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
-    diagnosticInfoScalar,
+  local diagnosticInfoScalar = { --DataValue
+    Type = ua.Types.VariantType.DiagnosticInfo,
+    Value = diagnosticInfo,
+  }
+
+  local diagnosticInfoArray = { --DataValueArray
+    Type = ua.Types.VariantType.DiagnosticInfo,
+    IsArray = true,
+    Value = {
+      diagnosticInfo,
+      diagnosticInfo,
+      diagnosticInfo,
+      diagnosticInfo,
+      diagnosticInfo,
+      diagnosticInfo,
+      diagnosticInfo,
+      diagnosticInfo,
+    }
   }
 
   -- Array with node id attributes of a new DataValue variable
   local newVariable = {
     NodesToAdd = {
-      ua.newVariableParams(parentNodeId, "DiagnosticInfo", {Value={DiagnosticInfo=diagnosticInfoScalar}}, nextId()),
-      ua.newVariableParams(parentNodeId, "DiagnosticInfoArray", {Value={DiagnosticInfo=diagnosticInfoArray}}, nextId()),
+      ua.newVariableParams(parentNodeId, "DiagnosticInfo", diagnosticInfoScalar, nextId()),
+      ua.newVariableParams(parentNodeId, "DiagnosticInfoArray", diagnosticInfoArray, nextId()),
     }
   }
 
