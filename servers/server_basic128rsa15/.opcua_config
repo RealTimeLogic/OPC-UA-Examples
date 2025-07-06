@@ -19,12 +19,12 @@ local serverConfig = {
   bufSize = 8192,
   securePolicies = {
     { -- #1
-      securityPolicyUri = ua.Types.SecurityPolicy.None,
-      securityMode = ua.Types.MessageSecurityMode.None,
+      securityPolicyUri = ua.SecurityPolicy.None,
+      securityMode = ua.MessageSecurityMode.None,
     },
     { -- #2
-      securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-      securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
+      securityPolicyUri = ua.SecurityPolicy.Basic128Rsa15,
+      securityMode = ua.MessageSecurityMode.SignAndEncrypt,
       certificate = ".basic128rsa15_server.pem",
       key =         ".basic128rsa15_server.key",
     }

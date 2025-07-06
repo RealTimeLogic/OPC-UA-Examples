@@ -41,7 +41,7 @@ trace("Adding a node into address space")
 local ObjectsFolder = "i=85"
 local statusCode = 0
 local value = {
-  Type = ua.Types.VariantType.Float,
+  Type = ua.VariantType.Float,
   Value = 1.0
 }
 local newVariableParams = ua.newVariableParams(ObjectsFolder, "CustomDataSource", value, dataSouceId)

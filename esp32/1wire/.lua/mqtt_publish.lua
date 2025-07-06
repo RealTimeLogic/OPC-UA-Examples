@@ -15,7 +15,7 @@ local classId <const> = "6fa38ebb-44d2-a3ec-d251-1030c777f10a"
 local dataTopic <const> = "rtl/json/data/urn:arykovanov-note:opcua:server/group/dataset"
 local publisherId <const> = "test_manual_publisher"
 local endpointUrl <const> = "opc.mqtt://test.mosquitto.org:1883"
-local tranportProfileUri = ua.Types.TranportProfileUri.MqttJson
+local tranportProfileUri = ua.TranportProfileUri.MqttJson
 
 local mqttConfig <const> = {
   bufSize = 8192
@@ -95,7 +95,7 @@ local function publishTemp(co)
     secs = secs + ns / 1e9
     local value = {
       Value = {
-        Type = ua.Types.VariantType.Float,
+        Type = ua.VariantType.Float,
         Value = temperature
       },
       ServerTimestamp = secs,

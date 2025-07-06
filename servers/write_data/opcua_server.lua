@@ -24,7 +24,7 @@ server:initialize()
 -- Add variable node
 local variableNodeId = "i=1000000"
 local value = {
-  Type = ua.Types.VariantType.Int64,
+  Type = ua.VariantType.Int64,
   Value = 0
 }
 local variableParams = ua.newVariableParams(ObjectsFolder, "variable", value, variableNodeId)
@@ -39,9 +39,9 @@ local nodes = {
   NodesToWrite = {
     {
       NodeId = variableNodeId,
-      AttributeId = ua.Types.AttributeId.Value,
+      AttributeId = ua.AttributeId.Value,
       Value = {
-        Type = ua.Types.VariantType.Int64,
+        Type = ua.VariantType.Int64,
         Value = 1
       }
     }

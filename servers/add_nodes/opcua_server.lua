@@ -43,14 +43,14 @@ local scalarBooleanId = "i=1000000"
 
 -- Initial boolean scalar value
 local scalarBoolean = {
-  Type = ua.Types.VariantType.Boolean,
+  Type = ua.VariantType.Boolean,
   Value = true
 }
 
 local arrBooleanId = "i=1000001"
 -- Initial boolean array value
 local arrBoolean = {
-  Type = ua.Types.VariantType.Boolean,
+  Type = ua.VariantType.Boolean,
   IsArray = true,
   Value = {true, false, true, false}
 }

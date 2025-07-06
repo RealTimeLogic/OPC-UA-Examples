@@ -9,10 +9,10 @@ local function createBrowseParams(nodeId)
       nodesToBrowse = {
          {
             nodeId = nodeId,
-            browseDirection = ua.Types.BrowseDirection.Forward,
+            browseDirection = ua.BrowseDirection.Forward,
             referenceTypeId = HierarchicalReferences,
-            nodeClassMask = ua.Types.NodeClass.Unspecified,
-            resultMask = ua.Types.BrowseResultMask.All,
+            nodeClassMask = ua.NodeClass.Unspecified,
+            resultMask = ua.BrowseResultMask.All,
             includeSubtypes = 1,
          }
       },
@@ -21,7 +21,7 @@ end
 
 local function createReadParams(nodeId)
    local nodeToRead = {}
-   for _,attrId in pairs(ua.Types.AttributeId) do
+   for _,attrId in pairs(ua.AttributeId) do
       table.insert(nodeToRead, {nodeId=nodeId, attributeId=attrId})
    end
 

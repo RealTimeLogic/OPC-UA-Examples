@@ -211,7 +211,7 @@ local function buttonCallback(val)
     -- Node ID of the button node
     NodeId=buttonId,
     -- Value Attribute ID of the node
-    AttributeId=ua.Types.AttributeId.Value,
+    AttributeId=ua.AttributeId.Value,
     -- New DataValue of the Value attribute
     Value = {
       -- This field is of Variant type. We use the Boolean type here.

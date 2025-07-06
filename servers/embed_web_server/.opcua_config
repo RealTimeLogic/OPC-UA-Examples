@@ -11,11 +11,11 @@ return {
     bufSize = 16386,
     securePolicies = {
        { -- #1
-         securityPolicyUri = ua.Types.SecurityPolicy.None,
+         securityPolicyUri = ua.SecurityPolicy.None,
        },
        { -- #2
-         securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-         securityMode = {ua.Types.MessageSecurityMode.SignAndEncrypt,ua.Types.MessageSecurityMode.Sign},
+         securityPolicyUri = ua.SecurityPolicy.Basic128Rsa15,
+         securityMode = {ua.MessageSecurityMode.SignAndEncrypt,ua.MessageSecurityMode.Sign},
          certificate = ".basic128rsa15_server.pem",
          key =         ".basic128rsa15_server.key",
        },

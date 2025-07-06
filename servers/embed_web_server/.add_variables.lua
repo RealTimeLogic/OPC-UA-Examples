@@ -59,7 +59,7 @@ local function addBoolean(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local value = {
-    Type = ua.Types.VariantType.Boolean,
+    Type = ua.VariantType.Boolean,
     Value = true
   }
   local newVariable =
@@ -77,7 +77,7 @@ local function addBooleanArray(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local value = {
-    Type = ua.Types.VariantType.Boolean,
+    Type = ua.VariantType.Boolean,
     IsArray = true,
     Value = {true,false,true,false,true,false,true,false,true,false}
   }
@@ -96,7 +96,7 @@ local function addByte(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local byteValue = {
-    Type = ua.Types.VariantType.Byte,
+    Type = ua.VariantType.Byte,
     Value = 17
   }
   local newVariable = {
@@ -113,7 +113,7 @@ local function addByteArray(services, parentNodeId)
   traceI("Adding Byte Array variable")
 
   local byteValue = {
-    Type = ua.Types.VariantType.Byte,
+    Type = ua.VariantType.Byte,
     IsArray = true,
     Value = {1,2,3,4,5,6,7,8,9,10}
   }
@@ -133,7 +133,7 @@ local function addSByte(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local sbyteValue = {
-    Type = ua.Types.VariantType.SByte,
+    Type = ua.VariantType.SByte,
     Value = -100
   }
   local newVariable = {
@@ -151,7 +151,7 @@ local function addSByteArray(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local sbyteValue = {
-    Type = ua.Types.VariantType.SByte,
+    Type = ua.VariantType.SByte,
     IsArray = true,
     Value = {-2,-1,0,1,2,3,4,5,6,7}
   }
@@ -170,7 +170,7 @@ local function addInt16(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local int16Value = {
-    Type = ua.Types.VariantType.Int16,
+    Type = ua.VariantType.Int16,
     Value = 30000
   }
   local newVariable = {
@@ -187,7 +187,7 @@ local function addInt16Array(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local int16Array = {
-    Type = ua.Types.VariantType.Int16,
+    Type = ua.VariantType.Int16,
     IsArray = true,
     Value = {-2000,-1000,0,100,200,300,400,5000,6000,7000}
   }
@@ -207,11 +207,11 @@ local function addUInt16_Scalar_And_Array(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local uint16Value = {
-    Type = ua.Types.VariantType.UInt16,
+    Type = ua.VariantType.UInt16,
     Value = 30000
   }
   local uint16Array = {
-    Type = ua.Types.VariantType.UInt16,
+    Type = ua.VariantType.UInt16,
     IsArray = true,
     Value = {2000,1000,0,100,200,300,400,5000,6000,40000}
   }
@@ -231,20 +231,20 @@ local function addInt32_UInt32_Scalar_And_Array(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local uint32Value = {
-    Type = ua.Types.VariantType.UInt32,
+    Type = ua.VariantType.UInt32,
     Value = 30000
   }
   local uint32Array = {
-    Type = ua.Types.VariantType.UInt32,
+    Type = ua.VariantType.UInt32,
     IsArray = true,
     Value = {2000,1000,0,100,200,300,4000000,5000,6000,40000}
   }
   local int32Value = {
-    Type = ua.Types.VariantType.Int32,
+    Type = ua.VariantType.Int32,
     Value = 1000000
   }
   local int32Array = {
-    Type = ua.Types.VariantType.Int32,
+    Type = ua.VariantType.Int32,
     IsArray = true,
     Value = {-2000,1000,0,100,-200,300,-10000,5000,6000,40000}
   }
@@ -268,16 +268,16 @@ local function addInt64_UInt64_Scalar_And_Array(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local uint64Array = {
-    Type = ua.Types.VariantType.UInt64,
+    Type = ua.VariantType.UInt64,
     IsArray = true,
     Value = {2000,1000,0,100,200,300,4000000000,5000,6000,40000}
   }
   local int64Value = {
-    Type = ua.Types.VariantType.Int64,
+    Type = ua.VariantType.Int64,
     Value = 1000000000
   }
   local int64Array = {
-    Type = ua.Types.VariantType.Int64,
+    Type = ua.VariantType.Int64,
     IsArray = true,
     Value = {-2000,1000,0,100,-200,300,-10000000000,5000,6000,40000}
   }
@@ -298,20 +298,20 @@ local function addFloat_Double_Scalar_And_Array(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local floatValue = {
-    Type = ua.Types.VariantType.Float,
+    Type = ua.VariantType.Float,
     Value = 1.1
   }
   local floatArray = {
-    Type = ua.Types.VariantType.Float,
+    Type = ua.VariantType.Float,
     IsArray = true,
     Value = {2.2,3.3}
   }
   local doubleValue = {
-    Type = ua.Types.VariantType.Double,
+    Type = ua.VariantType.Double,
     Value = -1.1
   }
   local doubleArray = {
-    Type = ua.Types.VariantType.Double,
+    Type = ua.VariantType.Double,
     IsArray = true,
     Value = {6000.222,40000.22}
   }
@@ -333,11 +333,11 @@ local function addString_Scalar_And_Array(services, parentNodeId)
 
   -- Array with node id attributes of a new boolean variable
   local stringScalar = {
-    Type = ua.Types.VariantType.String,
+    Type = ua.VariantType.String,
     Value = "This is a string variable"
   }
   local stringArray = {
-    Type = ua.Types.VariantType.String,
+    Type = ua.VariantType.String,
     IsArray = true,
     Value = {"Element1", "Element2", "Element3", "Element4", "Element5", "Element6", "Element7", "Element8", "Element9", "Element10"}
   }
@@ -355,11 +355,11 @@ local function addGuid_Scalar_And_Array(services, parentNodeId)
   traceI("Adding Guid scalar and array")
 
   local guidScalar = {
-    Type = ua.Types.VariantType.Guid,
+    Type = ua.VariantType.Guid,
     Value = ua.createGuid()
   }
   local guidArray = {
-    Type = ua.Types.VariantType.Guid,
+    Type = ua.VariantType.Guid,
     IsArray = true,
     Value = {ua.createGuid(),ua.createGuid(),ua.createGuid()}
   }
@@ -380,11 +380,11 @@ local function addDateTime_Scalar_And_Array(services, parentNodeId)
 
   local curTime = os.time()
   local dateTimeScalar = {
-    Type = ua.Types.VariantType.DateTime,
+    Type = ua.VariantType.DateTime,
     Value = curTime + 0.123
   }
   local dateTimeArray ={
-    Type = ua.Types.VariantType.DateTime,
+    Type = ua.VariantType.DateTime,
     IsArray = true,
     Value = {curTime, curTime - 1, curTime - 2, curTime - 3, curTime - 4, curTime - 5, curTime - 6, curTime - 7, curTime - 8, curTime - 9}
   }
@@ -403,11 +403,11 @@ local function addByteString_Scalar_And_Array(services, parentNodeId)
   traceI("Adding ByteString scalar and array")
 
   local byteStringScalar = {
-    Type = ua.Types.VariantType.ByteString,
+    Type = ua.VariantType.ByteString,
     Value = "\1\2\3\4\5\6\7\8\9"
   }
   local byteStringArray = {
-    Type = ua.Types.VariantType.ByteString,
+    Type = ua.VariantType.ByteString,
     IsArray = true,
     Value = {
       "\1\2\3\4\5",
@@ -438,11 +438,11 @@ local function addXmlElement_Scalar_And_Array(services, parentNodeId)
   traceI("Adding XmlElement scalar and array")
 
   local xmlScalar = {
-    Type = ua.Types.VariantType.XmlElement,
+    Type = ua.VariantType.XmlElement,
     Value = '<xml version="1.0"><opcua></opcua>'
   }
   local xmlArray = {
-    Type = ua.Types.VariantType.XmlElement,
+    Type = ua.VariantType.XmlElement,
     IsArray = true,
     Value = {
       '<xml version="1.0"><opcua></opcua>',
@@ -473,11 +473,11 @@ local function addNodeId_Scalar_And_Array(services, parentNodeId)
   traceI("Adding NodeId scalar and array")
 
   local nodeIdScalar = {
-    Type = ua.Types.VariantType.NodeId,
+    Type = ua.VariantType.NodeId,
     Value = "ns=10;s=string_id"
   }
   local nodeIdArray = {
-    Type = ua.Types.VariantType.NodeId,
+    Type = ua.VariantType.NodeId,
     IsArray = true,
     Value = {
       "ns=11;s=string_id",
@@ -507,11 +507,11 @@ local function addExpandedNodeId_Scalar_And_Array(services, parentNodeId)
 
 
   local nodeIdScalar = {
-    Type = ua.Types.VariantType.ExpandedNodeId,
+    Type = ua.VariantType.ExpandedNodeId,
     Value = "ns=10;s=expanded_string_id"
   }
   local nodeIdArray = {
-    Type = ua.Types.VariantType.ExpandedNodeId,
+    Type = ua.VariantType.ExpandedNodeId,
     IsArray = true,
     Value = {
       "nsu=uri;s=expanded_string_id",
@@ -540,11 +540,11 @@ local function addStatusCode_Scalar_And_Array(services, parentNodeId)
   traceI("Adding StatusCode variables scalar and array")
 
   local statusCodeScalar = {
-    Type = ua.Types.VariantType.StatusCode,
+    Type = ua.VariantType.StatusCode,
     Value = s.BadOutOfMemory
   }
   local statusCodeArray = {
-    Type = ua.Types.VariantType.StatusCode,
+    Type = ua.VariantType.StatusCode,
     IsArray = true,
     Value = {
       s.BadOutOfMemory,
@@ -576,11 +576,11 @@ local function addQualifiedName_Scalar_And_Array(services, parentNodeId)
   traceI("Adding QualifiedName scalar and array")
 
   local qualifiedNameScalar = {
-    Type = ua.Types.VariantType.QualifiedName,
+    Type = ua.VariantType.QualifiedName,
     Value = {Name="QualifiedNameValue", ns=10}
   }
   local qualifiedNameArray = {
-    Type = ua.Types.VariantType.QualifiedName,
+    Type = ua.VariantType.QualifiedName,
     IsArray = true,
     Value = {
       {Name="QualifiedName1",ns=1},
@@ -610,11 +610,11 @@ local function addLocalizedText_Scalar_And_Array(services, parentNodeId)
   traceI("Adding LocalizedText scalar and array")
 
   local localizedTextScalar = {
-    Type = ua.Types.VariantType.LocalizedText,
+    Type = ua.VariantType.LocalizedText,
     Value = {Text="LocalizedTextValue", Locale="en-US"}
   }
   local localizedTextArray = {
-    Type = ua.Types.VariantType.LocalizedText,
+    Type = ua.VariantType.LocalizedText,
     IsArray = true,
     Value = {
       {Text="LocalizedTextValue0", Locale="en-US"},
@@ -646,7 +646,7 @@ local function addExtensionObject_Scalar_And_Array(services, parentNodeId)
   traceI("Adding ExtensionObject scalar and array")
 
   local extensionObjectScalar = {
-    Type = ua.Types.VariantType.ExtensionObject,
+    Type = ua.VariantType.ExtensionObject,
     Value = {
       TypeId="i=10000",
       Body="\1\2\3\4\5\6"
@@ -654,7 +654,7 @@ local function addExtensionObject_Scalar_And_Array(services, parentNodeId)
   }
 
   local extensionObjectArray = {
-    Type = ua.Types.VariantType.ExtensionObject,
+    Type = ua.VariantType.ExtensionObject,
     IsArray = true,
     Value = {
       {TypeId="i=10000",Body="\1\2\3\4\5\6"},
@@ -686,9 +686,9 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
   traceI("Adding DataValue scalar and array")
 
   local dataValue = {
-    Type = ua.Types.VariantType.DataValue,
+    Type = ua.VariantType.DataValue,
     Value = {
-      Type = ua.Types.VariantType.Byte,
+      Type = ua.VariantType.Byte,
       Value=1,
       StatusCode = s.Good,
       SourceTimestamp = os.time() - 1,
@@ -698,16 +698,16 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
     }
   }
   local dataValueScalar = {-- DataValue
-    Type = ua.Types.VariantType.DataValue,
+    Type = ua.VariantType.DataValue,
     Value = dataValue,
   }
 
   local dataValueArray = {
-    Type = ua.Types.VariantType.DataValue,
+    Type = ua.VariantType.DataValue,
     IsArray = true,
     Value = { -- Array of DataValue
       {--#1
-        Type = ua.Types.VariantType.Byte,
+        Type = ua.VariantType.Byte,
         Value=1,
         StatusCode = s.Good,
         SourceTimestamp = os.time() - 1,
@@ -716,7 +716,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#2
-        Type = ua.Types.VariantType.SByte,
+        Type = ua.VariantType.SByte,
         Value=1,
         StatusCode = s.Good,
         SourceTimestamp = os.time() - 1,
@@ -725,7 +725,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#3
-        Type = ua.Types.VariantType.Int16,
+        Type = ua.VariantType.Int16,
         Value=1,
         StatusCode = s.Good,
         SourceTimestamp = os.time() - 1,
@@ -734,7 +734,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#4
-        Type = ua.Types.VariantType.UInt16,
+        Type = ua.VariantType.UInt16,
         Value=1,
         StatusCode = s.Good,
         SourceTimestamp = os.time() - 1,
@@ -743,7 +743,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#5
-        Type = ua.Types.VariantType.Double,
+        Type = ua.VariantType.Double,
         Value=1.1,
         StatusCode = s.Good,
         SourceTimestamp = os.time(),
@@ -752,7 +752,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#6
-        Type = ua.Types.VariantType.Float,
+        Type = ua.VariantType.Float,
         Value=1.1,
         StatusCode = s.Good,
         SourceTimestamp = os.time(),
@@ -761,7 +761,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#7
-        Type = ua.Types.VariantType.UInt64,
+        Type = ua.VariantType.UInt64,
         Value=122234567789,
         StatusCode = s.Good,
         SourceTimestamp = os.time(),
@@ -770,7 +770,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#8
-        Type = ua.Types.VariantType.String,
+        Type = ua.VariantType.String,
         Value="StringElement",
         StatusCode = s.Good,
         SourceTimestamp = os.time(),
@@ -779,7 +779,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#9
-        Type = ua.Types.VariantType.StatusCode,
+        Type = ua.VariantType.StatusCode,
         Value=s.BadInternalError,
         StatusCode = s.Good,
         SourceTimestamp = os.time(),
@@ -788,7 +788,7 @@ local function addDataValue_Scalar_And_Array(services, parentNodeId)
         ServerPicoseconds = 200
       },
       {--#10
-        Type = ua.Types.VariantType.DateTime,
+        Type = ua.VariantType.DateTime,
         Value=os.time(),
         StatusCode = s.Good,
         SourceTimestamp = os.time(),
@@ -832,12 +832,12 @@ local function addDiagnosticInfo_Scalar_And_Array(services, parentNodeId)
   }
 
   local diagnosticInfoScalar = { --DataValue
-    Type = ua.Types.VariantType.DiagnosticInfo,
+    Type = ua.VariantType.DiagnosticInfo,
     Value = diagnosticInfo,
   }
 
   local diagnosticInfoArray = { --DataValueArray
-    Type = ua.Types.VariantType.DiagnosticInfo,
+    Type = ua.VariantType.DiagnosticInfo,
     IsArray = true,
     Value = {
       diagnosticInfo,

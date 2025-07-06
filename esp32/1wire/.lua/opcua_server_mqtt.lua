@@ -44,7 +44,7 @@ local classId = "6fa38ebb-44d2-a3ec-d251-1030c777f10a"
 mqttPublisher:createDataset(mqttFields, classId)
 
 -- Connect to MQTT broker
-local tranportProfileUri = ua.Types.TranportProfileUri.MqttBinary
+local tranportProfileUri = ua.TranportProfileUri.MqttBinary
 local endpointUrl = "opc.mqtt://test.mosquitto.org:1883"
 mqttPublisher:connect(endpointUrl, tranportProfileUri)
 
@@ -64,10 +64,10 @@ local function writeTemp(temperature, err)
     NodesToWrite = {
       {
         NodeId = sensorNodeId,
-        AttributeId = ua.Types.AttributeId.Value,
+        AttributeId = ua.AttributeId.Value,
         Value = {
           Value = {
-            Type = ua.Types.VariantType.Float,
+            Type = ua.VariantType.Float,
             Value = temperature
           },
           ServerTimestamp = secs,
