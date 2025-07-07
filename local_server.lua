@@ -117,25 +117,25 @@ local serverConfig = {
 
   securePolicies = {
     { -- #1
-      securityPolicyUri = ua.Types.SecurityPolicy.None,
+      securityPolicyUri = ua.SecurityPolicy.None,
     },
     { -- #2
-      securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-      securityMode = {ua.Types.MessageSecurityMode.SignAndEncrypt, ua.Types.MessageSecurityMode.Sign},
+      securityPolicyUri = ua.SecurityPolicy.Basic128Rsa15,
+      securityMode = {ua.MessageSecurityMode.SignAndEncrypt, ua.MessageSecurityMode.Sign},
     }
   },
   userIdentityTokens = {
     {
       policyId = "anonymous_policy",
-      tokenType = ua.Types.UserTokenType.Anonymous,
+      tokenType = ua.UserTokenType.Anonymous,
     },
     {
       policyId = "cert_policy",
-      tokenType = ua.Types.UserTokenType.Certificate,
+      tokenType = ua.UserTokenType.Certificate,
     },
     {
       policyId = "username_policy",
-      tokenType = ua.Types.UserTokenType.UserName,
+      tokenType = ua.UserTokenType.UserName,
     },
   }
 }

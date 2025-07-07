@@ -29,7 +29,7 @@ local function FailIfError(err)
 
 
     trace("Error: " .. tostring(err))
-    os.exit(-1)
+    mako.exit(-1)
   end
 end
 
@@ -70,6 +70,6 @@ trace("---------------    SUCCESS       -----------------------")
 trace("--------------------------------------------------------")
 
 
-os.exit(0)
+mako.exit(0)
 
 ?>

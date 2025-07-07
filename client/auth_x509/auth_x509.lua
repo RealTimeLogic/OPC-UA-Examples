@@ -8,11 +8,11 @@ local config = {
   productUri = "urn:opcua-lua:example",
   securePolicies = {
     { -- #1
-      securityPolicyUri = ua.Types.SecurityPolicy.None,
+      securityPolicyUri = ua.SecurityPolicy.None,
     },
     { -- #2
-      securityPolicyUri = ua.Types.SecurityPolicy.Basic128Rsa15,
-      securityMode = ua.Types.MessageSecurityMode.SignAndEncrypt,
+      securityPolicyUri = ua.SecurityPolicy.Basic128Rsa15,
+      securityMode = ua.MessageSecurityMode.SignAndEncrypt,
       certificate = "./basic128rsa15_client.pem",
       key =         "./basic128rsa15_client.key",
     }
@@ -32,7 +32,7 @@ if err ~= nil then
 end
 
 -- Open secure channel with timeout 120 seconds
-resp, err = client:openSecureChannel(120000, ua.Types.SecurityPolicy.None, ua.Types.MessageSecurityMode.None)
+resp, err = client:openSecureChannel(120000, ua.SecurityPolicy.None, ua.MessageSecurityMode.None)
 if err ~= nil then
   return
 end
@@ -42,7 +42,7 @@ local tokenPolicy
 for _, endpoint in ipairs(session.ServerEndpoints) do
   -- Select certificate token policy with security policy Basic128Rsa15
   for _, policy in ipairs(endpoint.UserIdentityTokens) do
-    if  policy.TokenType == ua.Types.UserTokenType.Certificate then
+    if  policy.TokenType == ua.UserTokenType.Certificate then
       tokenPolicy = policy
       goto found
     end

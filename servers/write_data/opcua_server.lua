@@ -23,7 +23,10 @@ server:initialize()
 
 -- Add variable node
 local variableNodeId = "i=1000000"
-local value = {Value={Int64 = 0}}
+local value = {
+  Type = ua.VariantType.Int64,
+  Value = 0
+}
 local variableParams = ua.newVariableParams(ObjectsFolder, "variable", value, variableNodeId)
 local resp = server.services:addNodes({NodesToAdd={variableParams}})
 local res = resp.Results
@@ -36,11 +39,10 @@ local nodes = {
   NodesToWrite = {
     {
       NodeId = variableNodeId,
-      AttributeId = ua.Types.AttributeId.Value,
+      AttributeId = ua.AttributeId.Value,
       Value = {
-        Value = {
-          Int64 = 1
-        }
+        Type = ua.VariantType.Int64,
+        Value = 1
       }
     }
   }
@@ -61,12 +63,12 @@ end
 -- Create a timer that increments the int64 value every second
 
 local function timerFunc()
-   local value = nodes.nodesToWrite[1].value.value
+   local value = nodes.nodesToWrite[1].Value
    while true do
-      value.int64 = value.int64 + 1
+      value.Value = value.Value + 1
       local resp = server:write(nodes)
       if resp.results[1] == ua.StatusCode.Good then
-         trace("value.int64=",value.int64)
+         trace("value.Value=",value.Value)
       else
          trace("Updating node failed!")
       end

@@ -7,7 +7,7 @@ local config = {
   productUri = "urn:opcua-lua:example",
   securePolicies = {
     { -- #1
-      securityPolicyUri = ua.Types.SecurityPolicy.None,
+      securityPolicyUri = ua.SecurityPolicy.None,
     },
   },
 }
@@ -19,13 +19,13 @@ local resp, err
 -- Connecting to OPCUA server
 trace("connecting to server")
 local endpointUrl = "opc.tcp://localhost:4841"
-err = client:connect(endpointUrl, ua.Types.TranportProfileUri.TcpBinary)
+err = client:connect(endpointUrl, ua.TranportProfileUri.TcpBinary)
 if err ~= nil then
   return
 end
 
 -- Open secure channel with timeout 120 seconds
-resp, err = client:openSecureChannel(120000, ua.Types.SecurityPolicy.None, ua.Types.MessageSecurityMode.None)
+resp, err = client:openSecureChannel(120000, ua.SecurityPolicy.None, ua.MessageSecurityMode.None)
 if err ~= nil then
   return
 end
@@ -39,8 +39,8 @@ end
 local tokenPolicy
 for _, endpoint in ipairs(session.ServerEndpoints) do
   for _, policy in ipairs(endpoint.UserIdentityTokens) do
-    if policy.TokenType == ua.Types.UserTokenType.UserName and
-      (policy.SecurityPolicyUri == nil or policy.SecurityPolicyUri == ua.Types.SecurityPolicy.None)
+    if policy.TokenType == ua.UserTokenType.UserName and
+      (policy.SecurityPolicyUri == nil or policy.SecurityPolicyUri == ua.SecurityPolicy.None)
     then
       tokenPolicy = policy
       goto found

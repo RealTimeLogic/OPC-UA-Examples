@@ -11,7 +11,7 @@ local config = {
   productUri = "urn:opcua-lua:example",
   securePolicies = {
     { -- #1
-      securityPolicyUri = ua.Types.SecurityPolicy.None,
+      securityPolicyUri = ua.SecurityPolicy.None,
     },
   },
 }
@@ -29,7 +29,7 @@ if err ~= nil then
 end
 
 -- Open secure channel with timeout 120 seconds
-resp, err = client:openSecureChannel(120000, ua.Types.SecurityPolicy.None, ua.Types.MessageSecurityMode.None)
+resp, err = client:openSecureChannel(120000, ua.SecurityPolicy.None, ua.MessageSecurityMode.None)
 if err ~= nil then
   return
 end
@@ -86,17 +86,17 @@ local browseParams = {
     {
       NodeId = nodeIds.RootFolder,
       ReferenceTypeId = nodeIds.HierarchicalReferences,
-      BrowseDirection = ua.Types.BrowseDirection.Forward,
-      NodeClassMask = ua.Types.NodeClass.Unspecified,
-      ResultMask = ua.Types.BrowseResultMask.All,
+      BrowseDirection = ua.BrowseDirection.Forward,
+      NodeClassMask = ua.NodeClass.Unspecified,
+      ResultMask = ua.BrowseResultMask.All,
       IncludeSubtypes = true,
     },
     {
       NodeId = nodeIds.RootFolder,
       ReferenceTypeId = nodeIds.HierarchicalReferences,
-      BrowseDirection = ua.Types.BrowseDirection.Forward,
-      NodeClassMask = ua.Types.NodeClass.Unspecified,
-      ResultMask = ua.Types.BrowseResultMask.All,
+      BrowseDirection = ua.BrowseDirection.Forward,
+      NodeClassMask = ua.NodeClass.Unspecified,
+      ResultMask = ua.BrowseResultMask.All,
       IncludeSubtypes = true,
     }
   },
